@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - PrintCare{% endblock %}
+
+{% block content %}
+
+<div class="detail-page">
+
+    <div class="detail-icon">📦</div>
+
+    <h1>{{ product.name }}</h1>
+
+    <p class="detail-desc">
+        {{ product.description }}
+    </p>
+
+    <div class="detail-price-box">
+        <span>Rs. {{ product.price }}</span>
+    </div>
+
+    {% if product.in_stock() %}
+
+    {% if current_user %}
+
+    <form method="post" action="{{ url_for('stationery.add_to_cart', product_id=product.id) }}" class="form-stack">
+
+        <label>
+            Quantity
+
+            <input type="number" name="quantity" min="1" value="1">
+        </label>
+
+        <button type="submit" class="btn btn-primary btn-block">
+            Add to Cart
+        </button>
+
+    </form>
+
+    {% else %}
+
+    <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-block">
+        Login to Order
+    </a>
+
+    {% endif %}
+
+    {% else %}
+
+    <p class="badge-outofstock">
+        Out of stock
+    </p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

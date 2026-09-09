@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}My Orders - PrintCare{% endblock %}
+{% block content %}
+<h2 class="section-title">My Orders</h2>
+
+{% if orders %}
+<div class="order-list">
+    {% for order in orders %}
+    <a href="{{ url_for('orders.order_details', order_number=order.order_number) }}" class="order-row">
+        <div>
+            <div class="order-row-number">{{ order.order_number }}</div>
+            <div class="order-row-date">{{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}</div>
+        </div>
+        <div>
+            <span class="status-badge status-{{ order.status|lower|replace(' ', '-') }}">{{ order.status }}</span>
+            <div class="order-row-total">Rs. {{ '%.2f'|format(order.total_amount) }}</div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<p class="empty-state">You haven't placed any orders yet.</p>
+{% endif %}
+{% endblock %}

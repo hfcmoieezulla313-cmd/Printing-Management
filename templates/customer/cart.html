@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Cart - PrintCare{% endblock %}
+{% block content %}
+<h2 class="section-title">Your Cart</h2>
+
+{% if cart.items %}
+<div class="cart-list">
+    {% for item in cart.items %}
+    <div class="cart-item">
+        <div class="cart-item-icon">{{ '🖨️' if item.item_type == 'PRINTING' else '📦' }}</div>
+        <div class="cart-item-info">
+            <div class="cart-item-name">{{ item.display_name() }}</div>
+            {% if item.item_type == 'PRINTING' and item.print_configuration %}
+            <div class="cart-item-config">
+                {{ item.print_configuration.paper_size }} · {{ item.print_configuration.print_type }} ·
+                {{ item.print_configuration.print_side }} side · {{ item.print_configuration.copies }} copies ·
+                Binding: {{ item.print_configuration.binding }}
+            </div>
+            {% endif %}
+            <div class="cart-item-price">Rs. {{ '%.2f'|format(item.line_total()) }}</div>
+        </div>
+        <div class="cart-item-actions">
+            {% if item.item_type == 'STATIONERY' %}
+            <form method="post" action="{{ url_for('cart.update_item', item_id=item.id) }}" class="qty-form">
+                <button type="submit" name="quantity" value="{{ item.quantity - 1 }}">-</button>
+                <span>{{ item.quantity }}</span>
+                <button type="submit" name="quantity" value="{{ item.quantity + 1 }}">+</button>
+            </form>
+            {% endif %}
+            <form method="post" action="{{ url_for('cart.remove_item', item_id=item.id) }}">
+                <button type="submit" class="btn-remove">Remove</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="cart-summary">
+    <div class="cs-row"><span>Subtotal</span><span>Rs. {{ '%.2f'|format(totals.subtotal) }}</span></div>
+    <div class="cs-row"><span>Delivery</span><span>{{ 'FREE' if totals.delivery_charge == 0 else 'Rs. %.2f'|format(totals.delivery_charge) }}</span></div>
+    {% if not totals.meets_minimum_order %}
+    <p class="cs-warning">Minimum order value is Rs. {{ totals.minimum_order_value }}. Add more items to check out.</p>
+    {% endif %}
+</div>
+
+<a href="{{ url_for('checkout.checkout') }}" class="btn btn-primary btn-block {{ 'btn-disabled' if not totals.meets_minimum_order }}">Proceed to Checkout</a>
+
+{% else %}
+<p class="empty-state">Your cart is empty.</p>
+<a href="{{ url_for('main.home') }}" class="btn btn-primary">Start Shopping</a>
+{% endif %}
+{% endblock %}
+{% block extra_js %}<script src="{{ url_for('static', filename='js/cart.js') }}"></script>{% endblock %}

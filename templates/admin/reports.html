@@ -1,0 +1,11 @@
+{% extends "admin/base.html" %}
+{% block title %}Reports - Admin{% endblock %}
+{% block content %}
+<h1>Reports</h1>
+<table class="admin-table">
+    <tr><th>Status</th><th>Order Count</th><th>Total Revenue</th></tr>
+    {% for status, count, revenue in revenue_by_status %}
+    <tr><td>{{ status }}</td><td>{{ count }}</td><td>Rs. {{ '%.2f'|format(revenue) }}</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Order {{ order.order_number }} - PrintCare{% endblock %}
+{% block content %}
+<h2 class="section-title">Order {{ order.order_number }}</h2>
+<span class="status-badge status-{{ order.status|lower|replace(' ', '-') }}">{{ order.status }}</span>
+
+<div class="tracking-timeline">
+    {% for step in timeline %}
+    <div class="tl-step {{ 'tl-done' if step.done }} {{ 'tl-current' if step.current }}">
+        <div class="tl-dot">{{ '✓' if step.done else '○' }}</div>
+        <div class="tl-label">{{ step.label }}</div>
+    </div>
+    {% endfor %}
+</div>
+
+<h3 class="section-subtitle">Items</h3>
+<div class="order-items-list">
+    {% for item in order.items %}
+    <div class="order-item-row">
+        <div>
+            <strong>{{ item.name_snapshot }}</strong>
+            {% if item.details_snapshot %}<div class="order-item-details">{{ item.details_snapshot }}</div>{% endif %}
+        </div>
+        <div>Qty {{ item.quantity }} · Rs. {{ '%.2f'|format(item.line_total) }}</div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="cart-summary">
+    <div class="cs-row"><span>Subtotal</span><span>Rs. {{ '%.2f'|format(order.subtotal) }}</span></div>
+    <div class="cs-row"><span>Delivery</span><span>Rs. {{ '%.2f'|format(order.delivery_charge) }}</span></div>
+    {% if order.discount_amount %}<div class="cs-row"><span>Discount</span><span>- Rs. {{ '%.2f'|format(order.discount_amount) }}</span></div>{% endif %}
+    <div class="cs-row cs-total"><span>Total</span><span>Rs. {{ '%.2f'|format(order.total_amount) }}</span></div>
+</div>
+
+<h3 class="section-subtitle">Delivery Address</h3>
+<p>{{ order.contact_name }}, {{ order.contact_phone }}<br>{{ order.address.full_text() }}</p>
+{% endblock %}

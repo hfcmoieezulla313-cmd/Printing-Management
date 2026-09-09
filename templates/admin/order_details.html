@@ -1,0 +1,37 @@
+{% extends "admin/base.html" %}
+{% block title %}Order {{ order.order_number }} - Admin{% endblock %}
+{% block content %}
+<h1>Order {{ order.order_number }}</h1>
+<p>Customer: {{ order.user.full_name }} ({{ order.user.email }}, {{ order.user.phone }})</p>
+<p>Address: {{ order.address.full_text() }}</p>
+<p>Payment: {{ order.payment_method }}</p>
+
+<form method="post" action="{{ url_for('admin.update_status', order_number=order.order_number) }}" class="inline-form">
+    <select name="status">
+        {% for s in statuses %}
+        <option value="{{ s }}" {{ 'selected' if order.status == s }}>{{ s }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary">Update Status</button>
+</form>
+
+<h3 class="section-subtitle">Items</h3>
+<table class="admin-table">
+    <tr><th>Item</th><th>Details</th><th>Qty</th><th>Total</th></tr>
+    {% for item in order.items %}
+    <tr>
+        <td>{{ item.name_snapshot }}</td>
+        <td>{{ item.details_snapshot or '-' }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>Rs. {{ '%.2f'|format(item.line_total) }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<div class="cart-summary">
+    <div class="cs-row"><span>Subtotal</span><span>Rs. {{ '%.2f'|format(order.subtotal) }}</span></div>
+    <div class="cs-row"><span>Delivery</span><span>Rs. {{ '%.2f'|format(order.delivery_charge) }}</span></div>
+    <div class="cs-row"><span>Discount</span><span>- Rs. {{ '%.2f'|format(order.discount_amount) }}</span></div>
+    <div class="cs-row cs-total"><span>Total</span><span>Rs. {{ '%.2f'|format(order.total_amount) }}</span></div>
+</div>
+{% endblock %}

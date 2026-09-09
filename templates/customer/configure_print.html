@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Configure Print - PrintCare{% endblock %}
+{% block content %}
+<div class="form-page">
+    <h1>Configure Your Print</h1>
+    <p class="detail-desc">Document: {{ document.original_filename }}</p>
+
+    <form method="post" id="config-form" class="form-stack" data-service-id="{{ service.id }}">
+        {% if service.paper_size %}
+        <label>Paper Size
+            <select name="paper_size" id="paper_size">
+                <option value="A4" {{ 'selected' if service.paper_size == 'A4' }}>A4</option>
+                <option value="A3" {{ 'selected' if service.paper_size == 'A3' }}>A3</option>
+            </select>
+        </label>
+        {% endif %}
+
+        <label>Print Type
+            <select name="print_type" id="print_type">
+                <option value="BW" {{ 'selected' if service.print_type == 'BW' }}>Black & White</option>
+                <option value="COLOR" {{ 'selected' if service.print_type == 'COLOR' }}>Color</option>
+            </select>
+        </label>
+
+        <label>Print Side
+            <select name="print_side" id="print_side">
+                <option value="SINGLE">Single Side</option>
+                <option value="DOUBLE">Double Side</option>
+            </select>
+        </label>
+
+        <label>Copies
+            <input type="number" name="copies" id="copies" min="1" value="1">
+        </label>
+
+        <label>Pages per copy
+            <input type="number" name="page_count" id="page_count" min="1" value="{{ document.page_count }}">
+        </label>
+
+        <label>Binding
+            <select name="binding" id="binding">
+                <option value="NONE">None</option>
+                <option value="SPIRAL">Spiral Binding</option>
+            </select>
+        </label>
+
+        <div class="price-breakdown" id="price-breakdown" data-quote-url="{{ url_for('printing.quote') }}">
+            <div class="pb-row"><span>Document</span><span>{{ document.original_filename }}</span></div>
+            <div class="pb-row"><span>Price per page</span><span id="pb-per-page">Rs. {{ breakdown.price_per_page }}</span></div>
+            <div class="pb-row"><span>Printing subtotal</span><span id="pb-subtotal">Rs. {{ breakdown.printing_subtotal }}</span></div>
+            <div class="pb-row"><span>Binding cost</span><span id="pb-binding">Rs. {{ breakdown.binding_cost }}</span></div>
+            <div class="pb-row pb-total"><span>Final total</span><span id="pb-total">Rs. {{ breakdown.total }}</span></div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Add to Cart</button>
+    </form>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/print_config.js') }}"></script>
+{% endblock %}

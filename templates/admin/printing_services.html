@@ -1,0 +1,50 @@
+{% extends "admin/base.html" %}
+{% block title %}Printing Services - Admin{% endblock %}
+{% block content %}
+<h1>Printing Services</h1>
+<table class="admin-table">
+    <tr><th>Name</th><th>Price/page</th><th>Flat price</th><th>Active</th><th></th></tr>
+    {% for s in services %}
+    <tr>
+        <td>{{ s.name }}</td>
+        <td>{{ s.price_per_page if s.is_configurable else '-' }}</td>
+        <td>{{ s.flat_price if s.flat_price else '-' }}</td>
+        <td>{{ 'Yes' if s.is_active else 'No' }}</td>
+        <td>
+            <form method="post" action="{{ url_for('admin.delete_printing_service', service_id=s.id) }}" class="inline-form">
+                <button type="submit" class="btn-remove">Delete</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h3 class="section-subtitle">Add / Edit Printing Service</h3>
+<p class="hint">To edit an existing one, set the same Slug and submit — it will update the existing service.</p>
+<form method="post" class="form-stack">
+    <label>Name<input type="text" name="name" required></label>
+    <label>Slug (unique, e.g. a4-bw-print)<input type="text" name="slug" required></label>
+    <label>Category
+        <select name="category_id">
+            {% for c in categories %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+        </select>
+    </label>
+    <label>Description<textarea name="description" rows="2"></textarea></label>
+    <label>Paper Size
+        <select name="paper_size">
+            <option value="">N/A</option><option value="A4">A4</option><option value="A3">A3</option>
+        </select>
+    </label>
+    <label>Print Type
+        <select name="print_type">
+            <option value="">N/A</option><option value="BW">BW</option><option value="COLOR">COLOR</option>
+        </select>
+    </label>
+    <label class="checkbox-row"><input type="checkbox" name="is_configurable" checked> Configurable (per-page pricing)</label>
+    <label>Price per page (Rs.)<input type="number" step="0.01" name="price_per_page" value="0"></label>
+    <label>Double-side extra per page (Rs.)<input type="number" step="0.01" name="double_side_extra" value="0"></label>
+    <label>Flat price (Rs., for non-configurable services e.g. binding)<input type="number" step="0.01" name="flat_price"></label>
+    <label class="checkbox-row"><input type="checkbox" name="is_active" checked> Active</label>
+    <button type="submit" class="btn btn-primary btn-block">Save Service</button>
+</form>
+{% endblock %}

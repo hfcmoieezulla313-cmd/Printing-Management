@@ -1,0 +1,26 @@
+{% extends "admin/base.html" %}
+{% block title %}Orders - Admin{% endblock %}
+{% block content %}
+<h1>Orders</h1>
+<div class="chip-row">
+    <a href="{{ url_for('admin.orders') }}" class="chip {{ 'chip-active' if not active_status }}">All</a>
+    {% for s in statuses %}
+    <a href="{{ url_for('admin.orders', status=s) }}" class="chip {{ 'chip-active' if active_status == s }}">{{ s }}</a>
+    {% endfor %}
+</div>
+<table class="admin-table">
+    <tr><th>Order #</th><th>Customer</th><th>Status</th><th>Total</th><th>Date</th><th></th></tr>
+    {% for order in orders %}
+    <tr>
+        <td>{{ order.order_number }}</td>
+        <td>{{ order.user.full_name }}</td>
+        <td><span class="status-badge status-{{ order.status|lower|replace(' ', '-') }}">{{ order.status }}</span></td>
+        <td>Rs. {{ '%.2f'|format(order.total_amount) }}</td>
+        <td>{{ order.created_at.strftime('%d %b %Y') }}</td>
+        <td><a href="{{ url_for('admin.order_details', order_number=order.order_number) }}" class="btn-small">View</a></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6">No orders found.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

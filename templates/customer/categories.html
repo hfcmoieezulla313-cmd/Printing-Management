@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Categories - PrintCare{% endblock %}
+{% block content %}
+
+{% if search_query is defined and search_query %}
+<h2 class="section-title">Search results for "{{ search_query }}"</h2>
+
+{% if search_services %}
+<h3 class="section-subtitle">Printing Services</h3>
+<div class="printing-grid">
+    {% for svc in search_services %}
+    <a href="{{ url_for('printing.details', slug=svc.slug) }}" class="printing-card">
+        <div class="printing-card-icon">🖨️</div>
+        <div class="printing-card-name">{{ svc.name }}</div>
+    </a>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if search_products %}
+<h3 class="section-subtitle">Stationery</h3>
+<div class="product-grid">
+    {% for p in search_products %}
+    <a href="{{ url_for('stationery.details', product_id=p.id) }}" class="product-card">
+        <div class="product-card-icon">📦</div>
+        <div class="product-card-name">{{ p.name }}</div>
+        <div class="product-card-price">Rs. {{ p.price }}</div>
+    </a>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if not search_services and not search_products %}
+<p class="empty-state">No results found for "{{ search_query }}".</p>
+{% endif %}
+
+{% else %}
+
+<h2 class="section-title">Printing Categories</h2>
+<div class="category-grid">
+    {% for cat in printing_categories %}
+    <a href="{{ url_for('printing.list_services', category=cat.id) }}" class="category-card">
+        <span class="cat-icon">🖨️</span><span>{{ cat.name }}</span>
+    </a>
+    {% endfor %}
+</div>
+
+<h2 class="section-title">Stationery Categories</h2>
+<div class="category-grid">
+    {% for cat in stationery_categories %}
+    <a href="{{ url_for('stationery.list_products', category=cat.id) }}" class="category-card">
+        <span class="cat-icon">🗂️</span><span>{{ cat.name }}</span>
+    </a>
+    {% endfor %}
+</div>
+
+{% endif %}
+{% endblock %}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Admin - PrintCare{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body class="admin-body">
+
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <div class="admin-brand">Print<span>Care</span> <small>Admin</small></div>
+        <nav>
+            <a href="{{ url_for('admin.dashboard') }}" class="{{ 'active' if request.endpoint == 'admin.dashboard' }}">📊 Dashboard</a>
+            <a href="{{ url_for('admin.orders') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('admin.order') }}">📦 Orders</a>
+            <a href="{{ url_for('admin.customers') }}" class="{{ 'active' if request.endpoint == 'admin.customers' }}">👥 Customers</a>
+            <a href="{{ url_for('admin.printing_services') }}" class="{{ 'active' if request.endpoint and 'printing_service' in request.endpoint }}">🖨️ Printing Services</a>
+            <a href="{{ url_for('admin.stationery') }}" class="{{ 'active' if request.endpoint and 'stationery' in request.endpoint }}">📦 Stationery</a>
+            <a href="{{ url_for('admin.categories') }}" class="{{ 'active' if request.endpoint and 'categories' in request.endpoint }}">🗂️ Categories</a>
+            <a href="{{ url_for('admin.coupons') }}" class="{{ 'active' if request.endpoint and 'coupon' in request.endpoint }}">🏷️ Coupons</a>
+            <a href="{{ url_for('admin.complaints') }}" class="{{ 'active' if request.endpoint == 'admin.complaints' }}">🆘 Complaints</a>
+            <a href="{{ url_for('admin.reports') }}" class="{{ 'active' if request.endpoint == 'admin.reports' }}">📈 Reports</a>
+            <a href="{{ url_for('admin.settings') }}" class="{{ 'active' if request.endpoint == 'admin.settings' }}">⚙️ Settings</a>
+            <a href="{{ url_for('admin.logout') }}">⎋ Logout</a>
+        </nav>
+    </aside>
+
+    <main class="admin-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-container">
+                {% for category, message in messages %}
+                <div class="flash flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+</div>
+
+</body>
+</html>

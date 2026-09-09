@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Notifications - PrintCare{% endblock %}
+{% block content %}
+<h2 class="section-title">Notifications</h2>
+<div class="notification-list">
+    {% for n in notifications %}
+    <div class="notification-card">
+        <strong>{{ n.title }}</strong>
+        <p>{{ n.message }}</p>
+        <small>{{ n.created_at.strftime('%d %b %Y, %I:%M %p') }}</small>
+    </div>
+    {% else %}
+    <p class="empty-state">No notifications yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

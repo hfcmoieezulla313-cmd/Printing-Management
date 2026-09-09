@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Printing Services - PrintCare{% endblock %}
+{% block content %}
+<h2 class="section-title">Printing Services</h2>
+
+<div class="chip-row">
+    <a href="{{ url_for('printing.list_services') }}" class="chip {{ 'chip-active' if not active_category }}">All</a>
+    {% for cat in categories %}
+    <a href="{{ url_for('printing.list_services', category=cat.id) }}" class="chip {{ 'chip-active' if active_category == cat.id }}">{{ cat.name }}</a>
+    {% endfor %}
+</div>
+
+<div class="printing-grid">
+    {% for svc in services %}
+    <a href="{{ url_for('printing.details', slug=svc.slug) }}" class="printing-card">
+        <div class="printing-card-icon">🖨️</div>
+        <div class="printing-card-name">{{ svc.name }}</div>
+        <div class="printing-card-price">
+            {% if svc.is_configurable %}Rs. {{ svc.price_per_page }}/page{% else %}Rs. {{ svc.flat_price }}{% endif %}
+        </div>
+    </a>
+    {% else %}
+    <p class="empty-state">No printing services in this category yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

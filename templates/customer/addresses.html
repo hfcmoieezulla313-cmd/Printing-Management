@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Addresses - PrintCare{% endblock %}
+{% block content %}
+<h2 class="section-title">My Addresses</h2>
+
+<div class="address-list">
+    {% for addr in addresses %}
+    <div class="address-card">
+        <strong>{{ addr.label }}</strong> {% if addr.is_default %}<span class="badge-default">Default</span>{% endif %}
+        <p>{{ addr.contact_name }}, {{ addr.contact_phone }}<br>{{ addr.full_text() }}</p>
+        <form method="post" action="{{ url_for('profile.delete_address', address_id=addr.id) }}">
+            <button type="submit" class="btn-remove">Delete</button>
+        </form>
+    </div>
+    {% else %}
+    <p class="empty-state">No addresses saved yet.</p>
+    {% endfor %}
+</div>
+
+<h3 class="section-subtitle">Add New Address</h3>
+<form method="post" action="{{ url_for('profile.add_address') }}" class="form-stack">
+    <label>Label<input type="text" name="label" placeholder="Home / Work / Other" value="Home"></label>
+    <label>Contact Name<input type="text" name="contact_name" required></label>
+    <label>Contact Phone<input type="text" name="contact_phone" required></label>
+    <label>Address Line 1<input type="text" name="line1" required></label>
+    <label>Address Line 2<input type="text" name="line2"></label>
+    <label>City<input type="text" name="city" required></label>
+    <label>State<input type="text" name="state" required></label>
+    <label>Pincode<input type="text" name="pincode" required></label>
+    <label class="checkbox-row"><input type="checkbox" name="is_default"> Set as default</label>
+    <button type="submit" class="btn btn-primary btn-block">Save Address</button>
+</form>
+{% endblock %}

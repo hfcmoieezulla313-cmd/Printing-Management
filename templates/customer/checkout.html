@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Checkout - PrintCare{% endblock %}
+{% block content %}
+<h2 class="section-title">Checkout</h2>
+
+<section class="checkout-section">
+    <h3 class="section-subtitle">Delivery Address</h3>
+    {% if addresses %}
+    <form id="order-form" method="post" action="{{ url_for('checkout.place_order') }}" class="form-stack">
+        {% for addr in addresses %}
+        <label class="radio-card">
+            <input type="radio" name="address_id" value="{{ addr.id }}" {{ 'checked' if loop.first }} required>
+            <span><strong>{{ addr.label }}</strong> - {{ addr.contact_name }}, {{ addr.contact_phone }}<br>{{ addr.full_text() }}</span>
+        </label>
+        {% endfor %}
+
+        <h3 class="section-subtitle">Payment Method</h3>
+        <label class="radio-card">
+            <input type="radio" name="payment_method" value="COD" checked> Cash on Delivery
+        </label>
+        <label class="radio-card">
+            <input type="radio" name="payment_method" value="ONLINE_PLACEHOLDER"> Online Payment (Demo Placeholder)
+        </label>
+
+        <h3 class="section-subtitle">Order Summary</h3>
+        <div class="cart-summary">
+            <div class="cs-row"><span>Subtotal</span><span>Rs. {{ '%.2f'|format(summary.subtotal) }}</span></div>
+            <div class="cs-row"><span>Delivery</span><span>{{ 'FREE' if summary.delivery_charge == 0 else 'Rs. %.2f'|format(summary.delivery_charge) }}</span></div>
+            {% if applied_coupon %}
+            <div class="cs-row"><span>Coupon ({{ applied_coupon.code }})</span><span>- Rs. {{ '%.2f'|format(summary.discount_amount) }}</span></div>
+            {% endif %}
+            <div class="cs-row cs-total"><span>Total</span><span>Rs. {{ '%.2f'|format(summary.total_amount) }}</span></div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Place Order</button>
+    </form>
+    {% else %}
+    <p class="empty-state">You have no saved addresses yet.</p>
+    {% endif %}
+
+    <a href="{{ url_for('profile.addresses') }}" class="btn btn-secondary btn-block">Manage Addresses</a>
+</section>
+
+<section class="checkout-section">
+    <h3 class="section-subtitle">Coupon</h3>
+    {% if applied_coupon %}
+    <form method="post" action="{{ url_for('checkout.remove_coupon') }}">
+        <p>Applied: <strong>{{ applied_coupon.code }}</strong></p>
+        <button type="submit" class="btn btn-secondary">Remove Coupon</button>
+    </form>
+    {% else %}
+    <form method="post" action="{{ url_for('checkout.apply_coupon') }}" class="coupon-form">
+        <input type="text" name="code" placeholder="Enter coupon code">
+        <button type="submit" class="btn btn-secondary">Apply</button>
+    </form>
+    {% endif %}
+</section>
+{% endblock %}
+{% block extra_js %}<script src="{{ url_for('static', filename='js/checkout.js') }}"></script>{% endblock %}

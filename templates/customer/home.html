@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}PrintCare - Home{% endblock %}
+{% block content %}
+
+<section class="hero-section">
+    <h1>Print. Shop. We Deliver.</h1>
+    <p>All your printing and stationery needs, delivered fast to your door.</p>
+    <a href="{{ url_for('printing.list_services') }}" class="btn btn-primary btn-lg">Order Now</a>
+</section>
+
+<section class="quick-actions">
+    <h2 class="section-title">Quick Actions</h2>
+    <div class="quick-actions-grid">
+        <a href="{{ url_for('printing.list_services') }}" class="quick-action-card">
+            <span class="qa-icon">🖨️</span><span>Print Documents</span>
+        </a>
+        <a href="{{ url_for('printing.list_services') }}" class="quick-action-card">
+            <span class="qa-icon">📄</span><span>Photocopy</span>
+        </a>
+        <a href="{{ url_for('printing.list_services') }}" class="quick-action-card">
+            <span class="qa-icon">🔍</span><span>Scan Documents</span>
+        </a>
+        <a href="{{ url_for('printing.list_services') }}" class="quick-action-card">
+            <span class="qa-icon">🎨</span><span>Design & Print</span>
+        </a>
+    </div>
+</section>
+
+<section class="category-section">
+    <h2 class="section-title">Stationery Categories</h2>
+    <div class="category-grid">
+        {% for cat in stationery_categories %}
+        <a href="{{ url_for('stationery.list_products', category=cat.id) }}" class="category-card">
+            <span class="cat-icon">🗂️</span>
+            <span>{{ cat.name }}</span>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="printing-section">
+    <div class="section-title-row">
+        <h2 class="section-title">Popular Printing</h2>
+        <a href="{{ url_for('printing.list_services') }}" class="see-all">See all</a>
+    </div>
+    <div class="printing-grid">
+        {% for svc in popular_printing %}
+        <a href="{{ url_for('printing.details', slug=svc.slug) }}" class="printing-card">
+            <div class="printing-card-icon">🖨️</div>
+            <div class="printing-card-name">{{ svc.name }}</div>
+            <div class="printing-card-price">
+                {% if svc.is_configurable %}Rs. {{ svc.price_per_page }}/page{% else %}Rs. {{ svc.flat_price }}{% endif %}
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}

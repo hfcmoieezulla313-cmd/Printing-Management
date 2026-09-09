@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{ service.name }} - PrintCare{% endblock %}
+{% block content %}
+<div class="detail-page">
+    <div class="detail-icon">🖨️</div>
+    <h1>{{ service.name }}</h1>
+    <p class="detail-desc">{{ service.description }}</p>
+
+    <div class="detail-price-box">
+        {% if service.is_configurable %}
+        <span>Rs. {{ service.price_per_page }} / page</span>
+        {% if service.double_side_extra %}<small>+Rs. {{ service.double_side_extra }}/page for double-sided</small>{% endif %}
+        {% else %}
+        <span>Rs. {{ service.flat_price }}</span>
+        {% endif %}
+    </div>
+
+    {% if current_user %}
+        {% if service.is_configurable %}
+        <a href="{{ url_for('upload.upload_document', slug=service.slug) }}" class="btn btn-primary btn-block">Upload Document & Configure</a>
+        {% else %}
+        <a href="{{ url_for('upload.upload_document', slug=service.slug) }}" class="btn btn-primary btn-block">Continue</a>
+        {% endif %}
+    {% else %}
+        <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-block">Login to Order</a>
+    {% endif %}
+</div>
+{% endblock %}

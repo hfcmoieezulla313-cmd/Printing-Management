@@ -1,0 +1,39 @@
+{% extends "admin/base.html" %}
+{% block title %}Coupons - Admin{% endblock %}
+{% block content %}
+<h1>Coupons</h1>
+<table class="admin-table">
+    <tr><th>Code</th><th>Type</th><th>Value</th><th>Min Order</th><th>Active</th><th></th></tr>
+    {% for c in coupons %}
+    <tr>
+        <td>{{ c.code }}</td>
+        <td>{{ c.discount_type }}</td>
+        <td>{{ c.discount_value }}</td>
+        <td>{{ c.minimum_order_value }}</td>
+        <td>{{ 'Yes' if c.active else 'No' }}</td>
+        <td>
+            <form method="post" action="{{ url_for('admin.delete_coupon', coupon_id=c.id) }}" class="inline-form">
+                <button type="submit" class="btn-remove">Delete</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h3 class="section-subtitle">Add Coupon</h3>
+<form method="post" class="form-stack">
+    <label>Code<input type="text" name="code" required></label>
+    <label>Discount Type
+        <select name="discount_type">
+            <option value="PERCENT">Percentage</option>
+            <option value="FIXED">Fixed Amount</option>
+        </select>
+    </label>
+    <label>Discount Value<input type="number" step="0.01" name="discount_value" required></label>
+    <label>Minimum Order Value<input type="number" step="0.01" name="minimum_order_value" value="0"></label>
+    <label>Maximum Discount (for percentage coupons)<input type="number" step="0.01" name="maximum_discount"></label>
+    <label>Expiry Date (optional)<input type="date" name="expiry_date"></label>
+    <label class="checkbox-row"><input type="checkbox" name="active" checked> Active</label>
+    <button type="submit" class="btn btn-primary btn-block">Save Coupon</button>
+</form>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Welcome to PrintCare{% endblock %}
+{% block content %}
+<div class="onboarding">
+    <div class="onboarding-hero">
+        <h1>Print. Shop. <br>We Deliver.</h1>
+        <p>All your printing and stationery needs, delivered fast to your door.</p>
+        <a href="{{ url_for('main.home') }}" class="btn btn-primary btn-lg">Order Now</a>
+        <p class="onboarding-links">
+            <a href="{{ url_for('auth.login') }}">Login</a> ·
+            <a href="{{ url_for('auth.register') }}">Register</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

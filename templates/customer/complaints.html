@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Support - PrintCare{% endblock %}
+{% block content %}
+<h2 class="section-title">Support / Complaints</h2>
+<p>Call us at {{ support_phone }} or email {{ support_email }}.</p>
+
+<form method="post" class="form-stack">
+    <label>Category
+        <select name="category">
+            <option>Order</option>
+            <option>Printing</option>
+            <option>Delivery</option>
+            <option>Other</option>
+        </select>
+    </label>
+    <label>Related Order Number (optional)<input type="text" name="order_number" placeholder="PM202600001"></label>
+    <label>Subject<input type="text" name="subject" required></label>
+    <label>Message<textarea name="message" rows="4" required></textarea></label>
+    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+</form>
+
+<h3 class="section-subtitle">Your Past Requests</h3>
+<div class="complaint-list">
+    {% for c in complaints %}
+    <div class="complaint-card">
+        <strong>{{ c.subject }}</strong> <span class="status-badge">{{ c.status }}</span>
+        <p>{{ c.message }}</p>
+        <small>{{ c.created_at.strftime('%d %b %Y') }}</small>
+    </div>
+    {% else %}
+    <p class="empty-state">No requests submitted yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

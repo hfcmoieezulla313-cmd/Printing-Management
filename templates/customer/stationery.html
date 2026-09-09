@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Stationery - PrintCare{% endblock %}
+
+{% block content %}
+
+<h2 class="section-title">Stationery</h2>
+
+<div class="chip-row">
+    <a href="{{ url_for('stationery.list_products') }}" class="chip {{ 'chip-active' if not active_category }}">
+        All
+    </a>
+
+    {% for cat in categories %}
+    <a href="{{ url_for('stationery.list_products', category=cat.id) }}"
+        class="chip {{ 'chip-active' if active_category == cat.id }}">
+        {{ cat.name }}
+    </a>
+    {% endfor %}
+</div>
+
+<div class="product-grid">
+
+    {% for p in products %}
+
+    <a href="{{ url_for('stationery.details', product_id=p.id) }}" class="product-card">
+
+        <div class="product-card-icon">
+            {% if p.image %}
+            <img src="{{ url_for('static', filename=p.image) }}" alt="{{ p.name }}"
+                style="width: 100px; height: 100px; object-fit: contain;">
+            {% else %}
+            📦
+            {% endif %}
+        </div>
+
+        <div class="product-card-name">
+            {{ p.name }}
+        </div>
+
+        <div class="product-card-price">
+            Rs. {{ p.price }}
+        </div>
+
+        {% if not p.in_stock() %}
+        <div class="badge-outofstock">
+            Out of stock
+        </div>
+        {% endif %}
+
+    </a>
+
+    {% else %}
+
+    <p class="empty-state">
+        No products in this category yet.
+    </p>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

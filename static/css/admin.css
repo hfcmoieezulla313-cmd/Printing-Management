@@ -1,0 +1,49 @@
+.admin-body { padding-bottom: 0; background: var(--color-bg); }
+
+.admin-layout { display: flex; min-height: 100vh; }
+
+.admin-sidebar {
+    width: 220px;
+    background: #221733;
+    color: #fff;
+    padding: 20px 0;
+    flex-shrink: 0;
+}
+.admin-brand { font-size: 18px; font-weight: 800; padding: 0 20px 20px; }
+.admin-brand span { color: #B79CFF; }
+.admin-brand small { display: block; font-size: 11px; opacity: 0.6; font-weight: 500; }
+
+.admin-sidebar nav { display: flex; flex-direction: column; }
+.admin-sidebar nav a {
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #D8D0EF;
+    font-weight: 600;
+}
+.admin-sidebar nav a.active, .admin-sidebar nav a:hover {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+}
+
+.admin-content { flex: 1; padding: 28px 32px; max-width: 1100px; }
+.admin-content h1 { margin-top: 0; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin: 16px 0 28px; }
+.stat-card { background: var(--color-card); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); padding: 18px; }
+.stat-value { font-size: 24px; font-weight: 800; color: var(--color-primary-dark); }
+.stat-label { font-size: 12px; color: var(--color-text-muted); margin-top: 4px; }
+.stat-highlight { background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); color: #fff; }
+.stat-highlight .stat-value, .stat-highlight .stat-label { color: #fff; }
+
+.admin-table { width: 100%; border-collapse: collapse; background: var(--color-card); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); margin-bottom: 24px; }
+.admin-table th, .admin-table td { text-align: left; padding: 10px 14px; font-size: 13px; border-bottom: 1px solid var(--color-border); }
+.admin-table th { background: var(--color-bg); font-weight: 700; color: var(--color-text-muted); }
+
+.hint { font-size: 12px; color: var(--color-text-muted); margin: 4px 0 12px; }
+
+@media (max-width: 800px) {
+    .admin-layout { flex-direction: column; }
+    .admin-sidebar { width: 100%; }
+    .admin-sidebar nav { flex-direction: row; overflow-x: auto; }
+    .admin-content { padding: 18px; }
+}

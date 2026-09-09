@@ -1,0 +1,34 @@
+{% extends "admin/base.html" %}
+{% block title %}Categories - Admin{% endblock %}
+{% block content %}
+<h1>Categories</h1>
+<table class="admin-table">
+    <tr><th>Name</th><th>Kind</th><th>Order</th><th></th></tr>
+    {% for c in categories %}
+    <tr>
+        <td>{{ c.name }}</td>
+        <td>{{ c.kind }}</td>
+        <td>{{ c.sort_order }}</td>
+        <td>
+            <form method="post" action="{{ url_for('admin.delete_category', category_id=c.id) }}" class="inline-form">
+                <button type="submit" class="btn-remove">Delete</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h3 class="section-subtitle">Add Category</h3>
+<form method="post" class="form-stack">
+    <label>Name<input type="text" name="name" required></label>
+    <label>Kind
+        <select name="kind">
+            <option value="printing">Printing</option>
+            <option value="stationery">Stationery</option>
+        </select>
+    </label>
+    <label>Icon (keyword)<input type="text" name="icon" value="folder"></label>
+    <label>Sort order<input type="number" name="sort_order" value="0"></label>
+    <button type="submit" class="btn btn-primary btn-block">Add Category</button>
+</form>
+{% endblock %}

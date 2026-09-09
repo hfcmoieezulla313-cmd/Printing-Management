@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Profile - PrintCare{% endblock %}
+{% block content %}
+<h2 class="section-title">My Profile</h2>
+
+<form method="post" action="{{ url_for('profile.edit_profile') }}" class="form-stack">
+    <label>Full Name
+        <input type="text" name="full_name" value="{{ user.full_name }}">
+    </label>
+    <label>Email
+        <input type="email" value="{{ user.email }}" disabled>
+    </label>
+    <label>Phone
+        <input type="text" value="{{ user.phone }}" disabled>
+    </label>
+    <button type="submit" class="btn btn-primary btn-block">Save Changes</button>
+</form>
+
+<h3 class="section-subtitle">Change Password</h3>
+<form method="post" action="{{ url_for('profile.change_password') }}" class="form-stack">
+    <label>Current Password<input type="password" name="current_password" required></label>
+    <label>New Password<input type="password" name="new_password" required></label>
+    <label>Confirm New Password<input type="password" name="confirm_password" required></label>
+    <button type="submit" class="btn btn-secondary btn-block">Change Password</button>
+</form>
+
+<div class="profile-links">
+    <a href="{{ url_for('profile.addresses') }}" class="profile-link">📍 Manage Addresses</a>
+    <a href="{{ url_for('orders.my_orders') }}" class="profile-link">📦 My Orders</a>
+    <a href="{{ url_for('profile.notifications') }}" class="profile-link">🔔 Notifications</a>
+    <a href="{{ url_for('support.support') }}" class="profile-link">🆘 Support / Complaints</a>
+    <a href="{{ url_for('auth.logout') }}" class="profile-link">⎋ Logout</a>
+</div>
+{% endblock %}

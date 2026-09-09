@@ -1,0 +1,11 @@
+{% extends "admin/base.html" %}
+{% block title %}Settings - Admin{% endblock %}
+{% block content %}
+<h1>Application Settings</h1>
+<form method="post" class="form-stack">
+    {% for key, label in fields %}
+    <label>{{ label }}<input type="text" name="{{ key }}" value="{{ values[key] }}"></label>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary btn-block">Save Settings</button>
+</form>
+{% endblock %}

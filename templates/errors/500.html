@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Something Went Wrong - PrintCare{% endblock %}
+{% block content %}
+<div class="error-page">
+    <h1>500</h1>
+    <p>Something went wrong on our end. Please try again shortly.</p>
+    <a href="{{ url_for('main.home') }}" class="btn btn-primary">Back to Home</a>
+</div>
+{% endblock %}

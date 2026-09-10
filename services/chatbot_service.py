@@ -14,7 +14,7 @@ Design:
   live prices/settings from the database.
 """
 import re
-import requests
+from google import genai
 from flask import current_app
 
 from models import db, PrintingService, Setting, Order, ChatSession, ChatMessage
@@ -92,40 +92,39 @@ Store information:
 # ---------------------------------------------------------------------------
 
 def _call_ai_provider(user_message, context):
-    api_key = current_app.config.get("AI_API_KEY")
-    if not api_key:
-        return None  # triggers fallback
+    api_key = current_app.config.get("GEMINI_API_KEY")
 
-    api_url = current_app.config.get("AI_API_URL")
-    model = current_app.config.get("AI_MODEL")
+    if not api_key:
+        return None
+
+    model = current_app.config.get("AI_MODEL", "gemini-3.6-flash")
     system_prompt = SYSTEM_PROMPT_TEMPLATE.format(context=context)
 
     try:
-        response = requests.post(
-            api_url,
-            headers={
-                "Content-Type": "application/json",
-                "x-api-key": api_key,
-                "anthropic-version": "2023-06-01",
-            },
-            json={
-                "model": model,
-                "max_tokens": 400,
-                "system": system_prompt,
-                "messages": [{"role": "user", "content": user_message}],
-            },
-            timeout=15,
+        client = genai.Client(api_key=api_key)
+
+        prompt = f"""
+{system_prompt}
+
+Customer message:
+{user_message}
+
+Answer the customer briefly and helpfully.
+"""
+
+        response = client.models.generate_content(
+            model=model,
+            contents=prompt,
         )
-        response.raise_for_status()
-        data = response.json()
-        parts = [block.get("text", "") for block in data.get("content", []) if block.get("type") == "text"]
-        text = "".join(parts).strip()
+
+        text = (response.text or "").strip()
         return text or None
+
     except Exception:
-        current_app.logger.exception("AI provider call failed, using fallback FAQ.")
+        current_app.logger.exception(
+            "Gemini API call failed, using fallback FAQ."
+        )
         return None
-
-
 # ---------------------------------------------------------------------------
 # Local fallback FAQ (works with zero external dependencies)
 # ---------------------------------------------------------------------------

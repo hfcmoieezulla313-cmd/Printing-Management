@@ -1,19 +1,156 @@
 {% extends "base.html" %}
-{% block title %}Upload Document - PrintCare{% endblock %}
-{% block content %}
-<div class="form-page">
-    <h1>Upload Document</h1>
-    <p class="detail-desc">For: {{ service.name }}</p>
 
-    <form method="post" enctype="multipart/form-data" class="form-stack">
-        <label>Choose file (PDF, DOC, DOCX, JPG, JPEG, PNG)
-            <input type="file" name="document" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
-        </label>
-        <label>Number of pages
-            <input type="number" name="page_count" min="1" value="1" required>
-        </label>
-        <button type="submit" class="btn btn-primary btn-block">Continue to Configuration</button>
-    </form>
-</div>
+{% block title %}Upload Document - PrintCare{% endblock %}
+
+{% block content %}
+
+<section class="upload-page">
+
+    <div class="upload-container">
+
+        <div class="upload-header">
+
+            <div class="upload-icon">
+                🖨️
+            </div>
+
+            <h1>Upload Your Document</h1>
+
+            <p>
+                Upload your document and configure your printing options
+                on the next step.
+            </p>
+
+        </div>
+
+
+        <!-- Upload Form -->
+
+        <form method="POST"
+              enctype="multipart/form-data"
+              class="upload-form">
+
+
+            <div class="upload-box">
+
+                <div class="upload-box-icon">
+                    📄
+                </div>
+
+                <h2>Select your document</h2>
+
+                <p>
+                    PDF, DOC, DOCX, JPG, JPEG or PNG
+                </p>
+
+
+                <input
+                    type="file"
+                    name="document"
+                    id="document"
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                    required
+                >
+
+
+                <label for="document"
+                       class="btn btn-primary">
+
+                    Choose Document
+
+                </label>
+
+
+                <p id="file-name"
+                   class="file-name">
+                </p>
+
+            </div>
+
+
+            <!-- Page Count -->
+
+            <div class="form-group">
+
+                <label for="page_count">
+                    Number of Pages
+                </label>
+
+                <input
+                    type="number"
+                    name="page_count"
+                    id="page_count"
+                    value="1"
+                    min="1"
+                    required
+                >
+
+                <small>
+                    Enter the number of pages in your document.
+                </small>
+
+            </div>
+
+
+            <!-- Submit -->
+
+            <button
+                type="submit"
+                class="btn btn-primary btn-lg upload-submit">
+
+                Continue to Print Options →
+
+            </button>
+
+        </form>
+
+
+        <!-- Information -->
+
+        <div class="upload-info">
+
+            <div>
+                📄
+                <span>Supported documents</span>
+            </div>
+
+            <div>
+                🔒
+                <span>Your document is securely uploaded</span>
+            </div>
+
+            <div>
+                ⚙️
+                <span>Choose A4/A3 and Color/B&W next</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<script>
+
+const fileInput = document.getElementById("document");
+const fileName = document.getElementById("file-name");
+
+fileInput.addEventListener("change", function () {
+
+    if (this.files.length > 0) {
+
+        fileName.textContent =
+            "Selected: " + this.files[0].name;
+
+    } else {
+
+        fileName.textContent = "";
+
+    }
+
+});
+
+</script>
+
 {% endblock %}
-{% block extra_js %}<script src="{{ url_for('static', filename='js/upload.js') }}"></script>{% endblock %}

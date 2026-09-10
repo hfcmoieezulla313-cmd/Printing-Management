@@ -22,15 +22,30 @@ def home():
 
 
 def home_context():
-    printing_categories = Category.query.filter_by(kind="printing", is_active=True).order_by(Category.sort_order).all()
-    stationery_categories = Category.query.filter_by(kind="stationery", is_active=True).order_by(Category.sort_order).all()
-    popular_printing = PrintingService.query.filter_by(is_active=True).limit(7).all()
+    printing_categories = Category.query.filter_by(
+        kind="printing",
+        is_active=True
+    ).order_by(Category.sort_order).all()
+
+    stationery_categories = Category.query.filter_by(
+        kind="stationery",
+        is_active=True
+    ).order_by(Category.sort_order).all()
+
+    popular_printing = PrintingService.query.filter_by(
+        is_active=True
+    ).limit(7).all()
+
+    popular_stationery = StationeryProduct.query.filter_by(
+        is_active=True
+    ).limit(8).all()
+
     return {
         "printing_categories": printing_categories,
         "stationery_categories": stationery_categories,
         "popular_printing": popular_printing,
+        "popular_stationery": popular_stationery,
     }
-
 
 @main_bp.route("/categories")
 def categories():

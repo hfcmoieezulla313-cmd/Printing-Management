@@ -26,10 +26,10 @@ class Config:
     MAX_CONTENT_LENGTH = int(os.environ.get("MAX_CONTENT_LENGTH_MB", 15)) * 1024 * 1024
 
     # AI chatbot - never exposed to the browser, read only on the server
-    AI_PROVIDER = os.environ.get("AI_PROVIDER", "anthropic")
-    AI_API_KEY = os.environ.get("AI_API_KEY", "")
-    AI_MODEL = os.environ.get("AI_MODEL", "claude-sonnet-4-6")
-    AI_API_URL = os.environ.get("AI_API_URL", "https://api.anthropic.com/v1/messages")
+       
+    AI_PROVIDER = os.environ.get("AI_PROVIDER", "gemini")
+    GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+    AI_MODEL = os.environ.get("AI_MODEL", "gemini-2.5-flash")
 
     DEBUG = os.environ.get("FLASK_DEBUG", "True") == "True"
 

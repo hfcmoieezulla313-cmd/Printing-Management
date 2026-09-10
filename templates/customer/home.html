@@ -1,59 +1,353 @@
 {% extends "base.html" %}
+
 {% block title %}PrintCare - Home{% endblock %}
+
 {% block content %}
 
+<!-- =====================================================
+     HERO SECTION
+===================================================== -->
+
 <section class="hero-section">
+
     <h1>Print. Shop. We Deliver.</h1>
-    <p>All your printing and stationery needs, delivered fast to your door.</p>
-    <a href="{{ url_for('printing.list_services') }}" class="btn btn-primary btn-lg">Order Now</a>
+
+    <p>
+        All your printing and stationery needs,
+        delivered fast to your door.
+    </p>
+
+    <a href="{{ url_for('upload.upload_document') }}"
+       class="btn btn-primary btn-lg">
+        Start Printing
+    </a>
+
 </section>
+
+
+<!-- =====================================================
+     QUICK ACTIONS
+===================================================== -->
 
 <section class="quick-actions">
-    <h2 class="section-title">Quick Actions</h2>
+
+    <h2 class="section-title">
+        Quick Actions
+    </h2>
+
     <div class="quick-actions-grid">
-        <a href="{{ url_for('printing.list_services') }}" class="quick-action-card">
-            <span class="qa-icon">🖨️</span><span>Print Documents</span>
+
+
+        <!-- PRINT -->
+
+        <a href="{{ url_for('upload.upload_document') }}"
+           class="quick-action-card">
+
+            <span class="qa-icon">🖨️</span>
+
+            <span>Print</span>
+
         </a>
-        <a href="{{ url_for('printing.list_services') }}" class="quick-action-card">
-            <span class="qa-icon">📄</span><span>Photocopy</span>
+
+
+        <!-- PASSPORT PHOTOS -->
+
+        <a href="#"
+           class="quick-action-card">
+
+            <span class="qa-icon">🪪</span>
+
+            <span>Passport Photos</span>
+
         </a>
-        <a href="{{ url_for('printing.list_services') }}" class="quick-action-card">
-            <span class="qa-icon">🔍</span><span>Scan Documents</span>
+
+
+        <!-- PHOTOS -->
+
+        <a href="#"
+           class="quick-action-card">
+
+            <span class="qa-icon">📸</span>
+
+            <span>Photos</span>
+
         </a>
-        <a href="{{ url_for('printing.list_services') }}" class="quick-action-card">
-            <span class="qa-icon">🎨</span><span>Design & Print</span>
+
+
+        <!-- STATIONERY -->
+
+        <a href="{{ url_for('stationery.list_products') }}"
+           class="quick-action-card">
+
+            <span class="qa-icon">📚</span>
+
+            <span>Stationery</span>
+
         </a>
+
+
     </div>
+
 </section>
+
+
+<!-- =====================================================
+     STATIONERY CATEGORIES
+===================================================== -->
 
 <section class="category-section">
-    <h2 class="section-title">Stationery Categories</h2>
-    <div class="category-grid">
-        {% for cat in stationery_categories %}
-        <a href="{{ url_for('stationery.list_products', category=cat.id) }}" class="category-card">
-            <span class="cat-icon">🗂️</span>
-            <span>{{ cat.name }}</span>
+
+    <div class="section-title-row">
+
+        <h2 class="section-title">
+            Stationery Categories
+        </h2>
+
+        <a href="{{ url_for('stationery.list_products') }}"
+           class="see-all">
+
+            See all
+
         </a>
-        {% endfor %}
+
     </div>
+
+
+    <div class="category-grid">
+
+        {% for cat in stationery_categories %}
+
+        <a href="{{ url_for('stationery.list_products',
+                            category=cat.id) }}"
+           class="category-card">
+
+            <span class="cat-icon">
+                🗂️
+            </span>
+
+            <span>
+                {{ cat.name }}
+            </span>
+
+        </a>
+
+        {% else %}
+
+        <p>
+            No stationery categories available.
+        </p>
+
+        {% endfor %}
+
+    </div>
+
 </section>
 
+
+<!-- =====================================================
+     POPULAR PRINTING
+===================================================== -->
+
 <section class="printing-section">
+
     <div class="section-title-row">
-        <h2 class="section-title">Popular Printing</h2>
-        <a href="{{ url_for('printing.list_services') }}" class="see-all">See all</a>
-    </div>
-    <div class="printing-grid">
-        {% for svc in popular_printing %}
-        <a href="{{ url_for('printing.details', slug=svc.slug) }}" class="printing-card">
-            <div class="printing-card-icon">🖨️</div>
-            <div class="printing-card-name">{{ svc.name }}</div>
-            <div class="printing-card-price">
-                {% if svc.is_configurable %}Rs. {{ svc.price_per_page }}/page{% else %}Rs. {{ svc.flat_price }}{% endif %}
-            </div>
+
+        <h2 class="section-title">
+            Popular Printing
+        </h2>
+
+        <a href="{{ url_for('printing.list_services') }}"
+           class="see-all">
+
+            See all
+
         </a>
-        {% endfor %}
+
     </div>
+
+
+    <div class="printing-grid">
+
+        {% for svc in popular_printing %}
+
+        <a href="{{ url_for('printing.details',
+                            slug=svc.slug) }}"
+           class="printing-card">
+
+
+            <div class="printing-card-icon">
+                🖨️
+            </div>
+
+
+            <div class="printing-card-name">
+
+                {{ svc.name }}
+
+            </div>
+
+
+            <div class="printing-card-price">
+
+                {% if svc.is_configurable %}
+
+                    Rs. {{ svc.price_per_page }}/page
+
+                {% else %}
+
+                    Rs. {{ svc.flat_price }}
+
+                {% endif %}
+
+            </div>
+
+
+        </a>
+
+        {% else %}
+
+        <p>
+            No printing services available.
+        </p>
+
+        {% endfor %}
+
+    </div>
+
 </section>
+
+
+<!-- =====================================================
+     MOST ORDERED STATIONERY
+===================================================== -->
+
+<section class="stationery-section">
+
+    <div class="section-title-row">
+
+        <h2 class="section-title">
+            ⭐ Most Ordered Stationery
+        </h2>
+
+        <a href="{{ url_for('stationery.list_products') }}"
+           class="see-all">
+
+            See all
+
+        </a>
+
+    </div>
+
+
+    <div class="stationery-products-grid">
+
+        {% for product in popular_stationery %}
+
+
+        <a href="{{ url_for('stationery.details',
+                            product_id=product.id) }}"
+           class="stationery-product-card">
+
+
+            <!-- PRODUCT IMAGE -->
+
+            <div class="stationery-product-image">
+
+                {% if product.image_url %}
+
+                    <img src="{{ product.image_url }}"
+                         alt="{{ product.name }}">
+
+                {% else %}
+
+                    <div class="product-placeholder">
+                        📚
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- PRODUCT INFORMATION -->
+
+            <div class="stationery-product-info">
+
+                <h3>
+                    {{ product.name }}
+                </h3>
+
+
+                <div class="stationery-product-price">
+
+                    ₹{{ product.price }}
+
+                </div>
+
+
+                {% if product.in_stock() %}
+
+                    <span class="stock-status">
+
+                        In Stock
+
+                    </span>
+
+                {% else %}
+
+                    <span class="stock-status out-of-stock">
+
+                        Out of Stock
+
+                    </span>
+
+                {% endif %}
+
+
+            </div>
+
+
+        </a>
+
+
+        {% else %}
+
+        <p>
+            No stationery products available.
+        </p>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FINAL CTA
+===================================================== -->
+
+<section class="hero-section">
+
+    <h2>
+        Need something else?
+    </h2>
+
+
+    <p>
+        Explore all our printing services
+        and stationery products.
+    </p>
+
+
+    <a href="{{ url_for('stationery.list_products') }}"
+       class="btn btn-primary btn-lg">
+
+        Shop Stationery
+
+    </a>
+
+</section>
+
 
 {% endblock %}

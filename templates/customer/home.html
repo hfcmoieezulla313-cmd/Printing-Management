@@ -4,350 +4,626 @@
 
 {% block content %}
 
-<!-- =====================================================
-     HERO SECTION
-===================================================== -->
+<div class="printcare-dashboard">
 
-<section class="hero-section">
+    <!-- =====================================================
+         HERO SECTION
+    ====================================================== -->
 
-    <h1>Print. Shop. We Deliver.</h1>
+    <section class="dashboard-hero">
 
-    <p>
-        All your printing and stationery needs,
-        delivered fast to your door.
-    </p>
+        <div class="hero-content">
 
-    <a href="{{ url_for('upload.upload_document') }}"
-       class="btn btn-primary btn-lg">
-        Start Printing
-    </a>
-
-</section>
-
-
-<!-- =====================================================
-     QUICK ACTIONS
-===================================================== -->
-
-<section class="quick-actions">
-
-    <h2 class="section-title">
-        Quick Actions
-    </h2>
-
-    <div class="quick-actions-grid">
-
-
-        <!-- PRINT -->
-
-        <a href="{{ url_for('upload.upload_document') }}"
-           class="quick-action-card">
-
-            <span class="qa-icon">🖨️</span>
-
-            <span>Print</span>
-
-        </a>
-
-
-        <!-- PASSPORT PHOTOS -->
-
-        <a href="#"
-           class="quick-action-card">
-
-            <span class="qa-icon">🪪</span>
-
-            <span>Passport Photos</span>
-
-        </a>
-
-
-        <!-- PHOTOS -->
-
-        <a href="#"
-           class="quick-action-card">
-
-            <span class="qa-icon">📸</span>
-
-            <span>Photos</span>
-
-        </a>
-
-
-        <!-- STATIONERY -->
-
-        <a href="{{ url_for('stationery.list_products') }}"
-           class="quick-action-card">
-
-            <span class="qa-icon">📚</span>
-
-            <span>Stationery</span>
-
-        </a>
-
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     STATIONERY CATEGORIES
-===================================================== -->
-
-<section class="category-section">
-
-    <div class="section-title-row">
-
-        <h2 class="section-title">
-            Stationery Categories
-        </h2>
-
-        <a href="{{ url_for('stationery.list_products') }}"
-           class="see-all">
-
-            See all
-
-        </a>
-
-    </div>
-
-
-    <div class="category-grid">
-
-        {% for cat in stationery_categories %}
-
-        <a href="{{ url_for('stationery.list_products',
-                            category=cat.id) }}"
-           class="category-card">
-
-            <span class="cat-icon">
-                🗂️
+            <span class="hero-badge">
+                ⚡ Fast & Easy
             </span>
 
-            <span>
-                {{ cat.name }}
-            </span>
+            <h1>
+                Print. Shop.<br>
+                <span>We Deliver.</span>
+            </h1>
 
-        </a>
+            <p>
+                All your printing and stationery needs,
+                delivered fast to your door.
+            </p>
 
-        {% else %}
+            <a href="{{ url_for('upload.upload_document') }}"
+               class="dashboard-primary-btn">
+                🖨️ Start Printing
+            </a>
 
-        <p>
-            No stationery categories available.
-        </p>
-
-        {% endfor %}
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     POPULAR PRINTING
-===================================================== -->
-
-<section class="printing-section">
-
-    <div class="section-title-row">
-
-        <h2 class="section-title">
-            Popular Printing
-        </h2>
-
-        <a href="{{ url_for('printing.list_services') }}"
-           class="see-all">
-
-            See all
-
-        </a>
-
-    </div>
+        </div>
 
 
-    <div class="printing-grid">
+        <div class="hero-printer">
 
-        {% for svc in popular_printing %}
+            <div class="printer-illustration">
 
-        <a href="{{ url_for('printing.details',
-                            slug=svc.slug) }}"
-           class="printing-card">
+                <div class="printer-top"></div>
 
+                <div class="printer-body">
 
-            <div class="printing-card-icon">
-                🖨️
-            </div>
-
-
-            <div class="printing-card-name">
-
-                {{ svc.name }}
-
-            </div>
-
-
-            <div class="printing-card-price">
-
-                {% if svc.is_configurable %}
-
-                    Rs. {{ svc.price_per_page }}/page
-
-                {% else %}
-
-                    Rs. {{ svc.flat_price }}
-
-                {% endif %}
-
-            </div>
-
-
-        </a>
-
-        {% else %}
-
-        <p>
-            No printing services available.
-        </p>
-
-        {% endfor %}
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     MOST ORDERED STATIONERY
-===================================================== -->
-
-<section class="stationery-section">
-
-    <div class="section-title-row">
-
-        <h2 class="section-title">
-            ⭐ Most Ordered Stationery
-        </h2>
-
-        <a href="{{ url_for('stationery.list_products') }}"
-           class="see-all">
-
-            See all
-
-        </a>
-
-    </div>
-
-
-    <div class="stationery-products-grid">
-
-        {% for product in popular_stationery %}
-
-
-        <a href="{{ url_for('stationery.details',
-                            product_id=product.id) }}"
-           class="stationery-product-card">
-
-
-            <!-- PRODUCT IMAGE -->
-
-            <div class="stationery-product-image">
-
-                {% if product.image_url %}
-
-                    <img src="{{ product.image_url }}"
-                         alt="{{ product.name }}">
-
-                {% else %}
-
-                    <div class="product-placeholder">
-                        📚
+                    <div class="printer-screen">
+                        ●
                     </div>
 
-                {% endif %}
-
-            </div>
-
-
-            <!-- PRODUCT INFORMATION -->
-
-            <div class="stationery-product-info">
-
-                <h3>
-                    {{ product.name }}
-                </h3>
-
-
-                <div class="stationery-product-price">
-
-                    ₹{{ product.price }}
+                    <div class="printer-paper-slot"></div>
 
                 </div>
 
+                <div class="printer-paper">
+                    <span>PRINTCARE</span>
+                </div>
 
-                {% if product.in_stock() %}
+            </div>
 
-                    <span class="stock-status">
+        </div>
 
-                        In Stock
+    </section>
 
-                    </span>
 
-                {% else %}
+    <!-- =====================================================
+         QUICK ACCESS
+    ====================================================== -->
 
-                    <span class="stock-status out-of-stock">
+    <section class="dashboard-section">
 
-                        Out of Stock
+        <div class="dashboard-section-header">
 
-                    </span>
+            <div>
+                <h2>Quick Access</h2>
 
-                {% endif %}
+                <p>
+                    What do you need today?
+                </p>
+            </div>
 
+        </div>
+
+
+        <div class="quick-access-grid">
+
+            <!-- PRINT -->
+
+            <a href="{{ url_for('upload.upload_document') }}"
+               class="quick-access-card">
+
+                <div class="quick-access-icon">
+                    🖨️
+                </div>
+
+                <h3>
+                    Print
+                </h3>
+
+                <p>
+                    Upload & print documents
+                </p>
+
+            </a>
+
+
+            <!-- PHOTOS -->
+
+            <a href="#"
+               class="quick-access-card">
+
+                <div class="quick-access-icon">
+                    📸
+                </div>
+
+                <h3>
+                    Photos
+                </h3>
+
+                <p>
+                    Print your favourite photos
+                </p>
+
+            </a>
+
+
+            <!-- PASSPORT PHOTOS -->
+
+            <a href="#"
+               class="quick-access-card">
+
+                <div class="quick-access-icon">
+                    🪪
+                </div>
+
+                <h3>
+                    Passport Photos
+                </h3>
+
+                <p>
+                    Get passport size photos
+                </p>
+
+            </a>
+
+
+            <!-- STATIONERY -->
+
+            <a href="{{ url_for('stationery.list_products') }}"
+               class="quick-access-card">
+
+                <div class="quick-access-icon">
+                    📚
+                </div>
+
+                <h3>
+                    Stationery
+                </h3>
+
+                <p>
+                    Shop stationery products
+                </p>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         AI ASSISTANT
+    ====================================================== -->
+
+    <section class="ai-assistant-section">
+
+        <div class="ai-robot-container">
+
+            <div class="ai-robot">
+                🤖
+            </div>
+
+        </div>
+
+
+        <div class="ai-assistant-content">
+
+            <span class="ai-online">
+                ● AI Assistant Online
+            </span>
+
+            <h2>
+                Need help?
+                <br>
+                Ask PrintCare AI.
+            </h2>
+
+            <p>
+                I can help you choose printing options,
+                stationery products, and answer your questions.
+            </p>
+
+
+            <!-- CORRECT CHATBOT ENDPOINT -->
+
+            <a href="{{ url_for('chatbot.chat') }}"
+               class="ai-chat-button">
+
+                💬 Chat with AI
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         PRINTING SERVICES
+    ====================================================== -->
+
+    <section class="dashboard-section">
+
+        <div class="dashboard-section-header">
+
+            <div>
+
+                <h2>
+                    🖨️ Printing Services
+                </h2>
+
+                <p>
+                    Choose the service you need
+                </p>
 
             </div>
 
 
+            <a href="{{ url_for('printing.list_services') }}"
+               class="view-all">
+
+                View all →
+
+            </a>
+
+        </div>
+
+
+        <div class="printing-services-grid">
+
+            {% for svc in popular_printing %}
+
+                <a href="{{ url_for('printing.details',
+                                    slug=svc.slug) }}"
+                   class="printing-service-card">
+
+                    <div class="service-icon">
+                        🖨️
+                    </div>
+
+
+                    <div class="service-info">
+
+                        <h3>
+                            {{ svc.name }}
+                        </h3>
+
+
+                        <p>
+
+                            {% if svc.is_configurable %}
+
+                                ₹{{ svc.price_per_page }}/page
+
+                            {% else %}
+
+                                ₹{{ svc.flat_price }}
+
+                            {% endif %}
+
+                        </p>
+
+                    </div>
+
+
+                    <span class="service-arrow">
+                        →
+                    </span>
+
+                </a>
+
+            {% else %}
+
+                <p>
+                    No printing services available.
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         STATIONERY CATEGORIES
+    ====================================================== -->
+
+    <section class="dashboard-section">
+
+        <div class="dashboard-section-header">
+
+            <div>
+
+                <h2>
+                    📚 Stationery Categories
+                </h2>
+
+                <p>
+                    Find what you need quickly
+                </p>
+
+            </div>
+
+
+            <a href="{{ url_for('stationery.list_products') }}"
+               class="view-all">
+
+                View all →
+
+            </a>
+
+        </div>
+
+
+        <div class="stationery-category-grid">
+
+            {% for cat in stationery_categories %}
+
+                <a href="{{ url_for('stationery.list_products',
+                                    category=cat.id) }}"
+                   class="stationery-category-card">
+
+                    <div class="category-icon">
+                        📦
+                    </div>
+
+                    <span>
+                        {{ cat.name }}
+                    </span>
+
+                </a>
+
+            {% else %}
+
+                <p>
+                    No stationery categories available.
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         MOST ORDERED STATIONERY
+    ====================================================== -->
+
+    <section class="dashboard-section">
+
+        <div class="dashboard-section-header">
+
+            <div>
+
+                <h2>
+                    ⭐ Most Ordered Stationery
+                </h2>
+
+                <p>
+                    Popular products customers love
+                </p>
+
+            </div>
+
+
+            <a href="{{ url_for('stationery.list_products') }}"
+               class="view-all">
+
+                View all →
+
+            </a>
+
+        </div>
+
+
+        <div class="stationery-products-grid">
+
+            {% for product in popular_stationery %}
+
+                <div class="stationery-product-card">
+
+
+                    <!-- PRODUCT IMAGE -->
+
+                    <a href="{{ url_for('stationery.details',
+                                        product_id=product.id) }}"
+                       class="product-image-container">
+
+                        {% if product.image %}
+
+                            <img
+                                src="{{ url_for('static',
+                                               filename=product.image) }}"
+                                alt="{{ product.name }}"
+                                class="product-image"
+                            >
+
+                        {% else %}
+
+                            <div class="product-placeholder">
+                                📚
+                            </div>
+
+                        {% endif %}
+
+                    </a>
+
+
+                    <!-- PRODUCT DETAILS -->
+
+                    <div class="product-details">
+
+
+                        <!-- PRODUCT NAME -->
+
+                        <a href="{{ url_for('stationery.details',
+                                            product_id=product.id) }}"
+                           class="product-name">
+
+                            {{ product.name }}
+
+                        </a>
+
+
+                        <!-- PRICE -->
+
+                        <div class="product-price">
+
+                            ₹{{ product.price }}
+
+                        </div>
+
+
+                        <!-- STOCK -->
+
+                        {% if product.in_stock() %}
+
+                            <span class="product-stock">
+                                ✓ In Stock
+                            </span>
+
+                        {% else %}
+
+                            <span class="product-stock out-of-stock">
+                                Out of Stock
+                            </span>
+
+                        {% endif %}
+
+
+                        <!-- QUANTITY + CART -->
+
+                        <div class="product-cart-row">
+
+
+                            <div class="quantity-control">
+
+                                <button
+                                    type="button"
+                                    onclick="changeQuantity(this, -1)"
+                                    aria-label="Decrease quantity"
+                                >
+                                    −
+                                </button>
+
+
+                                <span class="quantity-value">
+                                    1
+                                </span>
+
+
+                                <button
+                                    type="button"
+                                    onclick="changeQuantity(this, 1)"
+                                    aria-label="Increase quantity"
+                                >
+                                    +
+                                </button>
+
+                            </div>
+
+
+                            <button
+                                type="button"
+                                class="add-cart-button"
+                                onclick="addToCart('{{ product.id }}', this)"
+                            >
+                                🛒 Add
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <p>
+                    No stationery products available.
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FINAL CTA
+    ====================================================== -->
+
+    <section class="dashboard-cta">
+
+        <div>
+
+            <h2>
+                Ready to print?
+            </h2>
+
+            <p>
+                Upload your document and get started.
+            </p>
+
+        </div>
+
+
+        <a href="{{ url_for('upload.upload_document') }}"
+           class="dashboard-primary-btn">
+
+            🖨️ Start Printing
+
         </a>
 
+    </section>
 
-        {% else %}
 
-        <p>
-            No stationery products available.
-        </p>
-
-        {% endfor %}
-
-    </div>
-
-</section>
+</div>
 
 
 <!-- =====================================================
-     FINAL CTA
-===================================================== -->
+     JAVASCRIPT
+====================================================== -->
 
-<section class="hero-section">
+<script>
 
-    <h2>
-        Need something else?
-    </h2>
+/* =====================================================
+   QUANTITY CONTROL
+===================================================== */
+
+function changeQuantity(button, amount) {
+
+    const quantityBox = button.parentElement;
+
+    const quantityText =
+        quantityBox.querySelector(".quantity-value");
+
+    let quantity =
+        parseInt(quantityText.textContent, 10);
+
+    quantity += amount;
+
+    if (quantity < 1) {
+        quantity = 1;
+    }
+
+    quantityText.textContent = quantity;
+}
 
 
-    <p>
-        Explore all our printing services
-        and stationery products.
-    </p>
+/* =====================================================
+   TEMPORARY ADD TO CART
+===================================================== */
+
+function addToCart(productId, button) {
+
+    const productCard =
+        button.closest(".stationery-product-card");
+
+    const quantityText =
+        productCard.querySelector(".quantity-value");
+
+    const quantity =
+        parseInt(quantityText.textContent, 10);
 
 
-    <a href="{{ url_for('stationery.list_products') }}"
-       class="btn btn-primary btn-lg">
+    console.log("Product ID:", productId);
 
-        Shop Stationery
+    console.log("Quantity:", quantity);
 
-    </a>
 
-</section>
+    button.textContent = "✓ Added";
+
+
+    setTimeout(function () {
+
+        button.textContent = "🛒 Add";
+
+    }, 1200);
+
+}
+
+</script>
 
 
 {% endblock %}

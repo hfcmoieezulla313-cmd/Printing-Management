@@ -3,74 +3,211 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{% block title %}PrintCare - Printing & Stationery Delivered{% endblock %}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+
+<title>
+    {% block title %}
+    PrintPilot AI - Printing & Stationery
+    {% endblock %}
+</title>
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}">
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/chatbot.css') }}">
+
 {% block extra_css %}{% endblock %}
 </head>
-<body>
+
+<body class="{% if request.endpoint and request.endpoint.startswith('auth.') %}auth-page{% endif %}">
+
+{# =========================================================
+   MAIN HEADER
+   Hidden automatically on Login / Register / OTP pages
+   ========================================================= #}
+
+{% if not (request.endpoint and request.endpoint.startswith('auth.')) %}
 
 <header class="topbar">
+
     <div class="topbar-inner">
-        <a href="{{ url_for('main.home') }}" class="brand">Print<span>Care</span></a>
-        <form class="search-form" action="{{ url_for('main.search') }}" method="get">
-            <input type="text" name="q" placeholder="Search for printing or stationery..." value="{{ request.args.get('q','') }}">
-            <button type="submit" aria-label="Search">🔍</button>
+
+        <!-- Brand -->
+        <a href="{{ url_for('main.home') }}"
+           class="brand">
+            Print<span>Pilot AI</span>
+        </a>
+
+        <!-- Search -->
+        <form class="search-form"
+              action="{{ url_for('main.search') }}"
+              method="get">
+
+            <input
+                type="text"
+                name="q"
+                placeholder="Search for printing or stationery..."
+                value="{{ request.args.get('q', '') }}"
+            >
+
+            <button type="submit"
+                    aria-label="Search">
+                🔍
+            </button>
+
         </form>
+
+        <!-- Account actions -->
         <div class="topbar-icons">
+
             {% if current_user %}
-            <a href="{{ url_for('profile.notifications') }}" title="Notifications">🔔</a>
-            <a href="{{ url_for('profile.profile') }}" title="Account">👤</a>
-            <a href="{{ url_for('auth.logout') }}" title="Logout">⎋</a>
+
+                <a href="{{ url_for('profile.notifications') }}"
+                   title="Notifications">
+                    🔔
+                </a>
+
+                <a href="{{ url_for('profile.profile') }}"
+                   title="Account">
+                    👤
+                </a>
+
+                <a href="{{ url_for('auth.logout') }}"
+                   title="Logout">
+                    ⎋
+                </a>
+
             {% else %}
-            <a href="{{ url_for('auth.login') }}" title="Login">👤 Login</a>
+
+                <a href="{{ url_for('auth.login') }}"
+                   title="Login">
+                    👤 Login
+                </a>
+
             {% endif %}
+
         </div>
+
     </div>
+
 </header>
 
+{% endif %}
+
+
+{# =========================================================
+   PAGE CONTENT
+   ========================================================= #}
+
 <main class="page-content">
+
     {% with messages = get_flashed_messages(with_categories=true) %}
+
         {% if messages %}
+
         <div class="flash-container">
+
             {% for category, message in messages %}
-            <div class="flash flash-{{ category }}">{{ message }}</div>
+
+            <div class="flash flash-{{ category }}">
+                {{ message }}
+            </div>
+
             {% endfor %}
+
         </div>
+
         {% endif %}
+
     {% endwith %}
 
+
     {% block content %}{% endblock %}
+
 </main>
 
-{% if current_user %}
+
+{# =========================================================
+   CUSTOMER NAVIGATION
+   Hidden on authentication pages
+   ========================================================= #}
+
+{% if current_user and not (request.endpoint and request.endpoint.startswith('auth.')) %}
+
 <nav class="bottom-nav">
-    <a href="{{ url_for('main.home') }}" class="{{ 'active' if request.endpoint == 'main.home' }}">
-        <span>🏠</span><small>Home</small>
+
+    <a href="{{ url_for('main.home') }}"
+       class="{{ 'active' if request.endpoint == 'main.home' }}">
+
+        <span>🏠</span>
+        <small>Home</small>
+
     </a>
-    <a href="{{ url_for('main.categories') }}" class="{{ 'active' if request.endpoint == 'main.categories' }}">
-        <span>🗂️</span><small>Categories</small>
+
+
+    <a href="{{ url_for('main.categories') }}"
+       class="{{ 'active' if request.endpoint == 'main.categories' }}">
+
+        <span>🗂️</span>
+        <small>Categories</small>
+
     </a>
-    <a href="{{ url_for('cart.view_cart') }}" class="{{ 'active' if request.endpoint == 'cart.view_cart' }}">
-        <span>🛒</span><small>Cart</small>
+
+
+    <a href="{{ url_for('cart.view_cart') }}"
+       class="{{ 'active' if request.endpoint == 'cart.view_cart' }}">
+
+        <span>🛒</span>
+        <small>Cart</small>
+
     </a>
-    <a href="{{ url_for('orders.my_orders') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('orders.') }}">
-        <span>📦</span><small>Orders</small>
+
+
+    <a href="{{ url_for('orders.my_orders') }}"
+       class="{{ 'active' if request.endpoint and request.endpoint.startswith('orders.') }}">
+
+        <span>📦</span>
+        <small>Orders</small>
+
     </a>
-    <a href="{{ url_for('profile.profile') }}" class="{{ 'active' if request.endpoint == 'profile.profile' }}">
-        <span>👤</span><small>Account</small>
+
+
+    <a href="{{ url_for('profile.profile') }}"
+       class="{{ 'active' if request.endpoint == 'profile.profile' }}">
+
+        <span>👤</span>
+        <small>Account</small>
+
     </a>
+
 </nav>
+
 {% endif %}
 
-{% if current_user %}
-{% include "customer/_chatbot.html" %}
+
+{# =========================================================
+   AI CHATBOT
+   Hidden on Login / Register / OTP
+   ========================================================= #}
+
+{% if current_user and not (request.endpoint and request.endpoint.startswith('auth.')) %}
+
+    {% include "customer/_chatbot.html" %}
+
 {% endif %}
+
 
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-{% if current_user %}
+
+
+{% if current_user and not (request.endpoint and request.endpoint.startswith('auth.')) %}
+
 <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+
 {% endif %}
+
+
 {% block extra_js %}{% endblock %}
+
 </body>
 </html>

@@ -1,207 +1,448 @@
 /* =========================================================
-   PRINTCARE CUSTOMER DASHBOARD
+   PRINTPILOT AI
+   COMPLETE CUSTOMER UI STYLESHEET
+========================================================= */
+
+
+/* =========================================================
+   1. GLOBAL RESET
 ========================================================= */
 
 * {
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f6f8fc;
+    padding: 0;
+    font-family: Inter, Arial, Helvetica, sans-serif;
+    background: #f5f7fb;
     color: #172033;
+    line-height: 1.5;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
 }
 
 a {
-    text-decoration: none;
     color: inherit;
+    text-decoration: none;
+}
+
+button {
+    cursor: pointer;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+input,
+select,
+textarea {
+    outline: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+    margin-top: 0;
 }
 
 
 /* =========================================================
-   MAIN DASHBOARD
+   2. NORMAL SITE HEADER
+========================================================= */
+
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid #e8ecf3;
+    backdrop-filter: blur(14px);
+}
+
+.topbar-inner {
+    max-width: 1400px;
+    min-height: 76px;
+    margin: 0 auto;
+    padding: 12px 28px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.brand {
+    flex-shrink: 0;
+    font-size: 25px;
+    font-weight: 900;
+    letter-spacing: -0.8px;
+    color: #172033;
+}
+
+.brand span {
+    color: #4169e1;
+}
+
+.search-form {
+    flex: 1;
+    max-width: 650px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    background: #f4f6fa;
+    border: 1px solid #e2e7f0;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.search-form input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    padding: 13px 16px;
+    color: #172033;
+    font-size: 14px;
+}
+
+.search-form input::placeholder {
+    color: #929bad;
+}
+
+.search-form button {
+    width: 48px;
+    height: 46px;
+    border: 0;
+    background: transparent;
+    font-size: 17px;
+}
+
+.search-form button:hover {
+    background: #e9edf5;
+}
+
+.topbar-icons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.topbar-icons a {
+    min-width: 42px;
+    height: 42px;
+    padding: 0 10px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4d5668;
+    transition: 0.2s ease;
+}
+
+.topbar-icons a:hover {
+    background: #eef3ff;
+    color: #4169e1;
+}
+
+
+/* =========================================================
+   3. PAGE CONTENT
+========================================================= */
+
+.page-content {
+    min-height: calc(100vh - 76px);
+}
+
+.flash-container {
+    position: fixed;
+    top: 88px;
+    left: 50%;
+    z-index: 2000;
+    width: min(92%, 520px);
+    transform: translateX(-50%);
+}
+
+.flash {
+    margin-bottom: 10px;
+    padding: 13px 16px;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #e3e8f1;
+    box-shadow: 0 12px 30px rgba(20, 30, 55, 0.12);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.flash-success {
+    color: #167346;
+    border-color: #b9e6ca;
+    background: #f0fff5;
+}
+
+.flash-danger {
+    color: #b42318;
+    border-color: #f1c0bb;
+    background: #fff6f5;
+}
+
+.flash-warning {
+    color: #9a6700;
+    border-color: #f1dc9d;
+    background: #fffaf0;
+}
+
+.flash-info {
+    color: #155eef;
+    border-color: #bdd1ff;
+    background: #f3f7ff;
+}
+
+
+/* =========================================================
+   4. CUSTOMER DASHBOARD
 ========================================================= */
 
 .printcare-dashboard {
-    max-width: 1400px;
+    width: min(1400px, calc(100% - 48px));
     margin: 0 auto;
-    padding: 30px;
+    padding: 32px 0 100px;
 }
 
 
 /* =========================================================
-   HERO
+   5. DASHBOARD HERO
 ========================================================= */
 
 .dashboard-hero {
-    min-height: 350px;
-    border-radius: 28px;
-    padding: 50px;
+    position: relative;
+    min-height: 390px;
+    padding: 54px 58px;
+    margin-bottom: 38px;
+    border-radius: 30px;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    overflow: hidden;
-    background: linear-gradient(135deg, #eaf2ff, #f7f9ff);
-    margin-bottom: 45px;
+    background:
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.55), transparent 25%),
+        linear-gradient(135deg, #eaf1ff 0%, #dfeaff 48%, #f8fbff 100%);
+    border: 1px solid #dce6f8;
+    box-shadow: 0 18px 45px rgba(48, 79, 135, 0.10);
+}
+
+.dashboard-hero::before {
+    content: "";
+    position: absolute;
+    width: 280px;
+    height: 280px;
+    right: 120px;
+    top: -160px;
+    border-radius: 50%;
+    background: rgba(65, 105, 225, 0.08);
 }
 
 .hero-content {
-    max-width: 600px;
+    position: relative;
+    z-index: 2;
+    max-width: 610px;
 }
 
 .hero-badge {
-    display: inline-block;
-    background: white;
-    padding: 8px 15px;
-    border-radius: 30px;
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 18px;
-}
-
-.hero-content h1 {
-    font-size: 48px;
-    line-height: 1.1;
-    margin: 0 0 18px;
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 13px;
+    margin-bottom: 16px;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #4169e1;
+    border: 1px solid #d9e3fa;
+    font-size: 12px;
     font-weight: 800;
 }
 
+.hero-content h1 {
+    margin-bottom: 15px;
+    font-size: clamp(42px, 5vw, 70px);
+    line-height: 0.98;
+    letter-spacing: -3px;
+    font-weight: 900;
+    color: #172033;
+}
+
 .hero-content h1 span {
-    color: #2563eb;
+    color: #4169e1;
 }
 
 .hero-content p {
-    font-size: 18px;
-    color: #667085;
-    line-height: 1.6;
-    margin-bottom: 28px;
+    max-width: 510px;
+    margin-bottom: 27px;
+    color: #5c6679;
+    font-size: 17px;
 }
 
 .dashboard-primary-btn {
-    display: inline-block;
-    background: #2563eb;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    padding: 0 22px;
+    border-radius: 13px;
+    background: #4169e1;
     color: white;
-    padding: 14px 24px;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 700;
-    transition: 0.2s;
+    font-size: 14px;
+    font-weight: 800;
+    box-shadow: 0 10px 25px rgba(65, 105, 225, 0.25);
+    transition: 0.2s ease;
 }
 
 .dashboard-primary-btn:hover {
-    background: #1d4ed8;
     transform: translateY(-2px);
+    background: #3157cf;
 }
 
 
 /* =========================================================
-   PRINTER ILLUSTRATION
+   6. CSS PRINTER
 ========================================================= */
 
 .hero-printer {
-    width: 390px;
+    position: relative;
+    z-index: 2;
+    width: 420px;
+    height: 320px;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 }
 
 .printer-illustration {
-    width: 270px;
     position: relative;
-    padding-top: 35px;
+    width: 300px;
+    height: 230px;
 }
 
 .printer-top {
-    width: 210px;
-    height: 45px;
-    background: #dce5f3;
-    border-radius: 12px 12px 4px 4px;
-    margin: auto;
+    position: absolute;
+    left: 55px;
+    top: 35px;
+    width: 190px;
+    height: 50px;
+    border-radius: 18px 18px 8px 8px;
+    background: #ffffff;
+    border: 4px solid #b9c8e8;
 }
 
 .printer-body {
-    width: 270px;
-    height: 145px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 15px 35px rgba(30, 50, 90, 0.12);
-    position: relative;
-    padding-top: 25px;
+    position: absolute;
+    left: 35px;
+    top: 70px;
+    width: 230px;
+    height: 125px;
+    border-radius: 22px;
+    background: linear-gradient(180deg, #e9effa, #cfdaf0);
+    border: 4px solid #a9bada;
+    box-shadow: 0 20px 30px rgba(50, 72, 110, 0.15);
 }
 
 .printer-screen {
-    width: 55px;
-    height: 35px;
+    position: absolute;
+    top: 27px;
+    left: 30px;
+    width: 42px;
+    height: 29px;
     border-radius: 7px;
-    background: #172033;
-    color: #35d07f;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-left: 30px;
+    background: #4169e1;
+    color: #dce7ff;
+    font-size: 11px;
 }
 
 .printer-paper-slot {
     position: absolute;
-    width: 120px;
-    height: 10px;
-    background: #dce5f3;
-    right: 25px;
-    top: 38px;
-    border-radius: 5px;
+    right: 28px;
+    top: 30px;
+    width: 110px;
+    height: 20px;
+    border-radius: 7px;
+    background: #8998b5;
 }
 
 .printer-paper {
-    width: 160px;
-    height: 100px;
-    background: white;
     position: absolute;
-    left: 55px;
-    bottom: -65px;
-    border-radius: 5px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    left: 77px;
+    top: 7px;
+    width: 145px;
+    height: 95px;
+    padding-top: 19px;
+    border-radius: 4px;
+    background: white;
+    border: 1px solid #dce2ed;
+    box-shadow: 0 8px 18px rgba(35, 52, 82, 0.10);
+    text-align: center;
+    transform: rotate(-3deg);
 }
 
 .printer-paper span {
-    font-size: 12px;
-    font-weight: 700;
-    color: #2563eb;
+    color: #4169e1;
+    font-size: 11px;
+    font-weight: 900;
 }
 
 
 /* =========================================================
-   SECTIONS
+   7. DASHBOARD SECTION
 ========================================================= */
 
 .dashboard-section {
-    margin-bottom: 45px;
+    margin-top: 42px;
 }
 
 .dashboard-section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     margin-bottom: 20px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
 }
 
 .dashboard-section-header h2 {
-    margin: 0 0 5px;
-    font-size: 27px;
+    margin-bottom: 5px;
+    font-size: 25px;
+    letter-spacing: -0.7px;
 }
 
 .dashboard-section-header p {
-    margin: 0;
-    color: #7b8495;
+    margin-bottom: 0;
+    color: #7a8496;
+    font-size: 14px;
 }
 
 .view-all {
-    color: #2563eb;
-    font-weight: 700;
-    font-size: 14px;
+    color: #4169e1;
+    font-size: 13px;
+    font-weight: 800;
 }
 
 .view-all:hover {
@@ -210,7 +451,7 @@ a {
 
 
 /* =========================================================
-   QUICK ACCESS
+   8. QUICK ACCESS
 ========================================================= */
 
 .quick-access-grid {
@@ -220,174 +461,196 @@ a {
 }
 
 .quick-access-card {
-    background: white;
-    border-radius: 18px;
+    min-height: 175px;
     padding: 25px;
-    border: 1px solid #e9edf4;
-    transition: 0.2s;
+    border-radius: 20px;
+    background: #ffffff;
+    border: 1px solid #e5eaf2;
+    box-shadow: 0 8px 24px rgba(31, 44, 74, 0.06);
+    transition: 0.22s ease;
 }
 
 .quick-access-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 30px rgba(30, 50, 90, 0.09);
+    transform: translateY(-5px);
+    border-color: #cdd9f6;
+    box-shadow: 0 16px 35px rgba(31, 55, 110, 0.10);
 }
 
 .quick-access-icon {
     width: 55px;
     height: 55px;
-    border-radius: 15px;
+    margin-bottom: 17px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
-    background: #eef4ff;
-    margin-bottom: 18px;
+    background: #eef3ff;
+    font-size: 26px;
 }
 
 .quick-access-card h3 {
-    margin: 0 0 7px;
+    margin-bottom: 6px;
     font-size: 18px;
 }
 
 .quick-access-card p {
-    margin: 0;
-    color: #7b8495;
-    font-size: 14px;
-    line-height: 1.5;
+    margin-bottom: 0;
+    color: #7a8496;
+    font-size: 13px;
 }
 
 
 /* =========================================================
-   AI ASSISTANT
+   9. AI ASSISTANT
 ========================================================= */
 
 .ai-assistant-section {
-    background: linear-gradient(135deg, #eef5ff, #ffffff);
-    border: 1px solid #dfe8f8;
+    position: relative;
+    min-height: 210px;
+    margin-top: 42px;
+    padding: 32px 40px;
     border-radius: 25px;
-    padding: 30px 35px;
+    overflow: hidden;
     display: flex;
     align-items: center;
-    gap: 30px;
-    margin-bottom: 45px;
-    box-shadow: 0 10px 30px rgba(30, 50, 90, 0.06);
+    gap: 28px;
+    background: linear-gradient(135deg, #18294f, #2f54a6);
+    color: white;
+    box-shadow: 0 18px 38px rgba(35, 63, 125, 0.18);
+}
+
+.ai-assistant-section::after {
+    content: "";
+    position: absolute;
+    right: -80px;
+    top: -100px;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
 }
 
 .ai-robot-container {
+    position: relative;
+    z-index: 2;
+    width: 115px;
+    height: 115px;
     flex-shrink: 0;
-}
-
-.ai-robot {
-    width: 125px;
-    height: 125px;
     border-radius: 30px;
-    background: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 75px;
-    box-shadow: 0 10px 25px rgba(30, 50, 90, 0.1);
+    background: rgba(255,255,255,0.13);
+}
+
+.ai-robot {
+    font-size: 60px;
 }
 
 .ai-assistant-content {
-    max-width: 650px;
+    position: relative;
+    z-index: 2;
 }
 
 .ai-online {
     display: inline-block;
-    color: #16a05d;
-    font-size: 13px;
-    font-weight: 700;
-    margin-bottom: 8px;
+    margin-bottom: 7px;
+    color: #a9ffd0;
+    font-size: 12px;
+    font-weight: 800;
 }
 
 .ai-assistant-content h2 {
-    font-size: 28px;
-    margin: 0 0 10px;
+    margin-bottom: 8px;
+    font-size: 29px;
+    line-height: 1.1;
 }
 
 .ai-assistant-content p {
-    color: #667085;
-    line-height: 1.6;
-    margin: 0 0 20px;
+    max-width: 600px;
+    margin-bottom: 17px;
+    color: #d9e3ff;
+    font-size: 14px;
 }
 
 .ai-chat-button {
-    display: inline-block;
-    padding: 12px 20px;
-    background: #2563eb;
-    color: white;
-    border-radius: 10px;
-    font-weight: 700;
-    transition: 0.2s;
-}
-
-.ai-chat-button:hover {
-    background: #1d4ed8;
+    display: inline-flex;
+    align-items: center;
+    min-height: 43px;
+    padding: 0 17px;
+    border-radius: 11px;
+    background: white;
+    color: #274d9f;
+    font-size: 13px;
+    font-weight: 800;
 }
 
 
 /* =========================================================
-   PRINTING SERVICES
+   10. PRINTING SERVICES
 ========================================================= */
 
 .printing-services-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
+    gap: 17px;
 }
 
 .printing-service-card {
-    background: white;
-    border: 1px solid #e9edf4;
-    border-radius: 18px;
+    min-height: 125px;
     padding: 20px;
+    border-radius: 18px;
+    background: white;
+    border: 1px solid #e5eaf2;
     display: flex;
     align-items: center;
-    gap: 15px;
-    transition: 0.2s;
+    gap: 16px;
+    transition: 0.2s ease;
 }
 
 .printing-service-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(30, 50, 90, 0.08);
+    border-color: #ccd9fa;
+    box-shadow: 0 13px 30px rgba(31, 50, 91, 0.08);
 }
 
 .service-icon {
-    width: 50px;
-    height: 50px;
-    background: #eef4ff;
-    border-radius: 13px;
+    width: 54px;
+    height: 54px;
+    flex-shrink: 0;
+    border-radius: 15px;
+    background: #eef3ff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 25px;
-    flex-shrink: 0;
 }
 
 .service-info {
     flex: 1;
+    min-width: 0;
 }
 
 .service-info h3 {
-    margin: 0 0 7px;
+    margin-bottom: 5px;
     font-size: 16px;
 }
 
 .service-info p {
     margin: 0;
-    color: #2563eb;
-    font-weight: 700;
+    color: #4169e1;
+    font-size: 13px;
+    font-weight: 800;
 }
 
 .service-arrow {
-    color: #98a2b3;
+    color: #9aa4b5;
     font-size: 20px;
 }
 
 
 /* =========================================================
-   STATIONERY CATEGORIES
+   11. STATIONERY CATEGORIES
 ========================================================= */
 
 .stationery-category-grid {
@@ -397,71 +660,86 @@ a {
 }
 
 .stationery-category-card {
+    min-height: 130px;
+    padding: 20px 12px;
+    border-radius: 18px;
     background: white;
-    border: 1px solid #e9edf4;
-    border-radius: 16px;
-    padding: 18px;
+    border: 1px solid #e5eaf2;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
-    font-weight: 600;
-    transition: 0.2s;
+    justify-content: center;
+    text-align: center;
+    transition: 0.2s ease;
 }
 
 .stationery-category-card:hover {
-    border-color: #2563eb;
-    transform: translateY(-2px);
+    transform: translateY(-4px);
+    border-color: #cdd9f7;
+    box-shadow: 0 12px 28px rgba(32, 51, 91, 0.08);
 }
 
 .category-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 11px;
-    background: #f1f5ff;
+    width: 58px;
+    height: 58px;
+    margin-bottom: 12px;
+    border-radius: 17px;
+    background: #f0f4ff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 21px;
-    flex-shrink: 0;
+    font-size: 27px;
+}
+
+.stationery-category-card span {
+    font-size: 13px;
+    font-weight: 800;
 }
 
 
 /* =========================================================
-   STATIONERY PRODUCTS
+   12. STATIONERY PRODUCT CARDS
 ========================================================= */
 
 .stationery-products-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+    gap: 18px;
 }
 
 .stationery-product-card {
-    background: white;
-    border: 1px solid #e9edf4;
-    border-radius: 18px;
+    min-width: 0;
     overflow: hidden;
-    transition: 0.2s;
+    border-radius: 20px;
+    background: white;
+    border: 1px solid #e5eaf2;
+    box-shadow: 0 7px 22px rgba(30, 43, 71, 0.05);
+    transition: 0.2s ease;
 }
 
 .stationery-product-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 30px rgba(30, 50, 90, 0.09);
+    box-shadow: 0 15px 35px rgba(30, 43, 71, 0.10);
 }
 
 .product-image-container {
-    height: 190px;
-    background: #f7f8fb;
+    height: 205px;
+    padding: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 18px;
+    background: #f7f9fc;
 }
 
 .product-image {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    transition: 0.2s ease;
+}
+
+.stationery-product-card:hover .product-image {
+    transform: scale(1.04);
 }
 
 .product-placeholder {
@@ -469,44 +747,40 @@ a {
 }
 
 .product-details {
-    padding: 18px;
+    padding: 17px;
 }
 
 .product-name {
     display: block;
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 1.4;
-    margin-bottom: 10px;
+    min-height: 42px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    line-height: 1.45;
+    font-weight: 800;
 }
 
 .product-name:hover {
-    color: #2563eb;
+    color: #4169e1;
 }
 
 .product-price {
-    font-size: 19px;
-    font-weight: 800;
+    margin-bottom: 6px;
     color: #172033;
-    margin-bottom: 8px;
+    font-size: 19px;
+    font-weight: 900;
 }
 
 .product-stock {
     display: inline-block;
-    font-size: 12px;
-    font-weight: 700;
-    color: #16a05d;
-    margin-bottom: 15px;
+    margin-bottom: 13px;
+    color: #16834d;
+    font-size: 11px;
+    font-weight: 800;
 }
 
 .product-stock.out-of-stock {
-    color: #dc3545;
+    color: #c53c32;
 }
-
-
-/* =========================================================
-   QUANTITY + ADD TO CART
-========================================================= */
 
 .product-cart-row {
     display: flex;
@@ -515,88 +789,1145 @@ a {
 }
 
 .quantity-control {
+    height: 40px;
     display: flex;
     align-items: center;
-    border: 1px solid #dfe3eb;
-    border-radius: 9px;
+    border: 1px solid #dce2eb;
+    border-radius: 10px;
     overflow: hidden;
-    height: 40px;
 }
 
 .quantity-control button {
-    width: 34px;
-    height: 40px;
-    border: none;
-    background: #f5f7fa;
-    font-size: 20px;
-    cursor: pointer;
+    width: 32px;
+    height: 100%;
+    border: 0;
+    background: #f6f8fb;
+    color: #172033;
+    font-size: 18px;
 }
 
 .quantity-control button:hover {
-    background: #e9edf4;
+    background: #eaf0fc;
 }
 
 .quantity-value {
-    width: 32px;
+    min-width: 30px;
     text-align: center;
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: 800;
 }
 
 .add-cart-button {
     flex: 1;
-    height: 40px;
-    border: none;
-    border-radius: 9px;
-    background: #2563eb;
+    min-height: 40px;
+    border: 0;
+    border-radius: 10px;
+    background: #4169e1;
     color: white;
-    font-weight: 700;
-    cursor: pointer;
-    transition: 0.2s;
+    font-size: 12px;
+    font-weight: 800;
+    transition: 0.2s ease;
 }
 
 .add-cart-button:hover {
-    background: #1d4ed8;
+    background: #3157cf;
 }
 
 
 /* =========================================================
-   FINAL CTA
+   13. DASHBOARD CTA
 ========================================================= */
 
 .dashboard-cta {
-    border-radius: 22px;
-    background: #172033;
-    color: white;
+    margin-top: 42px;
     padding: 30px 35px;
+    border-radius: 22px;
+    background: white;
+    border: 1px solid #e4e9f1;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 20px;
+    gap: 20px;
 }
 
 .dashboard-cta h2 {
-    margin: 0 0 7px;
-    font-size: 25px;
+    margin-bottom: 5px;
+    font-size: 24px;
 }
 
 .dashboard-cta p {
-    margin: 0;
-    color: #b8c0cf;
+    margin-bottom: 0;
+    color: #7b8494;
 }
 
 
 /* =========================================================
-   RESPONSIVE - TABLET
+   14. GENERAL PRODUCT / CATEGORY PAGE
 ========================================================= */
 
-@media (max-width: 1000px) {
+.products-page {
+    width: min(1400px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 32px 0 100px;
+}
+
+.products-header {
+    margin-bottom: 28px;
+}
+
+.products-header h1 {
+    margin-bottom: 7px;
+    font-size: 34px;
+    letter-spacing: -1px;
+}
+
+.products-header p {
+    color: #747f91;
+}
+
+.category-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+
+.category-list a {
+    padding: 10px 15px;
+    border-radius: 999px;
+    background: white;
+    border: 1px solid #dfe5ef;
+    color: #4f596a;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.category-list a:hover,
+.category-list a.active {
+    background: #4169e1;
+    border-color: #4169e1;
+    color: white;
+}
+
+
+/* =========================================================
+   15. GENERIC FORM STYLES
+========================================================= */
+
+.form-container {
+    width: min(650px, calc(100% - 30px));
+    margin: 40px auto;
+    padding: 32px;
+    background: white;
+    border: 1px solid #e4e8f0;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(30, 43, 70, 0.08);
+}
+
+.form-container h1,
+.form-container h2 {
+    margin-bottom: 8px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    color: #344054;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    min-height: 46px;
+    padding: 11px 13px;
+    border: 1px solid #d7deea;
+    border-radius: 10px;
+    background: white;
+    color: #172033;
+}
+
+.form-group textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #4169e1;
+    box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.10);
+}
+
+.primary-button {
+    min-height: 46px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: 10px;
+    background: #4169e1;
+    color: white;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   16. PRINTING SERVICE PAGE
+========================================================= */
+
+.printing-page {
+    width: min(1200px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 35px 0 100px;
+}
+
+.printing-card {
+    padding: 28px;
+    margin-bottom: 22px;
+    border-radius: 20px;
+    background: white;
+    border: 1px solid #e3e8f0;
+    box-shadow: 0 10px 30px rgba(30, 43, 70, 0.06);
+}
+
+.printing-card h1 {
+    margin-bottom: 8px;
+    font-size: 30px;
+}
+
+.printing-card p {
+    color: #6f7888;
+}
+
+.printing-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 17px;
+}
+
+.printing-option {
+    padding: 18px;
+    border: 1px solid #dfe5ee;
+    border-radius: 15px;
+    background: #fafbfe;
+}
+
+.printing-option label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   17. CART
+========================================================= */
+
+.cart-page {
+    width: min(1100px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 35px 0 110px;
+}
+
+.cart-page h1 {
+    margin-bottom: 25px;
+    font-size: 32px;
+}
+
+.cart-item {
+    margin-bottom: 14px;
+    padding: 18px;
+    border-radius: 16px;
+    background: white;
+    border: 1px solid #e2e7ef;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.cart-item-image {
+    width: 85px;
+    height: 85px;
+    padding: 8px;
+    border-radius: 12px;
+    background: #f5f7fb;
+    object-fit: contain;
+}
+
+.cart-item-details {
+    flex: 1;
+}
+
+.cart-item-details h3 {
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
+.cart-item-details p {
+    margin: 0;
+    color: #727c8e;
+    font-size: 13px;
+}
+
+.cart-total {
+    margin-top: 20px;
+    padding: 24px;
+    border-radius: 18px;
+    background: white;
+    border: 1px solid #e2e7ef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-total strong {
+    font-size: 22px;
+}
+
+
+/* =========================================================
+   18. ORDERS
+========================================================= */
+
+.orders-page {
+    width: min(1100px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 35px 0 110px;
+}
+
+.order-card {
+    margin-bottom: 16px;
+    padding: 22px;
+    border-radius: 18px;
+    background: white;
+    border: 1px solid #e2e7ef;
+    box-shadow: 0 8px 25px rgba(30, 43, 70, 0.04);
+}
+
+.order-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 14px;
+}
+
+.order-number {
+    font-size: 16px;
+    font-weight: 900;
+}
+
+.order-status {
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #eef4ff;
+    color: #4169e1;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   19. ACCOUNT / PROFILE
+========================================================= */
+
+.profile-page {
+    width: min(1000px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 35px 0 110px;
+}
+
+.profile-card {
+    padding: 28px;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    background: white;
+    border: 1px solid #e3e8f0;
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eaf0ff;
+    color: #4169e1;
+    font-size: 32px;
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   20. BOTTOM NAVIGATION
+========================================================= */
+
+.bottom-nav {
+    position: fixed;
+    left: 50%;
+    bottom: 18px;
+    z-index: 1100;
+    width: min(650px, calc(100% - 30px));
+    min-height: 68px;
+    padding: 7px;
+    transform: translateX(-50%);
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    border: 1px solid #dfe5ee;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.97);
+    box-shadow: 0 15px 45px rgba(25, 39, 70, 0.15);
+    backdrop-filter: blur(16px);
+}
+
+.bottom-nav a {
+    min-width: 0;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    color: #7b8494;
+    transition: 0.2s ease;
+}
+
+.bottom-nav a span {
+    font-size: 20px;
+    line-height: 1;
+}
+
+.bottom-nav a small {
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.bottom-nav a:hover,
+.bottom-nav a.active {
+    background: #edf2ff;
+    color: #4169e1;
+}
+
+
+/* =========================================================
+   21. PRINTPILOT AI LOGIN PAGE
+   Single centered page — NO split screen
+========================================================= */
+
+body.auth-page {
+    min-height: 100vh;
+    background: #eef4ff;
+}
+
+body.auth-page .page-content {
+    min-height: 100vh;
+}
+
+body.auth-page .topbar,
+body.auth-page .bottom-nav {
+    display: none !important;
+}
+
+body.auth-page .flash-container {
+    top: 20px;
+}
+
+
+/* Main login background */
+
+.printpilot-login {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    padding: 35px 20px 45px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background:
+        radial-gradient(circle at 10% 15%, rgba(82, 130, 230, 0.20), transparent 27%),
+        radial-gradient(circle at 90% 80%, rgba(120, 170, 255, 0.18), transparent 30%),
+        linear-gradient(135deg, #e8f0ff 0%, #f8fbff 50%, #edf4ff 100%);
+}
+
+
+/* Decorative shop atmosphere */
+
+.printpilot-login::before {
+    content: "";
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    left: -250px;
+    bottom: -270px;
+    border-radius: 50%;
+    background: rgba(65, 105, 225, 0.08);
+}
+
+.printpilot-login::after {
+    content: "";
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    right: -200px;
+    top: -200px;
+    border-radius: 50%;
+    background: rgba(78, 137, 230, 0.08);
+}
+
+
+/* Brand */
+
+.login-brand-center {
+    position: relative;
+    z-index: 10;
+    margin-bottom: 22px;
+    text-align: center;
+}
+
+.login-brand-center a {
+    font-size: 31px;
+    font-weight: 950;
+    letter-spacing: -1.2px;
+    color: #172033;
+}
+
+.login-brand-center span {
+    color: #4169e1;
+}
+
+.login-brand-center p {
+    margin: 5px 0 0;
+    color: #69758a;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* Login card */
+
+.login-main-card {
+    position: relative;
+    z-index: 10;
+    width: min(440px, 100%);
+    padding: 34px;
+    border: 1px solid rgba(255,255,255,0.85);
+    border-radius: 28px;
+    background: rgba(255,255,255,0.94);
+    box-shadow:
+        0 30px 80px rgba(32, 54, 95, 0.16),
+        0 5px 20px rgba(32, 54, 95, 0.06);
+    backdrop-filter: blur(20px);
+}
+
+
+/* Login icon */
+
+.login-card-brand {
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 17px;
+    border-radius: 21px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, #4169e1, #6e91ef);
+    color: white;
+    font-size: 31px;
+    box-shadow: 0 12px 25px rgba(65, 105, 225, 0.25);
+}
+
+
+/* Welcome */
+
+.login-welcome {
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.login-welcome h1 {
+    margin-bottom: 7px;
+    color: #172033;
+    font-size: 27px;
+    line-height: 1.15;
+    letter-spacing: -0.7px;
+}
+
+.login-welcome p {
+    margin-bottom: 0;
+    color: #778196;
+    font-size: 13px;
+}
+
+
+/* Login form */
+
+.printpilot-login-form {
+    width: 100%;
+}
+
+.login-field {
+    margin-bottom: 17px;
+}
+
+.login-field label {
+    display: block;
+    margin-bottom: 7px;
+    color: #344054;
+    font-size: 12px;
+    font-weight: 850;
+}
+
+.login-input-box {
+    position: relative;
+    width: 100%;
+}
+
+.login-input-box input {
+    width: 100%;
+    height: 52px;
+    padding: 0 15px;
+    border: 1px solid #d9dfeb;
+    border-radius: 13px;
+    background: #fafbfe;
+    color: #172033;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+.login-input-box input::placeholder {
+    color: #a1a9b8;
+}
+
+.login-input-box input:hover {
+    border-color: #c4cede;
+}
+
+.login-input-box input:focus {
+    border-color: #4169e1;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(65, 105, 225, 0.10);
+}
+
+
+/* Password field */
+
+.password-input {
+    padding-right: 48px !important;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    width: 36px;
+    height: 36px;
+    transform: translateY(-50%);
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: #778196;
+    font-size: 16px;
+}
+
+.password-toggle:hover {
+    background: #edf2ff;
+    color: #4169e1;
+}
+
+
+/* Forgot password */
+
+.login-options {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: -4px;
+    margin-bottom: 20px;
+}
+
+.login-forgot {
+    color: #4169e1;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.login-forgot:hover {
+    text-decoration: underline;
+}
+
+
+/* Login button */
+
+.printpilot-login-button {
+    width: 100%;
+    min-height: 52px;
+    border: 0;
+    border-radius: 13px;
+    background: linear-gradient(135deg, #4169e1, #3157cf);
+    color: white;
+    font-size: 14px;
+    font-weight: 900;
+    box-shadow: 0 11px 24px rgba(65, 105, 225, 0.25);
+    transition: 0.2s ease;
+}
+
+.printpilot-login-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 28px rgba(65, 105, 225, 0.30);
+}
+
+.printpilot-login-button:active {
+    transform: translateY(0);
+}
+
+
+/* Divider */
+
+.login-divider {
+    position: relative;
+    margin: 24px 0;
+    text-align: center;
+}
+
+.login-divider::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background: #e5e9f0;
+}
+
+.login-divider span {
+    position: relative;
+    padding: 0 12px;
+    background: white;
+    color: #9aa3b3;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+/* Register */
+
+.login-create-account {
+    text-align: center;
+    color: #6d7789;
+    font-size: 13px;
+}
+
+.login-create-account a {
+    color: #4169e1;
+    font-weight: 900;
+}
+
+.login-create-account a:hover {
+    text-decoration: underline;
+}
+
+
+/* Security */
+
+.login-security {
+    margin-top: 22px;
+    padding-top: 17px;
+    border-top: 1px solid #edf0f5;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    color: #8a94a5;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.login-security span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+
+/* Footer */
+
+.login-footer {
+    position: relative;
+    z-index: 10;
+    margin-top: 19px;
+    text-align: center;
+    color: #7c879a;
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   22. LOGIN DECORATIVE STATIONERY
+========================================================= */
+
+.login-decoration {
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+    user-select: none;
+}
+
+
+/* Books */
+
+.login-book-stack {
+    position: absolute;
+    left: 7%;
+    bottom: 9%;
+    width: 165px;
+    height: 105px;
+    transform: rotate(-7deg);
+}
+
+.login-book {
+    position: absolute;
+    left: 0;
+    width: 150px;
+    height: 32px;
+    border-radius: 5px;
+    box-shadow: 0 8px 15px rgba(40, 55, 90, 0.10);
+}
+
+.login-book.one {
+    bottom: 0;
+    background: #5e7fdc;
+}
+
+.login-book.two {
+    bottom: 29px;
+    left: 9px;
+    background: #f0b55c;
+}
+
+.login-book.three {
+    bottom: 58px;
+    left: 2px;
+    background: #e27676;
+}
+
+
+/* Pencil */
+
+.login-pencil {
+    position: absolute;
+    right: 10%;
+    bottom: 12%;
+    width: 190px;
+    height: 17px;
+    border-radius: 999px;
+    background: #f2c14e;
+    transform: rotate(-26deg);
+    box-shadow: 0 8px 18px rgba(40, 55, 90, 0.10);
+}
+
+.login-pencil::before {
+    content: "";
+    position: absolute;
+    right: -23px;
+    top: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-left: 25px solid #d8b18c;
+}
+
+.login-pencil::after {
+    content: "";
+    position: absolute;
+    left: 18px;
+    top: 0;
+    width: 22px;
+    height: 17px;
+    background: #ef7777;
+}
+
+
+/* Paper */
+
+.login-paper {
+    position: absolute;
+    right: 6%;
+    top: 16%;
+    width: 125px;
+    height: 160px;
+    border-radius: 5px;
+    background: rgba(255,255,255,0.72);
+    border: 1px solid rgba(210,220,238,0.8);
+    transform: rotate(10deg);
+    box-shadow: 0 12px 25px rgba(35, 55, 95, 0.08);
+}
+
+.login-paper::before,
+.login-paper::after {
+    content: "";
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    height: 5px;
+    border-radius: 999px;
+    background: #dce5f5;
+}
+
+.login-paper::before {
+    top: 42px;
+}
+
+.login-paper::after {
+    top: 62px;
+}
+
+
+/* Sticky notes */
+
+.login-note {
+    position: absolute;
+    width: 72px;
+    height: 72px;
+    border-radius: 5px;
+    box-shadow: 0 8px 20px rgba(35, 55, 95, 0.08);
+}
+
+.login-note.one {
+    left: 9%;
+    top: 18%;
+    background: #ffe59a;
+    transform: rotate(-8deg);
+}
+
+.login-note.two {
+    right: 13%;
+    top: 31%;
+    background: #bdebd0;
+    transform: rotate(8deg);
+}
+
+
+/* Printer decoration */
+
+.login-printer-decoration {
+    position: absolute;
+    left: 8%;
+    top: 31%;
+    width: 125px;
+    height: 78px;
+    border-radius: 14px;
+    background: #dce5f5;
+    border: 3px solid #b9c8e1;
+    transform: rotate(-5deg);
+    box-shadow: 0 12px 25px rgba(35, 55, 95, 0.08);
+}
+
+.login-printer-decoration::before {
+    content: "";
+    position: absolute;
+    width: 75px;
+    height: 43px;
+    left: 22px;
+    top: -25px;
+    background: white;
+    border: 2px solid #d5deee;
+}
+
+.login-printer-decoration::after {
+    content: "";
+    position: absolute;
+    width: 58px;
+    height: 9px;
+    left: 32px;
+    top: 26px;
+    border-radius: 4px;
+    background: #7f90b0;
+}
+
+
+/* =========================================================
+   23. REGISTER / OTP PAGES
+========================================================= */
+
+.auth-form-card {
+    width: min(500px, 100%);
+    padding: 34px;
+    border-radius: 25px;
+    background: rgba(255,255,255,0.95);
+    border: 1px solid #e2e7ef;
+    box-shadow: 0 25px 70px rgba(30, 50, 90, 0.13);
+}
+
+.auth-form-card h1 {
+    margin-bottom: 7px;
+    font-size: 28px;
+}
+
+.auth-form-card > p {
+    margin-bottom: 25px;
+    color: #778196;
+    font-size: 13px;
+}
+
+.auth-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.auth-full {
+    grid-column: 1 / -1;
+}
+
+.auth-submit {
+    width: 100%;
+    min-height: 50px;
+    border: 0;
+    border-radius: 12px;
+    background: #4169e1;
+    color: white;
+    font-weight: 900;
+}
+
+.otp-input {
+    width: 100%;
+    min-height: 58px;
+    text-align: center;
+    letter-spacing: 10px;
+    font-size: 24px !important;
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   24. EMPTY STATES
+========================================================= */
+
+.empty-state {
+    padding: 60px 20px;
+    text-align: center;
+    border: 1px dashed #d5dce8;
+    border-radius: 18px;
+    background: white;
+}
+
+.empty-state-icon {
+    margin-bottom: 10px;
+    font-size: 45px;
+}
+
+.empty-state h3 {
+    margin-bottom: 5px;
+}
+
+.empty-state p {
+    color: #7b8495;
+}
+
+
+/* =========================================================
+   25. RESPONSIVE - TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
 
     .quick-access-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 
+    .stationery-category-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .stationery-products-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
     .printing-services-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .hero-printer {
+        width: 350px;
+    }
+
+    .dashboard-hero {
+        padding: 45px;
+    }
+
+    .login-book-stack {
+        left: 3%;
+    }
+
+    .login-pencil {
+        right: 4%;
+    }
+}
+
+
+/* =========================================================
+   26. RESPONSIVE - SMALL TABLET
+========================================================= */
+
+@media (max-width: 800px) {
+
+    .topbar-inner {
+        padding: 12px 18px;
+        gap: 12px;
+    }
+
+    .brand {
+        font-size: 21px;
+    }
+
+    .topbar-icons a {
+        min-width: 38px;
+        padding: 0 6px;
+    }
+
+    .search-form {
+        order: 3;
+        flex-basis: 100%;
+    }
+
+    .topbar-inner {
+        flex-wrap: wrap;
+    }
+
+    .page-content {
+        min-height: calc(100vh - 125px);
+    }
+
+    .printcare-dashboard {
+        width: min(100% - 30px, 700px);
+        padding-top: 20px;
+    }
+
+    .dashboard-hero {
+        min-height: auto;
+        padding: 35px 28px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .hero-content h1 {
+        font-size: 48px;
+    }
+
+    .hero-printer {
+        width: 100%;
+        height: 230px;
+        margin-top: 10px;
     }
 
     .stationery-category-grid {
@@ -607,60 +1938,93 @@ a {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .dashboard-hero {
-        padding: 35px;
+    .ai-assistant-section {
+        padding: 27px;
     }
 
-    .hero-content h1 {
-        font-size: 40px;
+    .printing-options {
+        grid-template-columns: 1fr;
     }
 
-    .hero-printer {
-        width: 300px;
-        transform: scale(0.8);
+    .login-note,
+    .login-paper,
+    .login-printer-decoration {
+        opacity: 0.55;
     }
-
 }
 
 
 /* =========================================================
-   RESPONSIVE - MOBILE
+   27. RESPONSIVE - MOBILE
 ========================================================= */
 
-@media (max-width: 700px) {
+@media (max-width: 600px) {
+
+    body {
+        font-size: 14px;
+    }
+
+    .topbar-inner {
+        min-height: auto;
+    }
+
+    .topbar-icons a:not(:last-child) {
+        display: none;
+    }
 
     .printcare-dashboard {
-        padding: 15px;
+        width: calc(100% - 22px);
+        padding-bottom: 105px;
     }
 
     .dashboard-hero {
-        padding: 30px 22px;
-        min-height: auto;
-        flex-direction: column;
-        align-items: flex-start;
+        padding: 28px 22px;
+        border-radius: 22px;
     }
 
     .hero-content h1 {
-        font-size: 35px;
+        font-size: 41px;
+        letter-spacing: -2px;
     }
 
     .hero-content p {
-        font-size: 16px;
+        font-size: 14px;
     }
 
     .hero-printer {
-        width: 100%;
-        margin-top: 25px;
-        transform: scale(0.75);
+        transform: scale(0.85);
+        transform-origin: center;
+        margin-left: -10px;
+    }
+
+    .dashboard-section {
+        margin-top: 32px;
+    }
+
+    .dashboard-section-header {
+        align-items: center;
+    }
+
+    .dashboard-section-header h2 {
+        font-size: 21px;
     }
 
     .quick-access-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 11px;
     }
 
     .quick-access-card {
+        min-height: 145px;
         padding: 17px;
+        border-radius: 16px;
+    }
+
+    .quick-access-icon {
+        width: 45px;
+        height: 45px;
+        margin-bottom: 11px;
+        font-size: 21px;
     }
 
     .quick-access-card h3 {
@@ -668,13 +2032,24 @@ a {
     }
 
     .quick-access-card p {
-        font-size: 12px;
+        font-size: 11px;
     }
 
     .ai-assistant-section {
-        padding: 25px;
+        padding: 22px;
         flex-direction: column;
-        text-align: center;
+        align-items: flex-start;
+        border-radius: 20px;
+    }
+
+    .ai-robot-container {
+        width: 70px;
+        height: 70px;
+        border-radius: 20px;
+    }
+
+    .ai-robot {
+        font-size: 38px;
     }
 
     .ai-assistant-content h2 {
@@ -686,16 +2061,22 @@ a {
     }
 
     .stationery-category-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .stationery-category-card {
+        min-height: 110px;
     }
 
     .stationery-products-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
     }
 
     .product-image-container {
         height: 150px;
+        padding: 12px;
     }
 
     .product-details {
@@ -703,7 +2084,8 @@ a {
     }
 
     .product-name {
-        font-size: 14px;
+        min-height: 48px;
+        font-size: 12px;
     }
 
     .product-price {
@@ -716,38 +2098,1815 @@ a {
     }
 
     .quantity-control {
-        justify-content: center;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .quantity-control button {
+        width: 38px;
     }
 
     .add-cart-button {
-        width: 100%;
+        min-height: 38px;
     }
 
     .dashboard-cta {
+        padding: 23px;
         flex-direction: column;
         align-items: flex-start;
-        gap: 20px;
+    }
+
+    .bottom-nav {
+        bottom: 9px;
+        width: calc(100% - 18px);
+        min-height: 63px;
+        border-radius: 17px;
+    }
+
+    .bottom-nav a span {
+        font-size: 18px;
+    }
+
+    .bottom-nav a small {
+        font-size: 9px;
+    }
+
+
+    /* LOGIN MOBILE */
+
+    .printpilot-login {
+        min-height: 100vh;
+        padding: 25px 15px 35px;
+        justify-content: center;
+    }
+
+    .login-brand-center {
+        margin-bottom: 16px;
+    }
+
+    .login-brand-center a {
+        font-size: 27px;
+    }
+
+    .login-main-card {
+        width: 100%;
+        padding: 25px 20px;
+        border-radius: 22px;
+    }
+
+    .login-card-brand {
+        width: 58px;
+        height: 58px;
+        margin-bottom: 14px;
+        border-radius: 18px;
+        font-size: 26px;
+    }
+
+    .login-welcome h1 {
+        font-size: 24px;
+    }
+
+    .login-input-box input {
+        height: 50px;
+    }
+
+    .login-book-stack {
+        left: -40px;
+        bottom: 4%;
+        transform: scale(0.7) rotate(-7deg);
+    }
+
+    .login-pencil {
+        right: -50px;
+        bottom: 5%;
+        transform: scale(0.7) rotate(-26deg);
+    }
+
+    .login-paper,
+    .login-note,
+    .login-printer-decoration {
+        opacity: 0.35;
+    }
+
+    .login-paper {
+        right: -40px;
+    }
+
+    .login-printer-decoration {
+        left: -35px;
+    }
+
+    .auth-form-card {
+        padding: 25px 20px;
+    }
+
+    .auth-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-full {
+        grid-column: auto;
+    }
+
+    .products-page,
+    .printing-page,
+    .cart-page,
+    .orders-page,
+    .profile-page {
+        width: calc(100% - 24px);
+        padding-top: 22px;
+    }
+
+    .cart-item {
+        align-items: flex-start;
+    }
+
+    .cart-item-image {
+        width: 65px;
+        height: 65px;
+    }
+
+    .cart-total {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+}
+
+
+/* =========================================================
+   28. VERY SMALL PHONES
+========================================================= */
+
+@media (max-width: 390px) {
+
+    .hero-content h1 {
+        font-size: 35px;
+    }
+
+    .quick-access-grid {
+        gap: 8px;
+    }
+
+    .quick-access-card {
+        padding: 13px;
+    }
+
+    .stationery-products-grid {
+        gap: 8px;
+    }
+
+    .product-image-container {
+        height: 135px;
+    }
+
+    .product-details {
+        padding: 10px;
+    }
+
+    .product-name {
+        font-size: 11px;
+    }
+
+    .product-price {
+        font-size: 15px;
+    }
+
+    .login-main-card {
+        padding: 22px 17px;
+    }
+}
+
+
+/* =========================================================
+   29. ACCESSIBILITY / FOCUS
+========================================================= */
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid rgba(65, 105, 225, 0.28);
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   30. REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+/* =========================================================
+   PRINTPILOT AI
+   LOGIN PAGE
+   REALISTIC PRINT + STATIONERY SHOP
+   ========================================================= */
+
+
+/* =========================================================
+   AUTH PAGE
+   ========================================================= */
+
+body.auth-page {
+    margin: 0;
+    padding: 0;
+
+    min-height: 100vh;
+
+    overflow-x: hidden;
+}
+
+
+body.auth-page .page-content {
+    margin: 0;
+    padding: 0;
+
+    min-height: 100vh;
+}
+
+
+body.auth-page .topbar,
+body.auth-page .bottom-nav {
+    display: none !important;
+}
+
+
+/* =========================================================
+   MAIN LOGIN PAGE
+   ========================================================= */
+
+.printpilot-login {
+
+    position: relative;
+
+    width: 100%;
+    min-height: 100vh;
+
+    box-sizing: border-box;
+
+    overflow: hidden;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 35px 20px;
+
+    background: #dcecff;
+}
+
+
+/* =========================================================
+   REALISTIC BACKGROUND IMAGE
+   ========================================================= */
+
+.login-background {
+
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background-image:
+        linear-gradient(
+            rgba(235, 244, 255, 0.08),
+            rgba(235, 244, 255, 0.08)
+        ),
+        url("../images/login-background.png");
+
+    background-size: cover;
+
+    background-position: center;
+
+    background-repeat: no-repeat;
+
+    z-index: 0;
+}
+
+
+/* =========================================================
+   VERY LIGHT OVERLAY
+   ========================================================= */
+
+.login-background::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,0.06),
+            rgba(255,255,255,0.02),
+            rgba(255,255,255,0.08)
+        );
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   PAGE CONTENT
+   ========================================================= */
+
+.login-page-content {
+
+    position: relative;
+
+    z-index: 10;
+
+    width: 100%;
+
+    min-height: calc(100vh - 70px);
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.login-brand-center {
+
+    text-align: center;
+
+    margin-bottom: 20px;
+
+    animation: loginBrandAppear 0.6s ease;
+}
+
+
+.login-brand {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    text-decoration: none;
+
+    color: #10284f;
+
+    font-size: 34px;
+
+    font-weight: 800;
+
+    letter-spacing: -1px;
+
+    text-shadow:
+        0 2px 12px rgba(255,255,255,0.9);
+}
+
+
+.brand-icon {
+
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1769ff,
+            #4c8dff
+        );
+
+    color: white;
+
+    font-size: 22px;
+
+    box-shadow:
+        0 8px 20px rgba(23,105,255,0.28);
+}
+
+
+.brand-name span {
+
+    color: #1769ff;
+}
+
+
+.login-brand-center p {
+
+    margin: 6px 0 0;
+
+    color: #29496f;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    letter-spacing: 0.2px;
+
+    text-shadow:
+        0 1px 8px rgba(255,255,255,0.9);
+}
+
+
+/* =========================================================
+   LOGIN CARD
+   ========================================================= */
+
+.login-main-card {
+
+    position: relative;
+
+    width: min(440px, calc(100vw - 40px));
+
+    box-sizing: border-box;
+
+    padding: 34px 38px 28px;
+
+    background:
+        rgba(255,255,255,0.97);
+
+    border:
+        1px solid rgba(255,255,255,0.95);
+
+    border-radius: 24px;
+
+    box-shadow:
+        0 30px 80px rgba(25,55,100,0.27),
+        0 10px 30px rgba(25,55,100,0.14);
+
+    backdrop-filter: blur(12px);
+
+    animation:
+        loginCardAppear 0.7s ease;
+
+}
+
+
+/* =========================================================
+   LOGIN ICON
+   ========================================================= */
+
+.login-card-brand {
+
+    width: 60px;
+    height: 60px;
+
+    margin: 0 auto 18px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1769ff,
+            #4388ff
+        );
+
+    color: white;
+
+    font-size: 27px;
+
+    box-shadow:
+        0 12px 28px rgba(23,105,255,0.28);
+}
+
+
+/* =========================================================
+   WELCOME
+   ========================================================= */
+
+.login-welcome {
+
+    text-align: center;
+
+    margin-bottom: 26px;
+}
+
+
+.login-welcome h1 {
+
+    margin: 0;
+
+    color: #142b51;
+
+    font-size: 28px;
+
+    line-height: 1.2;
+
+    font-weight: 800;
+
+    letter-spacing: -0.5px;
+}
+
+
+.login-welcome p {
+
+    margin: 8px 0 0;
+
+    color: #6b7c93;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   FLASH MESSAGES
+   ========================================================= */
+
+.login-flashes {
+
+    margin-bottom: 18px;
+}
+
+
+.login-flashes .flash {
+
+    padding: 11px 13px;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   LOGIN FORM
+   ========================================================= */
+
+.printpilot-login-form {
+
+    width: 100%;
+}
+
+
+/* =========================================================
+   FORM FIELD
+   ========================================================= */
+
+.login-field {
+
+    margin-bottom: 18px;
+}
+
+
+.login-field label {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #263c5d;
+
+    font-size: 13px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   INPUT BOX
+   ========================================================= */
+
+.login-input-box {
+
+    position: relative;
+
+    width: 100%;
+}
+
+
+.login-input-box input {
+
+    width: 100%;
+
+    height: 52px;
+
+    box-sizing: border-box;
+
+    padding:
+        0
+        45px
+        0
+        44px;
+
+    border:
+        1px solid #d8e2ef;
+
+    border-radius: 12px;
+
+    outline: none;
+
+    background: #f9fbff;
+
+    color: #172d50;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.login-input-box input::placeholder {
+
+    color: #9aaabd;
+}
+
+
+.login-input-box input:focus {
+
+    border-color: #1769ff;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(23,105,255,0.10);
+}
+
+
+/* =========================================================
+   INPUT ICON
+   ========================================================= */
+
+.login-input-icon {
+
+    position: absolute;
+
+    left: 15px;
+
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+    width: 20px;
+
+    text-align: center;
+
+    color: #6d7f99;
+
+    font-size: 16px;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   PASSWORD TOGGLE
+   ========================================================= */
+
+.password-toggle {
+
+    position: absolute;
+
+    right: 13px;
+
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+    width: 30px;
+    height: 30px;
+
+    padding: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+
+    background: transparent;
+
+    color: #718198;
+
+    cursor: pointer;
+
+    font-size: 16px;
+
+    border-radius: 7px;
+}
+
+
+.password-toggle:hover {
+
+    background: #edf3fb;
+}
+
+
+/* =========================================================
+   FORGOT PASSWORD
+   ========================================================= */
+
+.login-options {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    margin:
+        -2px
+        0
+        19px;
+}
+
+
+.login-forgot {
+
+    color: #1769ff;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 700;
+}
+
+
+.login-forgot:hover {
+
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   LOGIN BUTTON
+   ========================================================= */
+
+.printpilot-login-button {
+
+    width: 100%;
+
+    height: 54px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    border: none;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1769ff,
+            #347dff
+        );
+
+    color: white;
+
+    font-family: inherit;
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 11px 25px
+        rgba(23,105,255,0.25);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.printpilot-login-button span {
+
+    font-size: 18px;
+
+    transition:
+        transform 0.2s ease;
+}
+
+
+.printpilot-login-button:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 15px 32px
+        rgba(23,105,255,0.32);
+}
+
+
+.printpilot-login-button:hover span {
+
+    transform:
+        translateX(3px);
+}
+
+
+.printpilot-login-button:active {
+
+    transform:
+        translateY(0);
+}
+
+
+/* =========================================================
+   OR DIVIDER
+   ========================================================= */
+
+.login-divider {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    margin:
+        25px 0
+        18px;
+
+    color: #96a3b5;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.5px;
+}
+
+
+.login-divider::before,
+.login-divider::after {
+
+    content: "";
+
+    height: 1px;
+
+    flex: 1;
+
+    background:
+        #e2e8f1;
+}
+
+
+/* =========================================================
+   CREATE ACCOUNT
+   ========================================================= */
+
+.login-create-account {
+
+    text-align: center;
+
+    margin-bottom: 21px;
+}
+
+
+.login-create-account a {
+
+    color: #1769ff;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    transition: color 0.2s ease;
+}
+
+
+.login-create-account a span {
+
+    display: inline-block;
+
+    margin-left: 3px;
+
+    transition:
+        transform 0.2s ease;
+}
+
+
+.login-create-account a:hover {
+
+    color: #0754dc;
+
+    text-decoration: underline;
+}
+
+
+.login-create-account a:hover span {
+
+    transform:
+        translateX(3px);
+}
+
+
+/* =========================================================
+   SECURITY
+   ========================================================= */
+
+.login-security {
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    gap: 14px;
+
+    padding-top: 17px;
+
+    border-top:
+        1px solid #edf1f6;
+
+    color: #8290a3;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.login-footer {
+
+    margin-top: 17px;
+
+    color: #29476e;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    text-shadow:
+        0 1px 8px rgba(255,255,255,0.9);
+}
+
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes loginCardAppear {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(20px)
+            scale(0.98);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
+}
+
+
+@keyframes loginBrandAppear {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(-10px);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
     }
 
 }
 
 
 /* =========================================================
-   VERY SMALL SCREENS
-========================================================= */
+   TABLET
+   ========================================================= */
 
-@media (max-width: 420px) {
+@media (max-width: 768px) {
 
-    .quick-access-grid {
-        grid-template-columns: 1fr;
+    .printpilot-login {
+
+        padding:
+            25px 15px;
     }
 
-    .stationery-products-grid {
-        grid-template-columns: 1fr;
+
+    .login-brand {
+
+        font-size: 30px;
     }
 
-    .stationery-category-grid {
-        grid-template-columns: 1fr;
+
+    .login-main-card {
+
+        width:
+            min(440px, calc(100vw - 30px));
+
+        padding:
+            30px 28px 25px;
     }
 
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .printpilot-login {
+
+        min-height: 100vh;
+
+        padding:
+            20px 12px;
+    }
+
+
+    .login-page-content {
+
+        min-height:
+            calc(100vh - 40px);
+    }
+
+
+    .login-brand {
+
+        font-size: 27px;
+    }
+
+
+    .brand-icon {
+
+        width: 36px;
+        height: 36px;
+
+        border-radius: 10px;
+
+        font-size: 18px;
+    }
+
+
+    .login-brand-center p {
+
+        font-size: 11px;
+    }
+
+
+    .login-main-card {
+
+        width: 100%;
+
+        padding:
+            27px 20px 23px;
+
+        border-radius: 20px;
+    }
+
+
+    .login-card-brand {
+
+        width: 54px;
+        height: 54px;
+
+        border-radius: 15px;
+
+        font-size: 24px;
+    }
+
+
+    .login-welcome h1 {
+
+        font-size: 24px;
+    }
+
+
+    .login-welcome p {
+
+        font-size: 13px;
+    }
+
+
+    .login-input-box input {
+
+        height: 50px;
+
+        font-size: 13px;
+    }
+
+
+    .printpilot-login-button {
+
+        height: 52px;
+    }
+
+
+    .login-security {
+
+        gap: 8px 12px;
+    }
+
+}
+/* =========================================================
+   PRINTPILOT AI - REGISTER PAGE
+   ========================================================= */
+
+body.auth-page {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+body.auth-page .page-content {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+body.auth-page .topbar,
+body.auth-page .bottom-nav {
+    display: none !important;
+}
+
+
+/* Main page */
+.printpilot-register {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 35px 20px;
+    box-sizing: border-box;
+    overflow: hidden;
+    background: #dcecff;
+}
+
+
+/* Background image */
+.register-background {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+
+    background-image:
+        linear-gradient(
+            rgba(235, 244, 255, 0.12),
+            rgba(235, 244, 255, 0.12)
+        ),
+        url("../images/login-background.png");
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    z-index: 0;
+}
+
+
+/* Light background overlay */
+.register-background::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,0.10),
+            rgba(255,255,255,0.02),
+            rgba(255,255,255,0.10)
+        );
+
+    pointer-events: none;
+}
+
+
+/* Content */
+.register-page-content {
+    position: relative;
+    z-index: 10;
+
+    width: 100%;
+    min-height: calc(100vh - 70px);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+}
+
+
+/* Brand */
+.register-brand-center {
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.register-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    color: #10284f;
+
+    text-decoration: none;
+
+    font-size: 34px;
+    font-weight: 800;
+
+    letter-spacing: -1px;
+
+    text-shadow:
+        0 2px 12px rgba(255,255,255,0.9);
+}
+
+.register-brand-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1769ff,
+            #4c8dff
+        );
+
+    color: #ffffff;
+
+    font-size: 22px;
+
+    box-shadow:
+        0 8px 20px rgba(23,105,255,0.28);
+}
+
+.register-brand > span:last-child > span {
+    color: #1769ff;
+}
+
+.register-brand-center p {
+    margin: 6px 0 0;
+
+    color: #29496f;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    text-shadow:
+        0 1px 8px rgba(255,255,255,0.9);
+}
+
+
+/* Register card */
+.register-card {
+    position: relative;
+
+    width: min(470px, calc(100vw - 40px));
+
+    box-sizing: border-box;
+
+    padding: 32px 38px 27px;
+
+    background: rgba(255,255,255,0.97);
+
+    border:
+        1px solid rgba(255,255,255,0.95);
+
+    border-radius: 24px;
+
+    box-shadow:
+        0 30px 80px rgba(25,55,100,0.27),
+        0 10px 30px rgba(25,55,100,0.14);
+
+    backdrop-filter: blur(12px);
+
+    animation:
+        registerCardAppear
+        0.7s
+        ease;
+}
+
+
+/* Register icon */
+.register-icon {
+    width: 58px;
+    height: 58px;
+
+    margin: 0 auto 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1769ff,
+            #4388ff
+        );
+
+    color: white;
+
+    font-size: 25px;
+
+    box-shadow:
+        0 12px 28px rgba(23,105,255,0.28);
+}
+
+
+/* Heading */
+.register-heading {
+    text-align: center;
+    margin-bottom: 23px;
+}
+
+.register-heading h1 {
+    margin: 0;
+
+    color: #142b51;
+
+    font-size: 27px;
+    font-weight: 800;
+
+    letter-spacing: -0.5px;
+}
+
+.register-heading p {
+    margin: 7px 0 0;
+
+    color: #6b7c93;
+
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+
+/* Flash messages */
+.register-flashes {
+    margin-bottom: 18px;
+}
+
+.register-flashes .flash {
+    padding: 10px 12px;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+
+/* Form */
+.printpilot-register-form {
+    width: 100%;
+}
+
+
+/* Field */
+.register-field {
+    margin-bottom: 15px;
+}
+
+.register-field label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #263c5d;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+/* Input box */
+.register-input-box {
+    position: relative;
+    width: 100%;
+}
+
+.register-input-box input {
+    width: 100%;
+    height: 49px;
+
+    box-sizing: border-box;
+
+    padding:
+        0
+        43px
+        0
+        43px;
+
+    border:
+        1px solid #d8e2ef;
+
+    border-radius: 12px;
+
+    outline: none;
+
+    background: #f9fbff;
+
+    color: #172d50;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.register-input-box input::placeholder {
+    color: #9aaabd;
+}
+
+.register-input-box input:focus {
+    border-color: #1769ff;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 0 0 4px rgba(23,105,255,0.10);
+}
+
+
+/* Input icon */
+.register-input-icon {
+    position: absolute;
+
+    left: 14px;
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+    width: 20px;
+
+    text-align: center;
+
+    color: #6d7f99;
+
+    font-size: 15px;
+
+    pointer-events: none;
+}
+
+
+/* Password toggle */
+.register-password-toggle {
+    position: absolute;
+
+    right: 10px;
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+    width: 30px;
+    height: 30px;
+
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+
+    background: transparent;
+
+    color: #718198;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    border-radius: 7px;
+}
+
+.register-password-toggle:hover {
+    background: #edf3fb;
+}
+
+
+/* Create account button */
+.printpilot-register-button {
+    width: 100%;
+    height: 53px;
+
+    margin-top: 5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    border: none;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1769ff,
+            #347dff
+        );
+
+    color: white;
+
+    font-family: inherit;
+
+    font-size: 15px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 11px 25px rgba(23,105,255,0.25);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.printpilot-register-button span {
+    font-size: 18px;
+
+    transition:
+        transform 0.2s ease;
+}
+
+.printpilot-register-button:hover {
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 15px 32px rgba(23,105,255,0.32);
+}
+
+.printpilot-register-button:hover span {
+    transform:
+        translateX(3px);
+}
+
+.printpilot-register-button:active {
+    transform:
+        translateY(0);
+}
+
+
+/* Login link */
+.register-login-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    margin-top: 21px;
+
+    font-size: 13px;
+
+    color: #7b899c;
+}
+
+.register-login-link a {
+    color: #1769ff;
+
+    text-decoration: none;
+
+    font-weight: 800;
+}
+
+.register-login-link a span {
+    display: inline-block;
+
+    margin-left: 2px;
+
+    transition:
+        transform 0.2s ease;
+}
+
+.register-login-link a:hover {
+    text-decoration: underline;
+}
+
+.register-login-link a:hover span {
+    transform:
+        translateX(3px);
+}
+
+
+/* Footer */
+.register-footer {
+    margin-top: 15px;
+
+    color: #29476e;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    text-shadow:
+        0 1px 8px rgba(255,255,255,0.9);
+}
+
+
+/* Animation */
+@keyframes registerCardAppear {
+    from {
+        opacity: 0;
+        transform:
+            translateY(20px)
+            scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+/* Tablet */
+@media (max-width: 768px) {
+
+    .printpilot-register {
+        padding:
+            25px 15px;
+    }
+
+    .register-brand {
+        font-size: 30px;
+    }
+
+    .register-card {
+        width:
+            min(
+                470px,
+                calc(100vw - 30px)
+            );
+
+        padding:
+            30px
+            28px
+            25px;
+    }
+}
+
+
+/* Mobile */
+@media (max-width: 480px) {
+
+    .printpilot-register {
+        padding:
+            20px 12px;
+    }
+
+    .register-page-content {
+        min-height:
+            calc(100vh - 40px);
+    }
+
+    .register-brand {
+        font-size: 27px;
+    }
+
+    .register-brand-icon {
+        width: 36px;
+        height: 36px;
+
+        border-radius: 10px;
+
+        font-size: 18px;
+    }
+
+    .register-brand-center p {
+        font-size: 11px;
+    }
+
+    .register-card {
+        width: 100%;
+
+        padding:
+            26px
+            20px
+            23px;
+
+        border-radius: 20px;
+    }
+
+    .register-icon {
+        width: 53px;
+        height: 53px;
+
+        border-radius: 15px;
+
+        font-size: 23px;
+    }
+
+    .register-heading h1 {
+        font-size: 24px;
+    }
+
+    .register-heading p {
+        font-size: 13px;
+    }
+
+    .register-input-box input {
+        height: 49px;
+        font-size: 13px;
+    }
+
+    .printpilot-register-button {
+        height: 52px;
+    }
+
+    .register-login-link {
+        flex-wrap: wrap;
+    }
 }

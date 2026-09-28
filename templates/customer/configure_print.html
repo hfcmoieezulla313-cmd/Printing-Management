@@ -1,61 +1,510 @@
 {% extends "base.html" %}
-{% block title %}Configure Print - PrintCare{% endblock %}
+
+{% block title %}Configure Print - Printify AI{% endblock %}
+
 {% block content %}
-<div class="form-page">
-    <h1>Configure Your Print</h1>
-    <p class="detail-desc">Document: {{ document.original_filename }}</p>
 
-    <form method="post" id="config-form" class="form-stack" data-service-id="{{ service.id }}">
-        {% if service.paper_size %}
-        <label>Paper Size
-            <select name="paper_size" id="paper_size">
-                <option value="A4" {{ 'selected' if service.paper_size == 'A4' }}>A4</option>
-                <option value="A3" {{ 'selected' if service.paper_size == 'A3' }}>A3</option>
-            </select>
-        </label>
-        {% endif %}
+<section class="print-config-page">
 
-        <label>Print Type
-            <select name="print_type" id="print_type">
-                <option value="BW" {{ 'selected' if service.print_type == 'BW' }}>Black & White</option>
-                <option value="COLOR" {{ 'selected' if service.print_type == 'COLOR' }}>Color</option>
-            </select>
-        </label>
+    <div class="print-config-container">
 
-        <label>Print Side
-            <select name="print_side" id="print_side">
-                <option value="SINGLE">Single Side</option>
-                <option value="DOUBLE">Double Side</option>
-            </select>
-        </label>
+        <!-- Header -->
+        <div class="print-config-header">
+            <span class="config-eyebrow">PRINT SETTINGS</span>
 
-        <label>Copies
-            <input type="number" name="copies" id="copies" min="1" value="1">
-        </label>
+            <h1>Configure Your Print</h1>
 
-        <label>Pages per copy
-            <input type="number" name="page_count" id="page_count" min="1" value="{{ document.page_count }}">
-        </label>
-
-        <label>Binding
-            <select name="binding" id="binding">
-                <option value="NONE">None</option>
-                <option value="SPIRAL">Spiral Binding</option>
-            </select>
-        </label>
-
-        <div class="price-breakdown" id="price-breakdown" data-quote-url="{{ url_for('printing.quote') }}">
-            <div class="pb-row"><span>Document</span><span>{{ document.original_filename }}</span></div>
-            <div class="pb-row"><span>Price per page</span><span id="pb-per-page">Rs. {{ breakdown.price_per_page }}</span></div>
-            <div class="pb-row"><span>Printing subtotal</span><span id="pb-subtotal">Rs. {{ breakdown.printing_subtotal }}</span></div>
-            <div class="pb-row"><span>Binding cost</span><span id="pb-binding">Rs. {{ breakdown.binding_cost }}</span></div>
-            <div class="pb-row pb-total"><span>Final total</span><span id="pb-total">Rs. {{ breakdown.total }}</span></div>
+            <p>
+                Review your uploaded files and choose how you want them printed.
+            </p>
         </div>
 
-        <button type="submit" class="btn btn-primary btn-block">Add to Cart</button>
-    </form>
-</div>
+
+        <!-- Uploaded Files -->
+        <section class="config-card uploaded-files-card">
+
+            <div class="config-card-header">
+                <div>
+                    <h2>Your Files</h2>
+                    <p>
+                        {{ documents|length }}
+                        file{% if documents|length != 1 %}s{% endif %}
+                        ready for printing
+                    </p>
+                </div>
+            </div>
+
+
+            <div class="uploaded-files-list">
+
+                {% for file in documents %}
+
+                <div class="uploaded-file-row">
+
+                    <div class="uploaded-file-icon">
+                        {% if file.file_extension in ["jpg", "jpeg", "png"] %}
+                            🖼️
+                        {% else %}
+                            📄
+                        {% endif %}
+                    </div>
+
+                    <div class="uploaded-file-details">
+
+                        <div class="uploaded-file-name">
+                            {{ file.original_filename }}
+                        </div>
+
+                        <div class="uploaded-file-meta">
+                            {{ file.file_extension|upper }}
+                            ·
+                            {{ (file.file_size_bytes / 1024)|round(1) }} KB
+                        </div>
+
+                    </div>
+
+                    <div class="uploaded-file-number">
+                        {{ loop.index }}
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+        <!-- Configuration Form -->
+        <form
+            method="POST"
+            id="config-form"
+            class="print-config-form"
+            data-service-id="{{ service.id if service else '' }}"
+        >
+
+            <!-- Page Count -->
+            <section class="config-card">
+
+                <div class="config-card-header">
+                    <div>
+                        <h2>Pages</h2>
+                        <p>Enter the number of pages for each file.</p>
+                    </div>
+                </div>
+
+
+                <div class="page-count-list">
+
+                    {% for file in documents %}
+
+                    <div class="page-count-row">
+
+                        <div class="page-count-file">
+
+                            <div class="page-file-icon">
+                                {% if file.file_extension in ["jpg", "jpeg", "png"] %}
+                                    🖼️
+                                {% else %}
+                                    📄
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                <strong>{{ file.original_filename }}</strong>
+                                <span>Pages in this file</span>
+                            </div>
+
+                        </div>
+
+
+                        <input
+                            type="number"
+                            name="page_count_{{ file.id }}"
+                            id="page_count_{{ file.id }}"
+                            class="page-count-input"
+                            value="{{ file.page_count or 1 }}"
+                            min="1"
+                            required
+                        >
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+
+            <!-- Paper Size -->
+            <section class="config-card">
+
+                <div class="config-card-header">
+                    <div>
+                        <h2>Paper Size</h2>
+                        <p>Select the paper size for your print.</p>
+                    </div>
+                </div>
+
+
+                <div class="option-grid">
+
+                    <label class="option-card">
+                        <input
+                            type="radio"
+                            name="paper_size"
+                            value="A4"
+                            id="paper_size_a4"
+                            {% if not service or service.paper_size == "A4" %}
+                                checked
+                            {% endif %}
+                        >
+
+                        <span class="option-card-content">
+                            <span class="option-card-title">
+                                A4
+                            </span>
+
+                            <span class="option-card-description">
+                                Standard document size
+                            </span>
+                        </span>
+
+                    </label>
+
+
+                    <label class="option-card">
+                        <input
+                            type="radio"
+                            name="paper_size"
+                            value="A3"
+                            id="paper_size_a3"
+                            {% if service and service.paper_size == "A3" %}
+                                checked
+                            {% endif %}
+                        >
+
+                        <span class="option-card-content">
+                            <span class="option-card-title">
+                                A3
+                            </span>
+
+                            <span class="option-card-description">
+                                Larger paper size
+                            </span>
+                        </span>
+
+                    </label>
+
+                </div>
+
+            </section>
+
+
+            <!-- Print Type -->
+            <section class="config-card">
+
+                <div class="config-card-header">
+                    <div>
+                        <h2>Print Color</h2>
+                        <p>Choose how your documents should be printed.</p>
+                    </div>
+                </div>
+
+
+                <div class="option-grid">
+
+                    <label class="option-card">
+                        <input
+                            type="radio"
+                            name="print_type"
+                            value="BW"
+                            id="print_type_bw"
+                            {% if not service or service.print_type != "COLOR" %}
+                                checked
+                            {% endif %}
+                        >
+
+                        <span class="option-card-content">
+                            <span class="option-card-title">
+                                Black & White
+                            </span>
+
+                            <span class="option-card-description">
+                                Clear and economical printing
+                            </span>
+                        </span>
+
+                    </label>
+
+
+                    <label class="option-card">
+                        <input
+                            type="radio"
+                            name="print_type"
+                            value="COLOR"
+                            id="print_type_color"
+                            {% if service and service.print_type == "COLOR" %}
+                                checked
+                            {% endif %}
+                        >
+
+                        <span class="option-card-content">
+                            <span class="option-card-title">
+                                Color
+                            </span>
+
+                            <span class="option-card-description">
+                                Full-color printing
+                            </span>
+                        </span>
+
+                    </label>
+
+                </div>
+
+            </section>
+
+
+            <!-- Print Side -->
+            <section class="config-card">
+
+                <div class="config-card-header">
+                    <div>
+                        <h2>Print Side</h2>
+                        <p>Choose whether to print on one or both sides.</p>
+                    </div>
+                </div>
+
+
+                <div class="option-grid">
+
+                    <label class="option-card">
+                        <input
+                            type="radio"
+                            name="print_side"
+                            value="SINGLE"
+                            id="print_side_single"
+                            checked
+                        >
+
+                        <span class="option-card-content">
+                            <span class="option-card-title">
+                                Single Side
+                            </span>
+
+                            <span class="option-card-description">
+                                Print on one side
+                            </span>
+                        </span>
+
+                    </label>
+
+
+                    <label class="option-card">
+                        <input
+                            type="radio"
+                            name="print_side"
+                            value="DOUBLE"
+                            id="print_side_double"
+                        >
+
+                        <span class="option-card-content">
+                            <span class="option-card-title">
+                                Double Side
+                            </span>
+
+                            <span class="option-card-description">
+                                Print on both sides
+                            </span>
+                        </span>
+
+                    </label>
+
+                </div>
+
+            </section>
+
+
+            <!-- Copies + Binding -->
+            <section class="config-card">
+
+                <div class="config-card-header">
+                    <div>
+                        <h2>Finishing Options</h2>
+                        <p>Choose copies and binding.</p>
+                    </div>
+                </div>
+
+
+                <div class="config-fields">
+
+                    <div class="config-field">
+
+                        <label for="copies">
+                            Copies
+                        </label>
+
+                        <input
+                            type="number"
+                            name="copies"
+                            id="copies"
+                            value="1"
+                            min="1"
+                            required
+                        >
+
+                        <small>
+                            Number of complete sets to print
+                        </small>
+
+                    </div>
+
+
+                    <div class="config-field">
+
+                        <label for="binding">
+                            Binding
+                        </label>
+
+                        <select
+                            name="binding"
+                            id="binding"
+                        >
+
+                            <option value="NONE">
+                                No Binding
+                            </option>
+
+                            <option value="SPIRAL">
+                                Spiral Binding
+                            </option>
+
+                        </select>
+
+                        <small>
+                            Spiral binding is charged separately
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- Price Breakdown -->
+            <section
+                class="config-card price-card"
+                id="price-breakdown"
+                data-quote-url="{{ url_for('printing.quote') }}"
+            >
+
+                <div class="config-card-header">
+                    <div>
+                        <h2>Price Summary</h2>
+                        <p>Your estimated printing cost</p>
+                    </div>
+                </div>
+
+
+                <div class="price-summary">
+
+                    <div class="pb-row">
+                        <span>Total files</span>
+                        <strong>
+                            {{ documents|length }}
+                        </strong>
+                    </div>
+
+
+                    <div class="pb-row">
+                        <span>Total pages</span>
+                        <strong id="pb-pages">
+                            {{ documents|sum(attribute='page_count') }}
+                        </strong>
+                    </div>
+
+
+                    <div class="pb-row">
+                        <span>Price per page</span>
+                        <span id="pb-per-page">
+                            {% if breakdown %}
+                                Rs. {{ '%.2f'|format(breakdown.price_per_page) }}
+                            {% else %}
+                                Rs. 0.00
+                            {% endif %}
+                        </span>
+                    </div>
+
+
+                    <div class="pb-row">
+                        <span>Printing subtotal</span>
+                        <span id="pb-subtotal">
+                            {% if breakdown %}
+                                Rs. {{ '%.2f'|format(breakdown.printing_subtotal) }}
+                            {% else %}
+                                Rs. 0.00
+                            {% endif %}
+                        </span>
+                    </div>
+
+
+                    <div class="pb-row">
+                        <span>Binding cost</span>
+                        <span id="pb-binding">
+                            {% if breakdown %}
+                                Rs. {{ '%.2f'|format(breakdown.binding_cost) }}
+                            {% else %}
+                                Rs. 0.00
+                            {% endif %}
+                        </span>
+                    </div>
+
+
+                    <div class="pb-row pb-total">
+
+                        <span>Final Total</span>
+
+                        <strong id="pb-total">
+
+                            {% if breakdown %}
+                                Rs. {{ '%.2f'|format(breakdown.total) }}
+                            {% else %}
+                                Rs. 0.00
+                            {% endif %}
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- Submit -->
+            <button
+                type="submit"
+                class="btn btn-primary btn-lg btn-block print-submit"
+            >
+                Add All Files to Cart →
+            </button>
+
+
+        </form>
+
+    </div>
+
+</section>
+
 {% endblock %}
+
+
 {% block extra_js %}
+
 <script src="{{ url_for('static', filename='js/print_config.js') }}"></script>
+
 {% endblock %}

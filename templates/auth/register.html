@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}PrintPilot AI - Create Account{% endblock %}
+{% block title %}Printify - Create Account{% endblock %}
 
 {% block content %}
 
-<div class="printpilot-register">
+<div class="Printify-register">
 
     <!-- Background -->
     <div class="register-background"></div>
@@ -13,11 +13,22 @@
 
         <!-- Brand -->
         <div class="register-brand-center">
-            <a href="{{ url_for('main.home') }}" class="register-brand">
-                <span class="register-brand-icon">✦</span>
-                <span>Print<span>Pilot AI</span></span>
+
+            <a
+                href="{{ url_for('main.home') }}"
+                class="register-brand"
+            >
+
+                <img
+                    src="{{ url_for('static', filename='images/printify-logo.png') }}"
+                    alt="Printify"
+                    class="printify-register-logo"
+                >
+
             </a>
+
             <p>Smart Printing & Stationery</p>
+
         </div>
 
         <!-- Register Card -->
@@ -28,34 +39,57 @@
             </div>
 
             <div class="register-heading">
-                <h1>Create your account</h1>
-                <p>Join PrintPilot AI and start printing smarter.</p>
+
+                <h1>
+                    Create your account
+                </h1>
+
+                <p>
+                    Join Printify and start printing smarter.
+                </p>
+
             </div>
 
             <!-- Flash Messages -->
             {% with messages = get_flashed_messages(with_categories=true) %}
+
                 {% if messages %}
+
                     <div class="register-flashes">
+
                         {% for category, message in messages %}
+
                             <div class="flash flash-{{ category }}">
                                 {{ message }}
                             </div>
+
                         {% endfor %}
+
                     </div>
+
                 {% endif %}
+
             {% endwith %}
 
             <!-- Register Form -->
-            <form method="POST"
-                  action="{{ url_for('auth.register') }}"
-                  class="printpilot-register-form">
+            <form
+                method="POST"
+                action="{{ url_for('auth.register') }}"
+                class="Printify-register-form"
+            >
 
                 <!-- Full Name -->
                 <div class="register-field">
-                    <label for="full_name">Full Name</label>
+
+                    <label for="full_name">
+                        Full Name
+                    </label>
 
                     <div class="register-input-box">
-                        <span class="register-input-icon">👤</span>
+
+                        <span class="register-input-icon">
+                            👤
+                        </span>
 
                         <input
                             type="text"
@@ -66,15 +100,23 @@
                             autocomplete="name"
                             required
                         >
+
                     </div>
+
                 </div>
 
                 <!-- Email -->
                 <div class="register-field">
-                    <label for="email">Email Address</label>
+
+                    <label for="email">
+                        Email Address
+                    </label>
 
                     <div class="register-input-box">
-                        <span class="register-input-icon">✉</span>
+
+                        <span class="register-input-icon">
+                            ✉
+                        </span>
 
                         <input
                             type="email"
@@ -85,15 +127,23 @@
                             autocomplete="email"
                             required
                         >
+
                     </div>
+
                 </div>
 
                 <!-- Mobile -->
                 <div class="register-field">
-                    <label for="phone">Mobile Number</label>
+
+                    <label for="phone">
+                        Mobile Number
+                    </label>
 
                     <div class="register-input-box">
-                        <span class="register-input-icon">📱</span>
+
+                        <span class="register-input-icon">
+                            📱
+                        </span>
 
                         <input
                             type="tel"
@@ -106,15 +156,23 @@
                             autocomplete="tel"
                             required
                         >
+
                     </div>
+
                 </div>
 
                 <!-- Password -->
                 <div class="register-field">
-                    <label for="password">Password</label>
+
+                    <label for="password">
+                        Password
+                    </label>
 
                     <div class="register-input-box">
-                        <span class="register-input-icon">🔒</span>
+
+                        <span class="register-input-icon">
+                            🔒
+                        </span>
 
                         <input
                             type="password"
@@ -133,15 +191,23 @@
                         >
                             👁
                         </button>
+
                     </div>
+
                 </div>
 
                 <!-- Confirm Password -->
                 <div class="register-field">
-                    <label for="confirm_password">Confirm Password</label>
+
+                    <label for="confirm_password">
+                        Confirm Password
+                    </label>
 
                     <div class="register-input-box">
-                        <span class="register-input-icon">🔒</span>
+
+                        <span class="register-input-icon">
+                            🔒
+                        </span>
 
                         <input
                             type="password"
@@ -160,11 +226,16 @@
                         >
                             👁
                         </button>
+
                     </div>
+
                 </div>
 
                 <!-- Create Account -->
-                <button type="submit" class="printpilot-register-button">
+                <button
+                    type="submit"
+                    class="Printify-register-button"
+                >
                     Create Account
                     <span>→</span>
                 </button>
@@ -173,38 +244,88 @@
 
             <!-- Login Link -->
             <div class="register-login-link">
-                <span>Already have an account?</span>
+
+                <span>
+                    Already have an account?
+                </span>
+
                 <a href="{{ url_for('auth.login') }}">
                     Log in
                     <span>→</span>
                 </a>
+
             </div>
 
         </div>
 
         <!-- Footer -->
         <div class="register-footer">
-            © 2026 PrintPilot AI
+            © 2026 Printify
         </div>
 
     </div>
 
 </div>
 
+
+<!-- =========================================================
+     LOGO SIZE
+========================================================= -->
+
+<style>
+
+.register-brand .printify-register-logo {
+    display: block;
+    width: 210px;
+    height: auto;
+    object-fit: contain;
+}
+
+@media (max-width: 600px) {
+
+    .register-brand .printify-register-logo {
+        width: 180px;
+    }
+
+}
+
+</style>
+
+
 <script>
+
 function toggleRegisterPassword(inputId, button) {
-    const input = document.getElementById(inputId);
+
+    const input =
+        document.getElementById(inputId);
+
 
     if (input.type === "password") {
+
         input.type = "text";
+
         button.textContent = "🙈";
-        button.setAttribute("aria-label", "Hide password");
+
+        button.setAttribute(
+            "aria-label",
+            "Hide password"
+        );
+
     } else {
+
         input.type = "password";
+
         button.textContent = "👁";
-        button.setAttribute("aria-label", "Show password");
+
+        button.setAttribute(
+            "aria-label",
+            "Show password"
+        );
+
     }
+
 }
+
 </script>
 
 {% endblock %}

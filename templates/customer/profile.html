@@ -1,34 +1,751 @@
 {% extends "base.html" %}
-{% block title %}Profile - PrintCare{% endblock %}
+
+{% block title %}Profile - Printify{% endblock %}
+
 {% block content %}
-<h2 class="section-title">My Profile</h2>
 
-<form method="post" action="{{ url_for('profile.edit_profile') }}" class="form-stack">
-    <label>Full Name
-        <input type="text" name="full_name" value="{{ user.full_name }}">
-    </label>
-    <label>Email
-        <input type="email" value="{{ user.email }}" disabled>
-    </label>
-    <label>Phone
-        <input type="text" value="{{ user.phone }}" disabled>
-    </label>
-    <button type="submit" class="btn btn-primary btn-block">Save Changes</button>
-</form>
+<style>
+/* =========================================================
+   PRINTIFY PROFILE PAGE
+   Page-scoped styles only.
+========================================================= */
 
-<h3 class="section-subtitle">Change Password</h3>
-<form method="post" action="{{ url_for('profile.change_password') }}" class="form-stack">
-    <label>Current Password<input type="password" name="current_password" required></label>
-    <label>New Password<input type="password" name="new_password" required></label>
-    <label>Confirm New Password<input type="password" name="confirm_password" required></label>
-    <button type="submit" class="btn btn-secondary btn-block">Change Password</button>
-</form>
+.printify-profile-page {
+    max-width: 1050px;
+    margin: 0 auto;
+    padding: 32px 28px 110px;
+}
 
-<div class="profile-links">
-    <a href="{{ url_for('profile.addresses') }}" class="profile-link">📍 Manage Addresses</a>
-    <a href="{{ url_for('orders.my_orders') }}" class="profile-link">📦 My Orders</a>
-    <a href="{{ url_for('profile.notifications') }}" class="profile-link">🔔 Notifications</a>
-    <a href="{{ url_for('support.support') }}" class="profile-link">🆘 Support / Complaints</a>
-    <a href="{{ url_for('auth.logout') }}" class="profile-link">⎋ Logout</a>
+/* =========================================================
+   HEADER
+========================================================= */
+
+.profile-header {
+    margin-bottom: 28px;
+}
+
+.profile-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #eaf2ff;
+    color: #2563eb;
+    padding: 7px 13px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.profile-header h1 {
+    margin: 0 0 7px;
+    color: #172033;
+    font-size: 34px;
+    font-weight: 800;
+}
+
+.profile-header p {
+    margin: 0;
+    color: #667085;
+    font-size: 14px;
+}
+
+/* =========================================================
+   MAIN GRID
+========================================================= */
+
+.profile-main-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(300px, 0.9fr);
+    gap: 22px;
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.profile-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f2;
+    border-radius: 22px;
+    padding: 25px;
+    box-shadow: 0 10px 28px rgba(28, 45, 78, 0.06);
+}
+
+.profile-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.profile-card-icon {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    border-radius: 15px;
+    background: #eef4ff;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.profile-card-header h2 {
+    margin: 0 0 4px;
+    color: #172033;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.profile-card-header p {
+    margin: 0;
+    color: #8490a2;
+    font-size: 12px;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.printify-profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+}
+
+.printify-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.printify-field-label {
+    color: #344054;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.printify-profile-form input {
+    width: 100%;
+    height: 46px;
+    box-sizing: border-box;
+    border: 1px solid #d9e1ed;
+    border-radius: 12px;
+    background: #fbfcfe;
+    color: #172033;
+    padding: 0 14px;
+    font-size: 14px;
+    outline: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.printify-profile-form input:focus {
+    border-color: #72a0ed;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.09);
+}
+
+.printify-profile-form input:disabled {
+    background: #f3f6fa;
+    color: #7d8797;
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.printify-primary-button,
+.printify-secondary-button {
+    width: 100%;
+    min-height: 46px;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.printify-primary-button {
+    background: #2563eb;
+    color: #ffffff;
+}
+
+.printify-primary-button:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 9px 20px rgba(37, 99, 235, 0.20);
+}
+
+.printify-secondary-button {
+    background: #172033;
+    color: #ffffff;
+}
+
+.printify-secondary-button:hover {
+    background: #101827;
+    transform: translateY(-1px);
+    box-shadow: 0 9px 20px rgba(23, 32, 51, 0.16);
+}
+
+/* =========================================================
+   ACCOUNT SUMMARY
+========================================================= */
+
+.profile-summary {
+    margin-top: 18px;
+    padding: 16px;
+    border-radius: 15px;
+    background: #f7f9fd;
+    border: 1px solid #e8edf5;
+}
+
+.profile-summary-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 7px 0;
+}
+
+.profile-summary-row + .profile-summary-row {
+    border-top: 1px solid #e6ebf3;
+}
+
+.profile-summary-label {
+    color: #8490a2;
+    font-size: 12px;
+}
+
+.profile-summary-value {
+    color: #344054;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: right;
+}
+
+/* =========================================================
+   ACCOUNT LINKS
+========================================================= */
+
+.profile-actions-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f2;
+    border-radius: 22px;
+    padding: 25px;
+    box-shadow: 0 10px 28px rgba(28, 45, 78, 0.06);
+}
+
+.profile-actions-card h2 {
+    margin: 0 0 6px;
+    color: #172033;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.profile-actions-card > p {
+    margin: 0 0 18px;
+    color: #8490a2;
+    font-size: 12px;
+}
+
+.profile-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.profile-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 56px;
+    padding: 0 15px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 1px solid #e2e8f2;
+    border-radius: 14px;
+    color: #344054;
+    font-size: 13px;
+    font-weight: 750;
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.profile-link:hover {
+    transform: translateY(-2px);
+    border-color: #bdd2f8;
+    background: #f8fbff;
+    box-shadow: 0 8px 18px rgba(28, 45, 78, 0.07);
+}
+
+.profile-link-icon {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 10px;
+    background: #eef4ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+}
+
+.profile-link-arrow {
+    margin-left: auto;
+    color: #98a2b3;
+    font-size: 17px;
+}
+
+.profile-link.logout {
+    color: #dc3545;
+    border-color: #f0d6da;
+}
+
+.profile-link.logout .profile-link-icon {
+    background: #fff0f2;
+}
+
+.profile-link.logout:hover {
+    background: #fff7f8;
+    border-color: #efb7c0;
+}
+
+/* =========================================================
+   SECURITY NOTE
+========================================================= */
+
+.security-note {
+    margin-top: 16px;
+    padding: 13px 14px;
+    border-radius: 12px;
+    background: #f7f9fd;
+    border: 1px solid #e6ebf3;
+    color: #7b8495;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 850px) {
+
+    .profile-main-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-actions-card {
+        order: 2;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .printify-profile-page {
+        padding: 22px 15px 105px;
+    }
+
+    .profile-header h1 {
+        font-size: 28px;
+    }
+
+    .profile-card,
+    .profile-actions-card {
+        padding: 19px;
+        border-radius: 18px;
+    }
+
+    .profile-card-header h2,
+    .profile-actions-card h2 {
+        font-size: 19px;
+    }
+
+    .profile-summary-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .profile-summary-value {
+        text-align: left;
+    }
+}
+</style>
+
+
+<div class="printify-profile-page">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="profile-header">
+
+        <span class="profile-eyebrow">
+            👤 Your Account
+        </span>
+
+        <h1>My Profile</h1>
+
+        <p>
+            Manage your personal information, password and account options.
+        </p>
+
+    </header>
+
+
+    <!-- =====================================================
+         MAIN PROFILE AREA
+    ====================================================== -->
+
+    <div class="profile-main-grid">
+
+        <!-- =================================================
+             PROFILE INFORMATION
+        ================================================== -->
+
+        <section class="profile-card">
+
+            <div class="profile-card-header">
+
+                <div class="profile-card-icon">
+                    👤
+                </div>
+
+                <div>
+                    <h2>Profile Information</h2>
+                    <p>Keep your account details up to date.</p>
+                </div>
+
+            </div>
+
+
+            <form
+                method="post"
+                action="{{ url_for('profile.edit_profile') }}"
+                class="printify-profile-form"
+            >
+
+                <!-- FULL NAME -->
+
+                <label class="printify-field">
+
+                    <span class="printify-field-label">
+                        Full Name
+                    </span>
+
+                    <input
+                        type="text"
+                        name="full_name"
+                        value="{{ user.full_name }}"
+                    >
+
+                </label>
+
+
+                <!-- EMAIL -->
+
+                <label class="printify-field">
+
+                    <span class="printify-field-label">
+                        Email
+                    </span>
+
+                    <input
+                        type="email"
+                        value="{{ user.email }}"
+                        disabled
+                    >
+
+                </label>
+
+
+                <!-- PHONE -->
+
+                <label class="printify-field">
+
+                    <span class="printify-field-label">
+                        Phone
+                    </span>
+
+                    <input
+                        type="text"
+                        value="{{ user.phone }}"
+                        disabled
+                    >
+
+                </label>
+
+
+                <button
+                    type="submit"
+                    class="printify-primary-button"
+                >
+                    Save Changes
+                </button>
+
+            </form>
+
+
+            <!-- ACCOUNT SUMMARY -->
+
+            <div class="profile-summary">
+
+                <div class="profile-summary-row">
+
+                    <span class="profile-summary-label">
+                        Account
+                    </span>
+
+                    <span class="profile-summary-value">
+                        Printify Customer
+                    </span>
+
+                </div>
+
+                <div class="profile-summary-row">
+
+                    <span class="profile-summary-label">
+                        Email status
+                    </span>
+
+                    <span class="profile-summary-value">
+                        Registered
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             PASSWORD + ACCOUNT ACTIONS
+        ================================================== -->
+
+        <div>
+
+            <!-- CHANGE PASSWORD -->
+
+            <section class="profile-card">
+
+                <div class="profile-card-header">
+
+                    <div class="profile-card-icon">
+                        🔐
+                    </div>
+
+                    <div>
+                        <h2>Change Password</h2>
+                        <p>Update your account password securely.</p>
+                    </div>
+
+                </div>
+
+
+                <form
+                    method="post"
+                    action="{{ url_for('profile.change_password') }}"
+                    class="printify-profile-form"
+                >
+
+                    <label class="printify-field">
+
+                        <span class="printify-field-label">
+                            Current Password
+                        </span>
+
+                        <input
+                            type="password"
+                            name="current_password"
+                            required
+                        >
+
+                    </label>
+
+
+                    <label class="printify-field">
+
+                        <span class="printify-field-label">
+                            New Password
+                        </span>
+
+                        <input
+                            type="password"
+                            name="new_password"
+                            required
+                        >
+
+                    </label>
+
+
+                    <label class="printify-field">
+
+                        <span class="printify-field-label">
+                            Confirm New Password
+                        </span>
+
+                        <input
+                            type="password"
+                            name="confirm_password"
+                            required
+                        >
+
+                    </label>
+
+
+                    <button
+                        type="submit"
+                        class="printify-secondary-button"
+                    >
+                        Change Password
+                    </button>
+
+                </form>
+
+
+                <div class="security-note">
+                    🔒 Keep your password private and never share it with anyone.
+                </div>
+
+            </section>
+
+
+            <!-- ACCOUNT LINKS -->
+
+            <section class="profile-actions-card"
+                     style="margin-top: 22px;">
+
+                <h2>Account Options</h2>
+
+                <p>
+                    Quickly access the rest of your Printify account.
+                </p>
+
+
+                <div class="profile-links">
+
+                    <a
+                        href="{{ url_for('profile.addresses') }}"
+                        class="profile-link"
+                    >
+
+                        <span class="profile-link-icon">
+                            📍
+                        </span>
+
+                        <span>
+                            Manage Addresses
+                        </span>
+
+                        <span class="profile-link-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('orders.my_orders') }}"
+                        class="profile-link"
+                    >
+
+                        <span class="profile-link-icon">
+                            📦
+                        </span>
+
+                        <span>
+                            My Orders
+                        </span>
+
+                        <span class="profile-link-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('profile.notifications') }}"
+                        class="profile-link"
+                    >
+
+                        <span class="profile-link-icon">
+                            🔔
+                        </span>
+
+                        <span>
+                            Notifications
+                        </span>
+
+                        <span class="profile-link-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('support.support') }}"
+                        class="profile-link"
+                    >
+
+                        <span class="profile-link-icon">
+                            🆘
+                        </span>
+
+                        <span>
+                            Support / Complaints
+                        </span>
+
+                        <span class="profile-link-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('auth.logout') }}"
+                        class="profile-link logout"
+                    >
+
+                        <span class="profile-link-icon">
+                            ⎋
+                        </span>
+
+                        <span>
+                            Logout
+                        </span>
+
+                        <span class="profile-link-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </div>
+
 </div>
+
 {% endblock %}

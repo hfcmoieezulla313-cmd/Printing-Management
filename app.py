@@ -1,28 +1,35 @@
-"""
-Printing Management System - application entrypoint.
-Run with:  python app.py
-Then open: http://127.0.0.1:5000/
-"""
 import os
+
 from flask import Flask, render_template
+
 from config import Config
 from models import db
 from utils import current_user, current_admin
 
 
 def create_app(config_class=Config):
+
     app = Flask(__name__)
+
     app.config.from_object(config_class)
 
-    os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+    os.makedirs(
+        app.config["UPLOAD_FOLDER"],
+        exist_ok=True
+    )
 
     db.init_app(app)
 
-    # ---- Blueprints -----------------------------------------------------
+    # ---------------------------------------------------------
+    # Blueprints
+    # ---------------------------------------------------------
+
     from routes.auth import auth_bp
     from routes.main import main_bp
     from routes.printing import printing_bp
     from routes.upload import upload_bp
+    from routes.photo import photo_bp
+    from routes.passport_photo import passport_photo_bp
     from routes.stationery import stationery_bp
     from routes.cart import cart_bp
     from routes.checkout import checkout_bp
@@ -36,6 +43,8 @@ def create_app(config_class=Config):
     app.register_blueprint(main_bp)
     app.register_blueprint(printing_bp)
     app.register_blueprint(upload_bp)
+    app.register_blueprint(photo_bp)
+    app.register_blueprint(passport_photo_bp)
     app.register_blueprint(stationery_bp)
     app.register_blueprint(cart_bp)
     app.register_blueprint(checkout_bp)
@@ -45,23 +54,45 @@ def create_app(config_class=Config):
     app.register_blueprint(chatbot_bp)
     app.register_blueprint(admin_bp)
 
-    # ---- Template globals -------------------------------------------------
+    # ---------------------------------------------------------
+    # Global template variables
+    # ---------------------------------------------------------
+
     @app.context_processor
     def inject_globals():
-        return {"current_user": current_user(), "current_admin": current_admin()}
+        return {
+            "current_user": current_user(),
+            "current_admin": current_admin(),
+        }
 
-    # ---- Error handlers -----------------------------------------------
+    # ---------------------------------------------------------
+    # Error handlers
+    # ---------------------------------------------------------
+
     @app.errorhandler(404)
     def not_found(e):
-        return render_template("errors/404.html"), 404
+        return render_template(
+            "errors/404.html"
+        ), 404
 
     @app.errorhandler(500)
     def server_error(e):
         db.session.rollback()
-        return render_template("errors/500.html"), 500
+
+        return render_template(
+            "errors/500.html"
+        ), 500
 
     return app
 
+
 app = create_app()
+
+
 if __name__ == "__main__":
-    app.run(debug=app.config.get("DEBUG", True))
+    app.run(
+        debug=app.config.get(
+            "DEBUG",
+            True
+        )
+    )

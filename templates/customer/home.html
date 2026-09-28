@@ -1,8 +1,337 @@
 {% extends "base.html" %}
 
-{% block title %}PrintCare - Home{% endblock %}
+{% block title %}Printify - Home{% endblock %}
 
 {% block content %}
+
+<style>
+
+/* =========================================================
+   REAL PRINTER IMAGE
+   ONLY THE PRINTER IMAGE IS CHANGED
+========================================================= */
+
+.dashboard-hero .hero-printer .dashboard-printer-photo {
+
+    width: 125%;
+    max-width: 500px;
+    height: 320px;
+
+    object-fit: contain;
+
+    display: block;
+
+    margin: 0 auto;
+
+    transform: scale(1.08);
+
+    filter: drop-shadow(
+        0 18px 25px rgba(30, 50, 90, 0.16)
+    );
+}
+
+
+@media (max-width: 1000px) {
+
+    .dashboard-hero .hero-printer .dashboard-printer-photo {
+
+        width: 115%;
+        max-width: 400px;
+        height: 280px;
+
+        transform: scale(1.06);
+
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .dashboard-hero .hero-printer .dashboard-printer-photo {
+
+        width: 110%;
+        max-width: 340px;
+        height: 245px;
+
+        transform: scale(1.04);
+
+    }
+
+}
+
+
+
+/* =========================================================
+   PRINTIFY HOME / DASHBOARD REFRESH
+   Page-scoped overrides only.
+   Quick Access follows the same card language as Categories.
+========================================================= */
+
+.printcare-dashboard {
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 30px 28px 110px;
+}
+
+.dashboard-hero {
+    min-height: 360px;
+    border-radius: 24px;
+    padding: 42px;
+    background: linear-gradient(135deg, #f4f8ff 0%, #ffffff 72%);
+    border: 1px solid #dfe8f6;
+    box-shadow: 0 12px 35px rgba(28, 45, 78, 0.07);
+    margin-bottom: 38px;
+}
+
+.hero-badge {
+    background: #eaf2ff;
+    color: #2563eb;
+    border: 1px solid #d8e6ff;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+}
+
+.hero-content h1 {
+    color: #172033;
+    font-size: 44px;
+    font-weight: 800;
+}
+
+.hero-content h1 span {
+    color: #2563eb;
+}
+
+.hero-content p {
+    color: #667085;
+    max-width: 570px;
+}
+
+.dashboard-primary-btn {
+    background: #2563eb;
+    border-radius: 12px;
+    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.18);
+}
+
+.dashboard-primary-btn:hover {
+    background: #1d4ed8;
+}
+
+/* ---------------------------------------------------------
+   SECTION HEADINGS
+--------------------------------------------------------- */
+
+.dashboard-section-header h2 {
+    color: #172033;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.dashboard-section-header p {
+    color: #7b8495;
+}
+
+.view-all {
+    color: #2563eb;
+}
+
+/* ---------------------------------------------------------
+   QUICK ACCESS = CATEGORY STYLE
+--------------------------------------------------------- */
+
+.quick-access-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.quick-access-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-height: 86px;
+    padding: 17px 16px;
+    background: #ffffff;
+    border: 1px solid #e4eaf4;
+    border-radius: 18px;
+    box-shadow: 0 7px 22px rgba(28, 45, 78, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    overflow: hidden;
+}
+
+.quick-access-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.06), transparent 55%);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+.quick-access-card:hover {
+    transform: translateY(-4px);
+    border-color: #bdd2f8;
+    box-shadow: 0 14px 30px rgba(28, 45, 78, 0.10);
+}
+
+.quick-access-card:hover::before {
+    opacity: 1;
+}
+
+.quick-access-icon {
+    position: relative;
+    z-index: 1;
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    border-radius: 15px;
+    background: #eef4ff;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 23px;
+    margin: 0;
+}
+
+.quick-access-card h3 {
+    position: relative;
+    z-index: 1;
+    margin: 0 0 4px;
+    color: #172033;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.quick-access-card p {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    color: #8a93a3;
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+/* ---------------------------------------------------------
+   AI SECTION
+--------------------------------------------------------- */
+
+.ai-assistant-section {
+    background: linear-gradient(135deg, #f4f8ff 0%, #ffffff 72%);
+    border: 1px solid #dfe8f6;
+    border-radius: 22px;
+    box-shadow: 0 10px 30px rgba(28, 45, 78, 0.06);
+}
+
+.ai-robot {
+    background: #eef4ff;
+    box-shadow: none;
+    border: 1px solid #dbe7fb;
+}
+
+.ai-online {
+    color: #16a05d;
+}
+
+.ai-assistant-content h2 {
+    color: #172033;
+    font-weight: 800;
+}
+
+.ai-assistant-content p {
+    color: #667085;
+}
+
+.ai-chat-button {
+    background: #2563eb;
+    border-radius: 11px;
+    box-shadow: 0 9px 20px rgba(37, 99, 235, 0.16);
+}
+
+/* ---------------------------------------------------------
+   PRODUCT SECTION
+--------------------------------------------------------- */
+
+.stationery-product-card {
+    border: 1px solid #e4eaf4;
+    box-shadow: 0 7px 22px rgba(28, 45, 78, 0.05);
+}
+
+.stationery-product-card:hover {
+    border-color: #bdd2f8;
+    box-shadow: 0 14px 30px rgba(28, 45, 78, 0.10);
+}
+
+.product-image-container {
+    background: #f7f9fd;
+}
+
+.product-name {
+    color: #172033;
+}
+
+.product-name:hover {
+    color: #2563eb;
+}
+
+.product-price {
+    color: #172033;
+}
+
+.add-cart-button {
+    background: #2563eb;
+}
+
+.add-cart-button:hover {
+    background: #1d4ed8;
+}
+
+/* ---------------------------------------------------------
+   FINAL CTA
+--------------------------------------------------------- */
+
+.dashboard-cta {
+    background: #172033;
+    border-radius: 22px;
+    box-shadow: 0 12px 30px rgba(23, 32, 51, 0.12);
+}
+
+.dashboard-cta h2 {
+    font-weight: 800;
+}
+
+/* ---------------------------------------------------------
+   RESPONSIVE OVERRIDES
+--------------------------------------------------------- */
+
+@media (max-width: 1000px) {
+    .quick-access-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .printcare-dashboard {
+        padding: 22px 15px 105px;
+    }
+
+    .dashboard-hero {
+        padding: 30px 22px;
+    }
+
+    .hero-content h1 {
+        font-size: 35px;
+    }
+
+    .quick-access-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
+
 
 <div class="printcare-dashboard">
 
@@ -36,27 +365,20 @@
         </div>
 
 
+        <!-- =================================================
+             REAL PRINTER PHOTO
+        ================================================== -->
+
         <div class="hero-printer">
 
-            <div class="printer-illustration">
-
-                <div class="printer-top"></div>
-
-                <div class="printer-body">
-
-                    <div class="printer-screen">
-                        ●
-                    </div>
-
-                    <div class="printer-paper-slot"></div>
-
-                </div>
-
-                <div class="printer-paper">
-                    <span>PRINTCARE</span>
-                </div>
-
-            </div>
+            <img
+                src="{{ url_for(
+                    'static',
+                    filename='images/printer-photo.png'
+                ) }}"
+                alt="Printify printer"
+                class="dashboard-printer-photo"
+            >
 
         </div>
 
@@ -72,11 +394,15 @@
         <div class="dashboard-section-header">
 
             <div>
-                <h2>Quick Access</h2>
+
+                <h2>
+                    Quick Access
+                </h2>
 
                 <p>
                     What do you need today?
                 </p>
+
             </div>
 
         </div>
@@ -104,9 +430,9 @@
             </a>
 
 
-            <!-- PHOTOS -->
+            <!-- PHOTO -->
 
-            <a href="#"
+            <a href="{{ url_for('photo.upload_photo') }}"
                class="quick-access-card">
 
                 <div class="quick-access-icon">
@@ -114,7 +440,7 @@
                 </div>
 
                 <h3>
-                    Photos
+                    Photo
                 </h3>
 
                 <p>
@@ -124,9 +450,9 @@
             </a>
 
 
-            <!-- PASSPORT PHOTOS -->
+            <!-- PASSPORT PHOTO -->
 
-            <a href="#"
+            <a href="{{ url_for('passport_photo.upload_passport_photo') }}"
                class="quick-access-card">
 
                 <div class="quick-access-icon">
@@ -134,7 +460,7 @@
                 </div>
 
                 <h3>
-                    Passport Photos
+                    Passport Photo
                 </h3>
 
                 <p>
@@ -192,7 +518,7 @@
             <h2>
                 Need help?
                 <br>
-                Ask PrintCare AI.
+                Ask Printa.
             </h2>
 
             <p>
@@ -206,158 +532,9 @@
             <a href="{{ url_for('chatbot.chat') }}"
                class="ai-chat-button">
 
-                💬 Chat with AI
+                💬 Chat with Printa
 
             </a>
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         PRINTING SERVICES
-    ====================================================== -->
-
-    <section class="dashboard-section">
-
-        <div class="dashboard-section-header">
-
-            <div>
-
-                <h2>
-                    🖨️ Printing Services
-                </h2>
-
-                <p>
-                    Choose the service you need
-                </p>
-
-            </div>
-
-
-            <a href="{{ url_for('printing.list_services') }}"
-               class="view-all">
-
-                View all →
-
-            </a>
-
-        </div>
-
-
-        <div class="printing-services-grid">
-
-            {% for svc in popular_printing %}
-
-                <a href="{{ url_for('printing.details',
-                                    slug=svc.slug) }}"
-                   class="printing-service-card">
-
-                    <div class="service-icon">
-                        🖨️
-                    </div>
-
-
-                    <div class="service-info">
-
-                        <h3>
-                            {{ svc.name }}
-                        </h3>
-
-
-                        <p>
-
-                            {% if svc.is_configurable %}
-
-                                ₹{{ svc.price_per_page }}/page
-
-                            {% else %}
-
-                                ₹{{ svc.flat_price }}
-
-                            {% endif %}
-
-                        </p>
-
-                    </div>
-
-
-                    <span class="service-arrow">
-                        →
-                    </span>
-
-                </a>
-
-            {% else %}
-
-                <p>
-                    No printing services available.
-                </p>
-
-            {% endfor %}
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         STATIONERY CATEGORIES
-    ====================================================== -->
-
-    <section class="dashboard-section">
-
-        <div class="dashboard-section-header">
-
-            <div>
-
-                <h2>
-                    📚 Stationery Categories
-                </h2>
-
-                <p>
-                    Find what you need quickly
-                </p>
-
-            </div>
-
-
-            <a href="{{ url_for('stationery.list_products') }}"
-               class="view-all">
-
-                View all →
-
-            </a>
-
-        </div>
-
-
-        <div class="stationery-category-grid">
-
-            {% for cat in stationery_categories %}
-
-                <a href="{{ url_for('stationery.list_products',
-                                    category=cat.id) }}"
-                   class="stationery-category-card">
-
-                    <div class="category-icon">
-                        📦
-                    </div>
-
-                    <span>
-                        {{ cat.name }}
-                    </span>
-
-                </a>
-
-            {% else %}
-
-                <p>
-                    No stationery categories available.
-                </p>
-
-            {% endfor %}
 
         </div>
 
@@ -573,7 +750,8 @@
 
 function changeQuantity(button, amount) {
 
-    const quantityBox = button.parentElement;
+    const quantityBox =
+        button.parentElement;
 
     const quantityText =
         quantityBox.querySelector(".quantity-value");

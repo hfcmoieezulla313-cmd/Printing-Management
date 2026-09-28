@@ -16,6 +16,7 @@ from models.printing_service import PrintingService   # noqa: E402
 from models.stationery_product import StationeryProduct  # noqa: E402
 from models.document import UploadedDocument            # noqa: E402
 from models.print_configuration import PrintConfiguration  # noqa: E402
+from models.photo_configuration import PhotoConfiguration  # noqa: E402
 from models.cart import Cart, CartItem  # noqa: E402
 from models.order import Order, OrderItem  # noqa: E402
 from models.coupon import Coupon        # noqa: E402
@@ -25,8 +26,24 @@ from models.chat import ChatSession, ChatMessage  # noqa: E402
 from models.setting import Setting      # noqa: E402
 
 __all__ = [
-    "db", "User", "Admin", "Address", "Category", "PrintingService",
-    "StationeryProduct", "UploadedDocument", "PrintConfiguration",
-    "Cart", "CartItem", "Order", "OrderItem", "Coupon", "Complaint",
-    "Notification", "ChatSession", "ChatMessage", "Setting",
+    "db",
+    "User",
+    "Admin",
+    "Address",
+    "Category",
+    "PrintingService",
+    "StationeryProduct",
+    "UploadedDocument",
+    "PrintConfiguration",
+    "PhotoConfiguration",
+    "Cart",
+    "CartItem",
+    "Order",
+    "OrderItem",
+    "Coupon",
+    "Complaint",
+    "Notification",
+    "ChatSession",
+    "ChatMessage",
+    "Setting",
 ]

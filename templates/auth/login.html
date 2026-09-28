@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}PrintPilot AI - Login{% endblock %}
+{% block title %}Printify - Login{% endblock %}
 
 {% block content %}
 
-<div class="printpilot-login">
+<div class="-login">
 
     <!-- =====================================================
          BACKGROUND
@@ -21,10 +21,13 @@
         <div class="login-brand-center">
 
             <a href="{{ url_for('main.home') }}" class="login-brand">
-                <span class="brand-icon">✈</span>
-                <span class="brand-name">
-                    Print<span>Pilot AI</span>
-                </span>
+
+                <img
+                    src="{{ url_for('static', filename='images/printify-logo.png') }}"
+                    alt="Printify"
+                    class="printify-logo"
+                >
+
             </a>
 
             <p>Smart Printing • Stationery • More</p>
@@ -88,7 +91,7 @@
             <form
                 method="POST"
                 action="{{ url_for('auth.login') }}"
-                class="printpilot-login-form"
+                class="-login-form"
             >
 
 
@@ -173,9 +176,9 @@
                 <!-- LOGIN BUTTON -->
                 <button
                     type="submit"
-                    class="printpilot-login-button"
+                    class="Printify-login-button"
                 >
-                    Log in to PrintPilot
+                    Log in to Printify
                     <span>→</span>
                 </button>
 
@@ -198,7 +201,7 @@
             <div class="login-create-account">
 
                 <a href="{{ url_for('auth.register') }}">
-                    Create your PrintPilot account
+                    Create your Printify account
                     <span>→</span>
                 </a>
 
@@ -226,13 +229,37 @@
         <!-- FOOTER -->
         <div class="login-footer">
 
-            © 2026 PrintPilot AI
+            © 2026 Printify
 
         </div>
 
     </div>
 
 </div>
+
+
+<!-- =========================================================
+     LOGO SIZE
+========================================================= -->
+
+<style>
+
+.login-brand .printify-logo {
+    display: block;
+    width: 210px;
+    height: auto;
+    object-fit: contain;
+}
+
+@media (max-width: 600px) {
+
+    .login-brand .printify-logo {
+        width: 180px;
+    }
+
+}
+
+</style>
 
 
 <!-- =========================================================

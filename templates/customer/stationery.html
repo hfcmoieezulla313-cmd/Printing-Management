@@ -1,62 +1,925 @@
 {% extends "base.html" %}
 
-{% block title %}Stationery - PrintCare{% endblock %}
+{% block title %}Stationery - Printify{% endblock %}
 
 {% block content %}
 
-<h2 class="section-title">Stationery</h2>
+<style>
 
-<div class="chip-row">
-    <a href="{{ url_for('stationery.list_products') }}" class="chip {{ 'chip-active' if not active_category }}">
-        All
-    </a>
+/* =========================================================
+   PRINTIFY STATIONERY STORE
+========================================================= */
 
-    {% for cat in categories %}
-    <a href="{{ url_for('stationery.list_products', category=cat.id) }}"
-        class="chip {{ 'chip-active' if active_category == cat.id }}">
-        {{ cat.name }}
-    </a>
-    {% endfor %}
-</div>
+.stationery-page {
 
-<div class="product-grid">
+    max-width: 1400px;
 
-    {% for p in products %}
+    margin: 0 auto;
 
-    <a href="{{ url_for('stationery.details', product_id=p.id) }}" class="product-card">
+    padding: 30px;
+}
 
-        <div class="product-card-icon">
-            {% if p.image %}
-            <img src="{{ url_for('static', filename=p.image) }}" alt="{{ p.name }}"
-                style="width: 100px; height: 100px; object-fit: contain;">
-            {% else %}
-            📦
-            {% endif %}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.stationery-store-hero {
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef5ff 0%,
+            #ffffff 100%
+        );
+
+    border: 1px solid #dfe8f8;
+
+    border-radius: 28px;
+
+    padding: 38px 42px;
+
+    margin-bottom: 30px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 30px;
+}
+
+.stationery-store-hero h1 {
+
+    margin: 0 0 10px;
+
+    font-size: 38px;
+
+    font-weight: 800;
+
+    color: #172033;
+}
+
+.stationery-store-hero h1 span {
+
+    color: #2563eb;
+}
+
+.stationery-store-hero p {
+
+    margin: 0;
+
+    color: #667085;
+
+    font-size: 16px;
+
+    line-height: 1.6;
+
+    max-width: 650px;
+}
+
+.stationery-hero-badge {
+
+    display: inline-block;
+
+    background: #ffffff;
+
+    color: #2563eb;
+
+    border: 1px solid #dbe5f5;
+
+    padding: 7px 13px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    margin-bottom: 14px;
+}
+
+
+/* =========================================================
+   CATEGORY NAV
+========================================================= */
+
+.stationery-layout {
+
+    display: grid;
+
+    grid-template-columns: 220px 1fr;
+
+    gap: 25px;
+
+    align-items: start;
+}
+
+.stationery-sidebar {
+
+    background: #ffffff;
+
+    border: 1px solid #e5eaf2;
+
+    border-radius: 20px;
+
+    padding: 18px;
+
+    position: sticky;
+
+    top: 95px;
+}
+
+.stationery-sidebar-title {
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+    margin-bottom: 12px;
+
+    color: #172033;
+}
+
+.stationery-category-link {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    width: 100%;
+
+    padding: 11px 12px;
+
+    margin-bottom: 6px;
+
+    border-radius: 10px;
+
+    color: #667085;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    transition: 0.2s;
+
+    text-decoration: none;
+}
+
+.stationery-category-link:hover {
+
+    background: #f1f5ff;
+
+    color: #2563eb;
+}
+
+.stationery-category-link.active {
+
+    background: #2563eb;
+
+    color: #ffffff;
+}
+
+.stationery-category-icon {
+
+    width: 25px;
+
+    text-align: center;
+
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   PRODUCT AREA
+========================================================= */
+
+.stationery-products-area {
+
+    min-width: 0;
+}
+
+.stationery-products-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+}
+
+.stationery-products-header h2 {
+
+    margin: 0;
+
+    font-size: 24px;
+
+    color: #172033;
+}
+
+.stationery-products-header p {
+
+    margin: 4px 0 0;
+
+    color: #7b8495;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   PRODUCT GRID
+========================================================= */
+
+.stationery-product-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 20px;
+}
+
+.stationery-product-card {
+
+    background: #ffffff;
+
+    border: 1px solid #e5eaf2;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.stationery-product-card:hover {
+
+    transform: translateY(-4px);
+
+    border-color: #cdd9f0;
+
+    box-shadow:
+        0 15px 35px rgba(
+            30,
+            50,
+            90,
+            0.10
+        );
+}
+
+
+/* =========================================================
+   PRODUCT IMAGE
+========================================================= */
+
+.stationery-product-image {
+
+    height: 220px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8faff,
+            #eef4ff
+        );
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    position: relative;
+}
+
+.stationery-product-image img {
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: contain;
+}
+
+.stationery-product-placeholder {
+
+    width: 100px;
+
+    height: 100px;
+
+    border-radius: 24px;
+
+    background: #ffffff;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 48px;
+
+    box-shadow:
+        0 10px 25px rgba(
+            30,
+            50,
+            90,
+            0.08
+        );
+}
+
+.stationery-stock-badge {
+
+    position: absolute;
+
+    top: 14px;
+
+    right: 14px;
+
+    background: #e8f8ef;
+
+    color: #16834d;
+
+    border: 1px solid #c8efd9;
+
+    padding: 5px 9px;
+
+    border-radius: 999px;
+
+    font-size: 10px;
+
+    font-weight: 800;
+}
+
+.stationery-stock-badge.out {
+
+    background: #fff0f0;
+
+    color: #d73535;
+
+    border-color: #ffd1d1;
+}
+
+
+/* =========================================================
+   PRODUCT DETAILS
+========================================================= */
+
+.stationery-product-body {
+
+    padding: 18px;
+}
+
+.stationery-product-name {
+
+    display: block;
+
+    color: #172033;
+
+    font-size: 16px;
+
+    font-weight: 800;
+
+    line-height: 1.4;
+
+    text-decoration: none;
+
+    margin-bottom: 8px;
+}
+
+.stationery-product-name:hover {
+
+    color: #2563eb;
+}
+
+.stationery-product-description {
+
+    color: #7b8495;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+
+    min-height: 38px;
+
+    margin-bottom: 12px;
+}
+
+.stationery-product-bottom {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 12px;
+
+    margin-bottom: 14px;
+}
+
+.stationery-product-price {
+
+    color: #172033;
+
+    font-size: 21px;
+
+    font-weight: 900;
+}
+
+.stationery-product-price small {
+
+    color: #98a2b3;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+.stationery-buy-form {
+
+    display: flex;
+
+    gap: 8px;
+
+    align-items: center;
+}
+
+.stationery-quantity {
+
+    width: 52px;
+
+    height: 40px;
+
+    border: 1px solid #dce3ee;
+
+    border-radius: 10px;
+
+    text-align: center;
+
+    font-size: 13px;
+
+    outline: none;
+}
+
+.stationery-add-btn {
+
+    flex: 1;
+
+    height: 40px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #2563eb;
+
+    color: #ffffff;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.stationery-add-btn:hover {
+
+    background: #1d4ed8;
+}
+
+.stationery-add-btn:disabled {
+
+    background: #c5ccd8;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.stationery-empty {
+
+    background: #ffffff;
+
+    border: 1px dashed #d8dfeb;
+
+    border-radius: 18px;
+
+    padding: 50px 25px;
+
+    text-align: center;
+
+    color: #7b8495;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    .stationery-layout {
+
+        grid-template-columns: 1fr;
+    }
+
+    .stationery-sidebar {
+
+        position: static;
+
+        display: flex;
+
+        gap: 7px;
+
+        overflow-x: auto;
+
+        padding: 10px;
+    }
+
+    .stationery-sidebar-title {
+
+        display: none;
+    }
+
+    .stationery-category-link {
+
+        width: auto;
+
+        flex-shrink: 0;
+
+        margin: 0;
+    }
+
+    .stationery-product-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+@media (max-width: 650px) {
+
+    .stationery-page {
+
+        padding: 15px;
+    }
+
+    .stationery-store-hero {
+
+        padding: 25px;
+
+        border-radius: 22px;
+    }
+
+    .stationery-store-hero h1 {
+
+        font-size: 29px;
+    }
+
+    .stationery-product-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .stationery-product-image {
+
+        height: 210px;
+    }
+
+}
+
+</style>
+
+
+<div class="stationery-page">
+
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <section class="stationery-store-hero">
+
+        <div>
+
+            <span class="stationery-hero-badge">
+                ✦ PRINTIFY ESSENTIALS
+            </span>
+
+            <h1>
+                Everything you need,
+                <span>all in one place.</span>
+            </h1>
+
+            <p>
+                Shop notebooks, writing tools, office essentials,
+                accessories and everyday products with fast delivery.
+            </p>
+
         </div>
 
-        <div class="product-card-name">
-            {{ p.name }}
-        </div>
+    </section>
 
-        <div class="product-card-price">
-            Rs. {{ p.price }}
-        </div>
 
-        {% if not p.in_stock() %}
-        <div class="badge-outofstock">
-            Out of stock
-        </div>
-        {% endif %}
+    <!-- =====================================================
+         STORE LAYOUT
+    ====================================================== -->
 
-    </a>
+    <div class="stationery-layout">
 
-    {% else %}
 
-    <p class="empty-state">
-        No products in this category yet.
-    </p>
+        <!-- =================================================
+             CATEGORY SIDEBAR
+        ================================================== -->
 
-    {% endfor %}
+        <aside class="stationery-sidebar">
+
+            <div class="stationery-sidebar-title">
+                Categories
+            </div>
+
+
+            <a
+                href="{{ url_for('stationery.list_products') }}"
+                class="stationery-category-link
+                       {{ 'active' if not active_category }}"
+            >
+
+                <span class="stationery-category-icon">
+                    ✦
+                </span>
+
+                <span>
+                    All Products
+                </span>
+
+            </a>
+
+
+            {% for cat in categories %}
+
+                {% set icon = '📦' %}
+
+                {% if cat.name == 'Notebooks & Journals' %}
+                    {% set icon = '📓' %}
+                {% elif cat.name == 'Pens & Writing' %}
+                    {% set icon = '🖊️' %}
+                {% elif cat.name == 'Highlighters' %}
+                    {% set icon = '🖍️' %}
+                {% elif cat.name == 'Sticky Notes' %}
+                    {% set icon = '🗒️' %}
+                {% elif cat.name == 'Art Supplies' %}
+                    {% set icon = '🎨' %}
+                {% elif cat.name == 'Office Supplies' %}
+                    {% set icon = '📎' %}
+                {% elif cat.name == 'Bags & Pouches' %}
+                    {% set icon = '🎒' %}
+                {% elif cat.name == 'Water Bottles' %}
+                    {% set icon = '🧴' %}
+                {% elif cat.name == 'Tech Accessories' %}
+                    {% set icon = '🔌' %}
+                {% elif cat.name == 'Lunch Boxes' %}
+                    {% set icon = '🍱' %}
+                {% elif cat.name == 'Keychains & Accessories' %}
+                    {% set icon = '🔑' %}
+                {% endif %}
+
+                <a
+                    href="{{ url_for(
+                        'stationery.list_products',
+                        category=cat.id
+                    ) }}"
+                    class="stationery-category-link
+                           {{ 'active' if active_category == cat.id }}"
+                >
+
+                    <span class="stationery-category-icon">
+                        {{ icon }}
+                    </span>
+
+                    <span>
+                        {{ cat.name }}
+                    </span>
+
+                </a>
+
+            {% endfor %}
+
+        </aside>
+
+
+        <!-- =================================================
+             PRODUCTS
+        ================================================== -->
+
+        <section class="stationery-products-area">
+
+
+            <div class="stationery-products-header">
+
+                <div>
+
+                    <h2>
+                        Stationery Store
+                    </h2>
+
+                    <p>
+                        Quality everyday essentials for study,
+                        work and life.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="stationery-product-grid">
+
+                {% for p in products %}
+
+                    <article class="stationery-product-card">
+
+
+                        <!-- PRODUCT IMAGE -->
+
+                        <a
+                            href="{{ url_for(
+                                'stationery.details',
+                                product_id=p.id
+                            ) }}"
+                            class="stationery-product-image"
+                        >
+
+                            {% if p.image %}
+
+                                <img
+                                    src="{{ url_for(
+                                        'static',
+                                        filename=p.image
+                                    ) }}"
+                                    alt="{{ p.name }}"
+                                >
+
+                            {% else %}
+
+                                <div class="stationery-product-placeholder">
+                                    📦
+                                </div>
+
+                            {% endif %}
+
+
+                            {% if p.in_stock() %}
+
+                                <span class="stationery-stock-badge">
+                                    In Stock
+                                </span>
+
+                            {% else %}
+
+                                <span class="stationery-stock-badge out">
+                                    Out of Stock
+                                </span>
+
+                            {% endif %}
+
+                        </a>
+
+
+                        <!-- PRODUCT DETAILS -->
+
+                        <div class="stationery-product-body">
+
+
+                            <a
+                                href="{{ url_for(
+                                    'stationery.details',
+                                    product_id=p.id
+                                ) }}"
+                                class="stationery-product-name"
+                            >
+                                {{ p.name }}
+                            </a>
+
+
+                            <div class="stationery-product-description">
+
+                                {{ p.description }}
+
+                            </div>
+
+
+                            <div class="stationery-product-bottom">
+
+                                <div class="stationery-product-price">
+
+                                    ₹{{ p.price }}
+
+                                </div>
+
+                                <div>
+
+                                    {% if p.in_stock() %}
+
+                                        <small>
+                                            Available
+                                        </small>
+
+                                    {% else %}
+
+                                        <small>
+                                            Currently unavailable
+                                        </small>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'stationery.add_to_cart',
+                                    product_id=p.id
+                                ) }}"
+                                class="stationery-buy-form"
+                            >
+
+                                <input
+                                    type="number"
+                                    name="quantity"
+                                    value="1"
+                                    min="1"
+                                    max="{{ p.stock }}"
+                                    class="stationery-quantity"
+                                    {% if not p.in_stock() %}
+                                        disabled
+                                    {% endif %}
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="stationery-add-btn"
+                                    {% if not p.in_stock() %}
+                                        disabled
+                                    {% endif %}
+                                >
+                                    🛒 Add to Cart
+                                </button>
+
+                            </form>
+
+
+                        </div>
+
+                    </article>
+
+                {% else %}
+
+                    <div class="stationery-empty">
+
+                        <h3>
+                            No products found
+                        </h3>
+
+                        <p>
+                            Try another category.
+                        </p>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+        </section>
+
+    </div>
 
 </div>
 

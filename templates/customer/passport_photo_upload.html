@@ -1,0 +1,1030 @@
+{% extends "base.html" %}
+
+{% block title %}Passport Photo - Printify{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* =========================================================
+   PASSPORT PHOTO UPLOAD PAGE
+   Page-specific styling only.
+   Configuration page is not affected.
+========================================================= */
+
+.passport-upload-page {
+    min-height: calc(100vh - 80px);
+    position: relative;
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 45px 20px 85px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f5f8ff 0%,
+            #edf3ff 50%,
+            #f8fbff 100%
+        );
+}
+
+
+/* =========================================================
+   SOFT BACKGROUND SHAPES
+========================================================= */
+
+.passport-upload-page::before {
+    content: "";
+
+    position: absolute;
+
+    width: 560px;
+    height: 560px;
+
+    top: -280px;
+    left: -190px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(56, 100, 245, 0.14),
+            transparent 68%
+        );
+
+    pointer-events: none;
+}
+
+
+.passport-upload-page::after {
+    content: "";
+
+    position: absolute;
+
+    width: 500px;
+    height: 500px;
+
+    right: -190px;
+    bottom: -260px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(102, 145, 255, 0.12),
+            transparent 68%
+        );
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+.passport-upload-content {
+    width: 100%;
+    max-width: 760px;
+
+    position: relative;
+    z-index: 2;
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.passport-brand {
+    text-align: center;
+
+    margin-bottom: 22px;
+}
+
+
+.passport-brand-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    text-decoration: none;
+
+    color: #17243e;
+
+    font-size: 28px;
+    font-weight: 800;
+}
+
+
+.passport-brand-icon {
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #315efb,
+            #6b89f7
+        );
+
+    color: white;
+
+    font-size: 20px;
+
+    box-shadow:
+        0 10px 25px rgba(49, 94, 251, 0.22);
+}
+
+
+.passport-brand-name span {
+    color: #3964f5;
+}
+
+
+.passport-brand-subtitle {
+    margin: 8px 0 0;
+
+    color: #707b90;
+
+    font-size: 13px;
+
+    letter-spacing: 0.25px;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.passport-upload-card {
+    width: 100%;
+
+    padding: 38px 38px 32px;
+
+    border-radius: 28px;
+
+    background: rgba(255, 255, 255, 0.98);
+
+    border: 1px solid #dfe6f3;
+
+    box-shadow:
+        0 25px 65px rgba(35, 55, 95, 0.13),
+        0 5px 18px rgba(35, 55, 95, 0.05);
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   ICON
+========================================================= */
+
+.passport-main-icon {
+    width: 72px;
+    height: 72px;
+
+    margin: 0 auto 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #edf2ff,
+            #dfe8ff
+        );
+
+    font-size: 32px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.85);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.passport-upload-eyebrow {
+    display: inline-block;
+
+    margin-bottom: 10px;
+
+    color: #4168ed;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.6px;
+}
+
+
+.passport-upload-card h1 {
+    margin: 0;
+
+    color: #17243e;
+
+    font-size: clamp(29px, 4vw, 38px);
+
+    line-height: 1.15;
+
+    font-weight: 800;
+}
+
+
+.passport-upload-description {
+    max-width: 580px;
+
+    margin: 12px auto 0;
+
+    color: #6c778c;
+
+    font-size: 14px;
+
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   UPLOAD AREA
+========================================================= */
+
+.passport-upload-area {
+    max-width: 560px;
+
+    margin: 28px auto 0;
+
+    padding: 28px 22px;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #f9fbff,
+            #f4f7fd
+        );
+
+    border: 1.5px dashed #c7d3ed;
+}
+
+
+.passport-upload-area:hover {
+    border-color: #7e9bf1;
+}
+
+
+/* =========================================================
+   SELECT BUTTON
+========================================================= */
+
+.passport-select-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    min-width: 190px;
+    min-height: 52px;
+
+    padding: 0 24px;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #315efb,
+            #5377f5
+        );
+
+    color: white;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 12px 27px rgba(49, 94, 251, 0.20);
+
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+
+.passport-select-button:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 15px 32px rgba(49, 94, 251, 0.27);
+}
+
+
+/* =========================================================
+   SELECTED FILE
+========================================================= */
+
+.passport-selected-file {
+    width: 100%;
+
+    max-width: 560px;
+
+    margin: 20px auto 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 14px 15px;
+
+    border-radius: 16px;
+
+    border: 1px solid #d7e1f2;
+
+    background: white;
+
+    text-align: left;
+}
+
+
+.passport-selected-file.hidden {
+    display: none;
+}
+
+
+.passport-selected-icon {
+    width: 40px;
+    height: 40px;
+
+    flex: 0 0 auto;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #eaf8ef;
+
+    color: #238a49;
+
+    font-size: 16px;
+
+    font-weight: 900;
+}
+
+
+.passport-selected-info {
+    min-width: 0;
+
+    flex: 1;
+}
+
+
+.passport-selected-info strong,
+.passport-selected-info span {
+    display: block;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+.passport-selected-info strong {
+    color: #1c2942;
+
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+
+.passport-selected-info span {
+    margin-top: 3px;
+
+    color: #7b8699;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   CHANGE BUTTON
+========================================================= */
+
+.passport-change-button {
+    flex: 0 0 auto;
+
+    padding: 8px 11px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #eef3ff;
+
+    color: #3c63e9;
+
+    cursor: pointer;
+
+    font-size: 11px;
+
+    font-weight: 800;
+}
+
+
+.passport-change-button:hover {
+    background: #e1e9ff;
+}
+
+
+/* =========================================================
+   CONTINUE BUTTON
+========================================================= */
+
+.passport-continue-button {
+    width: 100%;
+
+    max-width: 560px;
+
+    min-height: 55px;
+
+    margin: 20px auto 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    border: none;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #315efb,
+            #5278f7
+        );
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+    box-shadow:
+        0 12px 28px rgba(49, 94, 251, 0.21);
+
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        opacity 0.18s ease;
+}
+
+
+.passport-continue-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 16px 34px rgba(49, 94, 251, 0.27);
+}
+
+
+.passport-continue-button:disabled {
+    opacity: 0.45;
+
+    cursor: not-allowed;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   INFORMATION
+========================================================= */
+
+.passport-upload-info {
+    margin-top: 20px;
+
+    display: flex;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    gap: 9px;
+}
+
+
+.passport-info-pill {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 9px 13px;
+
+    border-radius: 999px;
+
+    background: #f4f7fc;
+
+    border: 1px solid #e4e9f2;
+
+    color: #69758a;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   SECURITY NOTE
+========================================================= */
+
+.passport-secure-note {
+    margin-top: 17px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 7px;
+
+    color: #8993a5;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+
+    .passport-upload-page {
+        padding:
+            30px
+            14px
+            70px;
+    }
+
+
+    .passport-brand-link {
+        font-size: 24px;
+    }
+
+
+    .passport-upload-card {
+        padding:
+            28px
+            18px
+            24px;
+
+        border-radius: 23px;
+    }
+
+
+    .passport-main-icon {
+        width: 64px;
+        height: 64px;
+
+        font-size: 28px;
+    }
+
+
+    .passport-upload-card h1 {
+        font-size: 28px;
+    }
+
+
+    .passport-upload-description {
+        font-size: 13px;
+    }
+
+
+    .passport-upload-area {
+        padding: 23px 14px;
+    }
+
+
+    .passport-selected-file {
+        align-items: flex-start;
+    }
+
+}
+
+
+@media (max-width: 430px) {
+
+    .passport-upload-page {
+        padding-left: 9px;
+        padding-right: 9px;
+    }
+
+
+    .passport-upload-card {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+
+    .passport-upload-card h1 {
+        font-size: 25px;
+    }
+
+
+    .passport-selected-file {
+        gap: 9px;
+    }
+
+
+    .passport-change-button {
+        padding: 7px 8px;
+    }
+
+}
+
+</style>
+
+
+<section class="passport-upload-page">
+
+    <div class="passport-upload-content">
+
+
+        <!-- =================================================
+             BRAND
+        ================================================== -->
+
+        <div class="passport-brand">
+
+            <a
+                href="{{ url_for('main.home') }}"
+                class="passport-brand-link"
+            >
+
+                <span class="passport-brand-icon">
+                    ✦
+                </span>
+
+                <span class="passport-brand-name">
+                    Print<span>ify</span>
+                </span>
+
+            </a>
+
+            <p class="passport-brand-subtitle">
+                Smart Printing • Stationery • More
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             MAIN CARD
+        ================================================== -->
+
+        <div class="passport-upload-card">
+
+
+            <!-- ICON -->
+
+            <div class="passport-main-icon">
+                🪪
+            </div>
+
+
+            <!-- HEADER -->
+
+            <span class="passport-upload-eyebrow">
+                PASSPORT PHOTO
+            </span>
+
+            <h1>
+                Upload your passport photo
+            </h1>
+
+            <p class="passport-upload-description">
+                Upload one clear JPG, JPEG or PNG photo.
+                You can choose the number of copies on the next step.
+            </p>
+
+
+            <!-- =================================================
+                 FORM
+            ================================================== -->
+
+            <form
+                method="POST"
+                enctype="multipart/form-data"
+                id="passport-upload-form"
+            >
+
+                <input
+                    type="file"
+                    name="photo"
+                    id="passport-photo"
+                    accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                    hidden
+                    required
+                >
+
+
+                <!-- Upload Area -->
+
+                <div class="passport-upload-area">
+
+                    <label
+                        for="passport-photo"
+                        class="passport-select-button"
+                    >
+                        📷 Choose Photo
+                    </label>
+
+                </div>
+
+
+                <!-- Selected File -->
+
+                <div
+                    id="passport-selected"
+                    class="passport-selected-file hidden"
+                >
+
+                    <div class="passport-selected-icon">
+                        ✓
+                    </div>
+
+                    <div class="passport-selected-info">
+
+                        <strong id="passport-file-name">
+                            Photo selected
+                        </strong>
+
+                        <span id="passport-file-size">
+                            Ready to upload
+                        </span>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        id="passport-change"
+                        class="passport-change-button"
+                    >
+                        Change
+                    </button>
+
+                </div>
+
+
+                <!-- Continue -->
+
+                <button
+                    type="submit"
+                    id="passport-continue"
+                    class="passport-continue-button"
+                    disabled
+                >
+                    Continue
+                    <span>→</span>
+                </button>
+
+            </form>
+
+
+            <!-- =================================================
+                 INFORMATION
+            ================================================== -->
+
+            <div class="passport-upload-info">
+
+                <div class="passport-info-pill">
+
+                    <span>📷</span>
+
+                    <span>
+                        JPG, JPEG, PNG
+                    </span>
+
+                </div>
+
+
+                <div class="passport-info-pill">
+
+                    <span>1️⃣</span>
+
+                    <span>
+                        One photo
+                    </span>
+
+                </div>
+
+
+                <div class="passport-info-pill">
+
+                    <span>⚙️</span>
+
+                    <span>
+                        Configure copies next
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- SECURITY -->
+
+            <div class="passport-secure-note">
+
+                <span>
+                    🔒
+                </span>
+
+                <span>
+                    Your photo will be securely uploaded.
+                </span>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const fileInput =
+        document.getElementById("passport-photo");
+
+    const selectedBox =
+        document.getElementById("passport-selected");
+
+    const fileName =
+        document.getElementById("passport-file-name");
+
+    const fileSize =
+        document.getElementById("passport-file-size");
+
+    const continueButton =
+        document.getElementById("passport-continue");
+
+    const changeButton =
+        document.getElementById("passport-change");
+
+    const form =
+        document.getElementById("passport-upload-form");
+
+
+    /* =====================================================
+       FILE SIZE
+    ===================================================== */
+
+    function formatFileSize(bytes) {
+
+        if (bytes < 1024) {
+            return bytes + " B";
+        }
+
+        if (bytes < 1024 * 1024) {
+
+            return (
+                (bytes / 1024).toFixed(1) +
+                " KB"
+            );
+
+        }
+
+        return (
+            (bytes / (1024 * 1024)).toFixed(1) +
+            " MB"
+        );
+    }
+
+
+    /* =====================================================
+       UPDATE SELECTED FILE
+    ===================================================== */
+
+    function updateSelectedFile() {
+
+        if (!fileInput.files.length) {
+
+            selectedBox.classList.add("hidden");
+
+            continueButton.disabled = true;
+
+            return;
+        }
+
+
+        const file =
+            fileInput.files[0];
+
+
+        fileName.textContent =
+            file.name;
+
+
+        fileSize.textContent =
+            formatFileSize(file.size);
+
+
+        selectedBox.classList.remove("hidden");
+
+
+        continueButton.disabled =
+            false;
+    }
+
+
+    /* =====================================================
+       FILE CHANGE
+    ===================================================== */
+
+    fileInput.addEventListener(
+        "change",
+        updateSelectedFile
+    );
+
+
+    /* =====================================================
+       CHANGE PHOTO
+    ===================================================== */
+
+    changeButton.addEventListener(
+        "click",
+        function () {
+
+            fileInput.click();
+
+        }
+    );
+
+
+    /* =====================================================
+       SUBMIT
+    ===================================================== */
+
+    form.addEventListener(
+        "submit",
+        function () {
+
+            continueButton.disabled = true;
+
+            continueButton.innerHTML =
+                "Uploading... <span>⏳</span>";
+
+        }
+    );
+
+});
+
+</script>
+
+{% endblock %}

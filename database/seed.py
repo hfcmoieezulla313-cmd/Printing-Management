@@ -1,5 +1,5 @@
 """
-PrintCare Database Setup + Seed Script
+Printify Database Setup + Seed Script
 
 Run from project root:
 
@@ -10,14 +10,15 @@ This script:
 2. Seeds application settings.
 3. Seeds printing and stationery categories.
 4. Seeds printing services.
-5. Adds/updates 100 stationery products.
-6. Seeds coupons.
-7. Creates the initial admin account.
+5. Deactivates the old stationery catalog.
+6. Adds/updates the new Printify stationery catalog.
+7. Seeds coupons.
+8. Creates the initial admin account.
 
-IMPORTANT:
-The current project has only 8 stationery image files.
-Therefore, multiple products temporarily use the available
-images. We can add unique product images later.
+NOTE:
+The new stationery products use image paths under
+static/images/stationery/. Add the matching PNG files
+to that folder so the product cards show the product images.
 """
 
 import os
@@ -88,7 +89,7 @@ def seed_settings():
         ),
 
         "application_name": (
-            "PrintCare",
+            "Printify",
             "Application display name"
         ),
     }
@@ -128,18 +129,34 @@ def seed_categories():
         "Design & Print"
     ]
 
+    # New Printify stationery catalog categories.
     stationery_categories = [
-        "Pens & Pencils",
-        "Notebooks & Registers",
-        "Files & Folders",
+        "Notebooks & Journals",
+        "Pens & Writing",
+        "Highlighters",
+        "Sticky Notes",
+        "Art Supplies",
         "Office Supplies",
-        "Art & Craft",
-        "Geometry & Instruments",
-        "Paper & Envelopes",
-        "Calculators",
-        "School Essentials",
-        "Adhesives & Correction"
+        "Bags & Pouches",
+        "Water Bottles",
+        "Tech Accessories",
+        "Lunch Boxes",
+        "Keychains & Accessories"
     ]
+
+    category_icons = {
+        "Notebooks & Journals": "notebook",
+        "Pens & Writing": "pen",
+        "Highlighters": "highlighter",
+        "Sticky Notes": "sticky-note",
+        "Art Supplies": "palette",
+        "Office Supplies": "briefcase",
+        "Bags & Pouches": "bag",
+        "Water Bottles": "bottle",
+        "Tech Accessories": "laptop",
+        "Lunch Boxes": "lunch-box",
+        "Keychains & Accessories": "keychain"
+    }
 
     created = {}
 
@@ -160,15 +177,28 @@ def seed_categories():
                 name=name,
                 kind="printing",
                 sort_order=index,
-                icon="printer"
+                icon="printer",
+                is_active=True
             )
 
             db.session.add(category)
 
+        else:
+            category.sort_order = index
+            category.icon = "printer"
+            category.is_active = True
+
         created[("printing", name)] = category
 
     # --------------------------------------------------------
-    # STATIONERY CATEGORIES
+    # DEACTIVATE OLD STATIONERY CATEGORIES
+    # --------------------------------------------------------
+
+    for category in Category.query.filter_by(kind="stationery").all():
+        category.is_active = False
+
+    # --------------------------------------------------------
+    # CREATE / UPDATE NEW STATIONERY CATEGORIES
     # --------------------------------------------------------
 
     for index, name in enumerate(stationery_categories):
@@ -184,10 +214,16 @@ def seed_categories():
                 name=name,
                 kind="stationery",
                 sort_order=index,
-                icon="pen"
+                icon=category_icons.get(name, "box"),
+                is_active=True
             )
 
             db.session.add(category)
+
+        else:
+            category.sort_order = index
+            category.icon = category_icons.get(name, "box")
+            category.is_active = True
 
         created[("stationery", name)] = category
 
@@ -367,1001 +403,641 @@ def seed_printing_services(categories):
 
 
 # ============================================================
-# STATIONERY PRODUCTS - 100 PRODUCTS
+# STATIONERY PRODUCTS - 70 PRODUCTS
 # ============================================================
 
 def seed_stationery(categories):
 
-    pens = categories[
-        ("stationery", "Pens & Pencils")
-    ]
+    # --------------------------------------------------------
+    # NEW PRINTIFY STATIONERY CATALOG
+    # --------------------------------------------------------
 
-    notebooks = categories[
-        ("stationery", "Notebooks & Registers")
-    ]
+    notebooks = categories[("stationery", "Notebooks & Journals")]
+    writing = categories[("stationery", "Pens & Writing")]
+    highlighters = categories[("stationery", "Highlighters")]
+    sticky_notes = categories[("stationery", "Sticky Notes")]
+    art = categories[("stationery", "Art Supplies")]
+    office = categories[("stationery", "Office Supplies")]
+    bags = categories[("stationery", "Bags & Pouches")]
+    bottles = categories[("stationery", "Water Bottles")]
+    tech = categories[("stationery", "Tech Accessories")]
+    lunch = categories[("stationery", "Lunch Boxes")]
+    accessories = categories[("stationery", "Keychains & Accessories")]
 
-    files = categories[
-        ("stationery", "Files & Folders")
-    ]
-
-    office = categories[
-        ("stationery", "Office Supplies")
-    ]
-
-    art = categories[
-        ("stationery", "Art & Craft")
-    ]
-
-    geometry = categories[
-        ("stationery", "Geometry & Instruments")
-    ]
-
-    paper = categories[
-        ("stationery", "Paper & Envelopes")
-    ]
-
-    calculators = categories[
-        ("stationery", "Calculators")
-    ]
-
-    school = categories[
-        ("stationery", "School Essentials")
-    ]
-
-    adhesives = categories[
-        ("stationery", "Adhesives & Correction")
-    ]
-
-    # ========================================================
-    # 100 PRODUCTS
-    # ========================================================
+    # Keep old products in the database for historical orders/cart references,
+    # but hide them from the active stationery catalog.
+    for existing_product in StationeryProduct.query.all():
+        existing_product.is_active = False
 
     products = [
-
         # ====================================================
-        # 1-20 : PENS & PENCILS
+        # NOTEBOOKS & JOURNALS (8)
         # ====================================================
-
         {
-            "name": "Cello Butterflow Ball Pen - Blue",
-            "category": pens,
-            "price": 10,
-            "stock": 200,
-            "image": "images/stationery/pen.png",
-            "description": "Smooth blue ball pen for everyday writing."
-        },
-
-        {
-            "name": "Cello Butterflow Ball Pen - Black",
-            "category": pens,
-            "price": 10,
-            "stock": 200,
-            "image": "images/stationery/pen.png",
-            "description": "Smooth black ball pen for everyday writing."
-        },
-
-        {
-            "name": "Reynolds 045 Ball Pen - Blue",
-            "category": pens,
-            "price": 10,
-            "stock": 180,
-            "image": "images/stationery/pen.png",
-            "description": "Popular blue ball pen with comfortable grip."
-        },
-
-        {
-            "name": "Reynolds 045 Ball Pen - Black",
-            "category": pens,
-            "price": 10,
-            "stock": 180,
-            "image": "images/stationery/pen.png",
-            "description": "Reliable black ball pen for daily use."
-        },
-
-        {
-            "name": "Flair Writo-meter Ball Pen",
-            "category": pens,
-            "price": 10,
-            "stock": 150,
-            "image": "images/stationery/pen.png",
-            "description": "Smooth writing Flair ball pen."
-        },
-
-        {
-            "name": "Flair Marathon Ball Pen",
-            "category": pens,
-            "price": 10,
-            "stock": 150,
-            "image": "images/stationery/pen.png",
-            "description": "Comfortable everyday writing pen."
-        },
-
-        {
-            "name": "Classmate Octane Ball Pen",
-            "category": pens,
-            "price": 10,
-            "stock": 160,
-            "image": "images/stationery/pen.png",
-            "description": "Smooth-writing pen suitable for students."
-        },
-
-        {
-            "name": "Pentonic Ball Pen",
-            "category": pens,
-            "price": 10,
-            "stock": 160,
-            "image": "images/stationery/pen.png",
-            "description": "Modern smooth-flow ball pen."
-        },
-
-        {
-            "name": "Linc Ocean Gel Pen",
-            "category": pens,
-            "price": 10,
-            "stock": 140,
-            "image": "images/stationery/pen.png",
-            "description": "Smooth gel pen for comfortable writing."
-        },
-
-        {
-            "name": "Linc Glycer Gel Pen",
-            "category": pens,
-            "price": 10,
-            "stock": 140,
-            "image": "images/stationery/pen.png",
-            "description": "Fine gel writing pen."
-        },
-
-        {
-            "name": "Pilot V7 Roller Ball Pen",
-            "category": pens,
-            "price": 80,
+            "name": "A5 Minimal Hardcover Journal",
+            "category": notebooks,
+            "price": 149,
             "stock": 80,
-            "image": "images/stationery/pen.png",
-            "description": "Premium liquid ink roller ball pen."
+            "image": "images/stationery/a5-hardcover-journal.png",
+            "description": "Clean hardcover journal with smooth pages for notes, ideas and planning."
         },
-
         {
-            "name": "Pilot V5 Roller Ball Pen",
-            "category": pens,
-            "price": 75,
-            "stock": 80,
-            "image": "images/stationery/pen.png",
-            "description": "Fine-point roller ball pen."
-        },
-
-        {
-            "name": "Luxor Pilot Pen",
-            "category": pens,
-            "price": 30,
-            "stock": 100,
-            "image": "images/stationery/pen.png",
-            "description": "Reliable smooth-writing pen."
-        },
-
-        {
-            "name": "Parker Jotter Ball Pen",
-            "category": pens,
-            "price": 350,
-            "stock": 30,
-            "image": "images/stationery/pen.png",
-            "description": "Premium Parker ball pen for professional use."
-        },
-
-        {
-            "name": "Apsara Platinum Pencil - Pack of 10",
-            "category": pens,
-            "price": 60,
-            "stock": 120,
-            "image": "images/stationery/pencil.png",
-            "description": "HB graphite pencils for writing and drawing."
-        },
-
-        {
-            "name": "Nataraj HB Pencil - Pack of 10",
-            "category": pens,
-            "price": 45,
-            "stock": 150,
-            "image": "images/stationery/pencil.png",
-            "description": "Classic HB pencils for school and college."
-        },
-
-        {
-            "name": "DOMS Groove Pencil - Pack of 10",
-            "category": pens,
-            "price": 55,
-            "stock": 120,
-            "image": "images/stationery/pencil.png",
-            "description": "Comfortable grip pencils for students."
-        },
-
-        {
-            "name": "Faber-Castell Pencil - Pack of 10",
-            "category": pens,
-            "price": 70,
-            "stock": 100,
-            "image": "images/stationery/pencil.png",
-            "description": "Quality graphite pencils."
-        },
-
-        {
-            "name": "Camlin Supreme Pencil - Pack of 10",
-            "category": pens,
-            "price": 55,
-            "stock": 100,
-            "image": "images/stationery/pencil.png",
-            "description": "Smooth graphite pencils for everyday use."
-        },
-
-        {
-            "name": "Mechanical Pencil 0.5mm",
-            "category": pens,
-            "price": 35,
-            "stock": 100,
-            "image": "images/stationery/pencil.png",
-            "description": "Reusable 0.5mm mechanical pencil."
-        },
-
-        # ====================================================
-        # 21-40 : NOTEBOOKS & REGISTERS
-        # ====================================================
-
-        {
-            "name": "Classmate A4 Notebook - 200 Pages",
+            "name": "A5 Dotted Notebook",
             "category": notebooks,
-            "price": 90,
-            "stock": 100,
-            "image": "images/stationery/nootbook.png",
-            "description": "A4 ruled notebook for college and school."
+            "price": 179,
+            "stock": 75,
+            "image": "images/stationery/a5-dotted-notebook.png",
+            "description": "Premium dotted notebook for study notes, journaling and creative layouts."
         },
-
         {
-            "name": "Classmate Long Notebook - 172 Pages",
+            "name": "A4 Ruled Study Notebook",
             "category": notebooks,
-            "price": 70,
-            "stock": 100,
-            "image": "images/stationery/nootbook.png",
-            "description": "Ruled notebook for daily study."
-        },
-
-        {
-            "name": "Classmate Pulse Notebook",
-            "category": notebooks,
-            "price": 80,
+            "price": 119,
             "stock": 90,
-            "image": "images/stationery/nootbook.png",
-            "description": "Stylish notebook for students."
+            "image": "images/stationery/a4-ruled-notebook.png",
+            "description": "Spacious ruled notebook for lectures, assignments and daily study."
         },
-
         {
-            "name": "Navneet Youva Notebook - 200 Pages",
+            "name": "A5 Spiral Study Notebook",
             "category": notebooks,
-            "price": 75,
-            "stock": 100,
-            "image": "images/stationery/nootbook.png",
-            "description": "Ruled notebook for notes and assignments."
-        },
-
-        {
-            "name": "Navneet Youva Long Book",
-            "category": notebooks,
-            "price": 65,
-            "stock": 100,
-            "image": "images/stationery/nootbook.png",
-            "description": "Long ruled notebook for everyday writing."
-        },
-
-        {
-            "name": "Camlin Notebook - 200 Pages",
-            "category": notebooks,
-            "price": 80,
-            "stock": 100,
-            "image": "images/stationery/nootbook.png",
-            "description": "Quality ruled notebook."
-        },
-
-        {
-            "name": "Paperkraft Premium Notebook",
-            "category": notebooks,
-            "price": 180,
-            "stock": 60,
-            "image": "images/stationery/nootbook.png",
-            "description": "Premium notebook for professional notes."
-        },
-
-        {
-            "name": "Spiral Notebook - Pocket Size",
-            "category": notebooks,
-            "price": 55,
-            "stock": 120,
-            "image": "images/stationery/spiral_nootbook.png",
-            "description": "Compact spiral notebook."
-        },
-
-        {
-            "name": "A4 Spiral Notebook - 200 Pages",
-            "category": notebooks,
-            "price": 120,
-            "stock": 90,
-            "image": "images/stationery/spiral_nootbook.png",
-            "description": "Large spiral notebook for projects."
-        },
-
-        {
-            "name": "A5 Spiral Notebook",
-            "category": notebooks,
-            "price": 80,
-            "stock": 100,
-            "image": "images/stationery/spiral_nootbook.png",
-            "description": "Portable A5 spiral notebook."
-        },
-
-        {
-            "name": "College Register - 300 Pages",
-            "category": notebooks,
-            "price": 140,
-            "stock": 80,
-            "image": "images/stationery/nootbook.png",
-            "description": "Large register for college notes."
-        },
-
-        {
-            "name": "Practical Record Book",
-            "category": notebooks,
-            "price": 100,
-            "stock": 100,
-            "image": "images/stationery/nootbook.png",
-            "description": "Record book for practical subjects."
-        },
-
-        {
-            "name": "Project Notebook",
-            "category": notebooks,
-            "price": 110,
-            "stock": 80,
-            "image": "images/stationery/nootbook.png",
-            "description": "Notebook suitable for project documentation."
-        },
-
-        {
-            "name": "Drawing Notebook",
-            "category": notebooks,
-            "price": 90,
-            "stock": 80,
-            "image": "images/stationery/nootbook.png",
-            "description": "Plain pages for drawing and diagrams."
-        },
-
-        {
-            "name": "Mini Memo Notebook",
-            "category": notebooks,
-            "price": 40,
-            "stock": 150,
-            "image": "images/stationery/spiral_nootbook.png",
-            "description": "Small notebook for quick notes."
-        },
-
-        {
-            "name": "Hardbound Notebook",
-            "category": notebooks,
-            "price": 160,
-            "stock": 60,
-            "image": "images/stationery/nootbook.png",
-            "description": "Durable hardbound notebook."
-        },
-
-        {
-            "name": "A4 Plain Notebook",
-            "category": notebooks,
-            "price": 75,
-            "stock": 100,
-            "image": "images/stationery/nootbook.png",
-            "description": "Plain A4 notebook for projects and sketches."
-        },
-
-        {
-            "name": "Assignment Notebook",
-            "category": notebooks,
-            "price": 65,
-            "stock": 120,
-            "image": "images/stationery/nootbook.png",
-            "description": "Notebook designed for assignments."
-        },
-
-        {
-            "name": "Meeting Notebook",
-            "category": notebooks,
-            "price": 100,
-            "stock": 70,
-            "image": "images/stationery/nootbook.png",
-            "description": "Professional notebook for meetings."
-        },
-
-        {
-            "name": "Daily Planner Notebook",
-            "category": notebooks,
-            "price": 150,
-            "stock": 60,
-            "image": "images/stationery/spiral_nootbook.png",
-            "description": "Planner notebook for organizing daily tasks."
-        },
-
-        # ====================================================
-        # 41-52 : FILES & FOLDERS
-        # ====================================================
-
-        {
-            "name": "Plastic File Folder - Pack of 5",
-            "category": files,
-            "price": 120,
-            "stock": 80,
-            "image": "images/stationery/file_foolder.png",
-            "description": "Durable plastic file folders."
-        },
-
-        {
-            "name": "Solo Document File",
-            "category": files,
-            "price": 50,
-            "stock": 100,
-            "image": "images/stationery/file_foolder.png",
-            "description": "Simple document storage file."
-        },
-
-        {
-            "name": "Solo Expanding File",
-            "category": files,
-            "price": 220,
-            "stock": 50,
-            "image": "images/stationery/file_foolder.png",
-            "description": "Expanding file for organizing documents."
-        },
-
-        {
-            "name": "Ring Binder File",
-            "category": files,
-            "price": 150,
-            "stock": 60,
-            "image": "images/stationery/binder.png",
-            "description": "2-ring binder for documents."
-        },
-
-        {
-            "name": "A4 Lever Arch File",
-            "category": files,
-            "price": 180,
-            "stock": 60,
-            "image": "images/stationery/binder.png",
-            "description": "Strong file for document storage."
-        },
-
-        {
-            "name": "College Assignment File",
-            "category": files,
-            "price": 65,
-            "stock": 100,
-            "image": "images/stationery/file_foolder.png",
-            "description": "File for assignments and project work."
-        },
-
-        {
-            "name": "Transparent File - Pack of 10",
-            "category": files,
-            "price": 130,
-            "stock": 80,
-            "image": "images/stationery/file_foolder.png",
-            "description": "Transparent document sleeves."
-        },
-
-        {
-            "name": "Button File Folder",
-            "category": files,
-            "price": 35,
-            "stock": 150,
-            "image": "images/stationery/file_foolder.png",
-            "description": "Button closure folder for documents."
-        },
-
-        {
-            "name": "Display File - 20 Pockets",
-            "category": files,
-            "price": 100,
-            "stock": 80,
-            "image": "images/stationery/file_foolder.png",
-            "description": "Display file with multiple pockets."
-        },
-
-        {
-            "name": "Document Folder - Pack of 3",
-            "category": files,
-            "price": 90,
-            "stock": 100,
-            "image": "images/stationery/file_foolder.png",
-            "description": "Set of folders for document organization."
-        },
-
-        {
-            "name": "Project File Folder",
-            "category": files,
-            "price": 60,
-            "stock": 120,
-            "image": "images/stationery/file_foolder.png",
-            "description": "Useful folder for college projects."
-        },
-
-        {
-            "name": "Certificate File",
-            "category": files,
-            "price": 100,
-            "stock": 70,
-            "image": "images/stationery/binder.png",
-            "description": "Protective file for certificates."
-        },
-
-        # ====================================================
-        # 53-62 : OFFICE SUPPLIES
-        # ====================================================
-
-        {
-            "name": "Stapler with Pins",
-            "category": office,
             "price": 99,
-            "stock": 70,
-            "image": "images/stationery/stapler.png",
-            "description": "Compact stapler with pins."
+            "stock": 100,
+            "image": "images/stationery/a5-spiral-notebook.png",
+            "description": "Compact spiral notebook with easy-turn pages for everyday notes."
         },
-
         {
-            "name": "Kangaro Stapler",
-            "category": office,
-            "price": 120,
+            "name": "Hardcover Daily Planner",
+            "category": notebooks,
+            "price": 229,
             "stock": 60,
-            "image": "images/stationery/stapler.png",
-            "description": "Reliable desktop stapler."
+            "image": "images/stationery/daily-planner.png",
+            "description": "Daily planner with sections for tasks, priorities and schedules."
         },
-
         {
-            "name": "Staple Pins No.10",
-            "category": office,
-            "price": 20,
-            "stock": 150,
-            "image": "images/stationery/stapler.png",
-            "description": "Standard staple pins."
+            "name": "Project Record Notebook",
+            "category": notebooks,
+            "price": 139,
+            "stock": 70,
+            "image": "images/stationery/project-record-notebook.png",
+            "description": "Practical notebook for project records, observations and documentation."
         },
-
         {
-            "name": "Sticky Notes - Pack of 4",
-            "category": office,
-            "price": 70,
-            "stock": 140,
-            "image": "images/stationery/sticky_notes.png",
-            "description": "Assorted colour sticky notes."
-        },
-
-        {
-            "name": "Sticky Notes - Neon",
-            "category": office,
-            "price": 50,
-            "stock": 130,
-            "image": "images/stationery/sticky_notes.png",
-            "description": "Bright neon sticky notes."
-        },
-
-        {
-            "name": "Paper Clips - Pack of 100",
-            "category": office,
-            "price": 30,
-            "stock": 150,
-            "image": "images/stationery/sticky_notes.png",
-            "description": "Metal paper clips for organizing papers."
-        },
-
-        {
-            "name": "Binder Clips - Pack of 12",
-            "category": office,
-            "price": 60,
-            "stock": 100,
-            "image": "images/stationery/stapler.png",
-            "description": "Strong binder clips for documents."
-        },
-
-        {
-            "name": "Whiteboard Marker - Pack of 4",
-            "category": office,
-            "price": 80,
-            "stock": 100,
-            "image": "images/stationery/pen.png",
-            "description": "Dry erase markers for whiteboards."
-        },
-
-        {
-            "name": "Permanent Marker - Black",
-            "category": office,
-            "price": 30,
+            "name": "Pocket Memo Notebook",
+            "category": notebooks,
+            "price": 69,
             "stock": 120,
-            "image": "images/stationery/pen.png",
-            "description": "Permanent black marker."
+            "image": "images/stationery/pocket-memo-notebook.png",
+            "description": "Small portable notebook for quick reminders and short notes."
         },
-
         {
-            "name": "Desk Organizer",
-            "category": office,
-            "price": 180,
-            "stock": 50,
-            "image": "images/stationery/binder.png",
-            "description": "Desk organizer for stationery items."
+            "name": "Premium Black Notebook",
+            "category": notebooks,
+            "price": 199,
+            "stock": 65,
+            "image": "images/stationery/premium-black-notebook.png",
+            "description": "Simple premium notebook with a durable cover and clean ruled pages."
         },
 
         # ====================================================
-        # 63-70 : ART & CRAFT
+        # PENS & WRITING (8)
         # ====================================================
-
         {
-            "name": "DOMS Colour Pencils - 12 Shades",
-            "category": art,
-            "price": 75,
-            "stock": 100,
-            "image": "images/stationery/pencil.png",
-            "description": "Colour pencil set with 12 shades."
+            "name": "SmoothFlow Gel Pen Set - 5",
+            "category": writing,
+            "price": 129,
+            "stock": 120,
+            "image": "images/stationery/gel-pen-set.png",
+            "description": "Set of five smooth gel pens for everyday writing and study work."
         },
-
         {
-            "name": "DOMS Colour Pencils - 24 Shades",
-            "category": art,
-            "price": 150,
-            "stock": 70,
-            "image": "images/stationery/pencil.png",
-            "description": "Colour pencil set with 24 shades."
-        },
-
-        {
-            "name": "Faber-Castell Colour Pencils - 12",
-            "category": art,
-            "price": 100,
-            "stock": 80,
-            "image": "images/stationery/pencil.png",
-            "description": "Quality colour pencils."
-        },
-
-        {
-            "name": "Camlin Sketch Pens - 12 Colours",
-            "category": art,
-            "price": 70,
+            "name": "Executive Metal Ball Pen",
+            "category": writing,
+            "price": 79,
             "stock": 90,
-            "image": "images/stationery/pen.png",
-            "description": "Bright sketch pens for drawing."
+            "image": "images/stationery/executive-ball-pen.png",
+            "description": "Sleek metal-finish ball pen designed for comfortable everyday writing."
         },
-
         {
-            "name": "Camlin Sketch Pens - 24 Colours",
-            "category": art,
-            "price": 130,
-            "stock": 70,
-            "image": "images/stationery/pen.png",
-            "description": "Large sketch pen set."
+            "name": "Fine Tip Blue Pen Set - 10",
+            "category": writing,
+            "price": 109,
+            "stock": 120,
+            "image": "images/stationery/fine-tip-blue-pens.png",
+            "description": "Ten fine-tip blue pens for neat handwriting and note taking."
         },
-
         {
-            "name": "Wax Crayons - 12 Colours",
-            "category": art,
-            "price": 50,
+            "name": "Black Ink Ball Pen Set - 10",
+            "category": writing,
+            "price": 109,
+            "stock": 120,
+            "image": "images/stationery/black-ball-pens.png",
+            "description": "Smooth black ink pens suitable for forms, notes and office work."
+        },
+        {
+            "name": "QuickDry Roller Pen - Blue",
+            "category": writing,
+            "price": 49,
             "stock": 100,
-            "image": "images/stationery/pencil.png",
-            "description": "Colourful wax crayons."
+            "image": "images/stationery/blue-roller-pen.png",
+            "description": "Fine roller pen with smooth blue ink and comfortable grip."
+        },
+        {
+            "name": "QuickDry Roller Pen - Black",
+            "category": writing,
+            "price": 49,
+            "stock": 100,
+            "image": "images/stationery/black-roller-pen.png",
+            "description": "Fine roller pen with smooth black ink for clean writing."
+        },
+        {
+            "name": "0.5mm Mechanical Pencil Set - 3",
+            "category": writing,
+            "price": 99,
+            "stock": 90,
+            "image": "images/stationery/mechanical-pencils.png",
+            "description": "Three reusable 0.5mm mechanical pencils for writing and drawing."
+        },
+        {
+            "name": "HB Pencil Pack - 10",
+            "category": writing,
+            "price": 59,
+            "stock": 150,
+            "image": "images/stationery/hb-pencils.png",
+            "description": "HB graphite pencils for school work, sketching and everyday writing."
         },
 
+        # ====================================================
+        # HIGHLIGHTERS (6)
+        # ====================================================
         {
-            "name": "Oil Pastels - 12 Shades",
-            "category": art,
-            "price": 80,
-            "stock": 80,
-            "image": "images/stationery/pencil.png",
-            "description": "Smooth oil pastel set."
+            "name": "Pastel Highlighter Set - 6",
+            "category": highlighters,
+            "price": 149,
+            "stock": 85,
+            "image": "images/stationery/pastel-highlighters.png",
+            "description": "Six soft pastel highlighters for notes, textbooks and planners."
+        },
+        {
+            "name": "Dual Tip Highlighter Set - 4",
+            "category": highlighters,
+            "price": 199,
+            "stock": 70,
+            "image": "images/stationery/dual-tip-highlighters.png",
+            "description": "Four dual-tip highlighters with flexible tips for highlighting and underlining."
+        },
+        {
+            "name": "Neon Highlighter Set - 5",
+            "category": highlighters,
+            "price": 119,
+            "stock": 90,
+            "image": "images/stationery/neon-highlighters.png",
+            "description": "Bright neon shades that make important notes easy to spot."
+        },
+        {
+            "name": "Mini Highlighter Set - 6",
+            "category": highlighters,
+            "price": 99,
+            "stock": 110,
+            "image": "images/stationery/mini-highlighters.png",
+            "description": "Compact highlighters that fit easily into pencil cases and pouches."
+        },
+        {
+            "name": "Desk Highlighter Trio",
+            "category": highlighters,
+            "price": 79,
+            "stock": 100,
+            "image": "images/stationery/highlighter-trio.png",
+            "description": "Three everyday highlighter colours for study and office notes."
+        },
+        {
+            "name": "Soft Tone Highlighter Set - 8",
+            "category": highlighters,
+            "price": 219,
+            "stock": 65,
+            "image": "images/stationery/soft-tone-highlighters.png",
+            "description": "Eight muted highlighter shades for organized and comfortable reading."
         },
 
+        # ====================================================
+        # STICKY NOTES (5)
+        # ====================================================
         {
-            "name": "Drawing Pencil Set",
+            "name": "Pastel Sticky Notes - 4 Pack",
+            "category": sticky_notes,
+            "price": 99,
+            "stock": 140,
+            "image": "images/stationery/pastel-sticky-notes.png",
+            "description": "Four pastel sticky-note pads for reminders, study notes and quick lists."
+        },
+        {
+            "name": "Index Page Flags - 8 Colour",
+            "category": sticky_notes,
+            "price": 79,
+            "stock": 100,
+            "image": "images/stationery/page-flags.png",
+            "description": "Eight colour page flags for organizing books, documents and assignments."
+        },
+        {
+            "name": "Square Memo Notes - 3 Pack",
+            "category": sticky_notes,
+            "price": 89,
+            "stock": 110,
+            "image": "images/stationery/square-memo-notes.png",
+            "description": "Three memo pads for reminders, to-do lists and desk notes."
+        },
+        {
+            "name": "Arrow Sticky Flags - 6 Colour",
+            "category": sticky_notes,
+            "price": 69,
+            "stock": 125,
+            "image": "images/stationery/arrow-sticky-flags.png",
+            "description": "Arrow-shaped flags for marking important lines and pages."
+        },
+        {
+            "name": "Large Sticky Note Pad",
+            "category": sticky_notes,
+            "price": 79,
+            "stock": 100,
+            "image": "images/stationery/large-sticky-notes.png",
+            "description": "Large writable sticky notes for detailed reminders and planning."
+        },
+
+        # ====================================================
+        # ART SUPPLIES (8)
+        # ====================================================
+        {
+            "name": "Colour Marker Set - 24",
             "category": art,
-            "price": 120,
+            "price": 299,
             "stock": 60,
-            "image": "images/stationery/pencil.png",
-            "description": "Drawing pencils for sketches."
+            "image": "images/stationery/colour-marker-set.png",
+            "description": "Twenty-four vibrant markers for drawing, lettering and creative projects."
         },
-
-        # ====================================================
-        # 71-78 : GEOMETRY & INSTRUMENTS
-        # ====================================================
-
         {
-            "name": "Camlin Geometry Box",
-            "category": geometry,
-            "price": 120,
-            "stock": 80,
-            "image": "images/stationery/pencil.png",
-            "description": "Complete geometry instrument box."
+            "name": "Sketching Pencil Set - 12",
+            "category": art,
+            "price": 199,
+            "stock": 65,
+            "image": "images/stationery/sketching-pencil-set.png",
+            "description": "Twelve sketching pencils with a useful range of grades for shading and drawing."
         },
-
         {
-            "name": "DOMS Geometry Box",
-            "category": geometry,
-            "price": 100,
-            "stock": 80,
-            "image": "images/stationery/pencil.png",
-            "description": "Student geometry set."
+            "name": "Colour Pencil Set - 24 Shades",
+            "category": art,
+            "price": 179,
+            "stock": 75,
+            "image": "images/stationery/colour-pencils-24.png",
+            "description": "Twenty-four bright colour pencils for school art and creative work."
         },
-
         {
-            "name": "30cm Plastic Ruler",
-            "category": geometry,
-            "price": 20,
-            "stock": 150,
-            "image": "images/stationery/pencil.png",
-            "description": "30cm transparent ruler."
+            "name": "Watercolour Paint Set - 12",
+            "category": art,
+            "price": 229,
+            "stock": 55,
+            "image": "images/stationery/watercolour-set.png",
+            "description": "Twelve watercolour shades for painting, projects and creative practice."
         },
-
         {
-            "name": "15cm Ruler",
-            "category": geometry,
-            "price": 10,
-            "stock": 180,
-            "image": "images/stationery/pencil.png",
-            "description": "Compact ruler for school use."
-        },
-
-        {
-            "name": "Compass Set",
-            "category": geometry,
-            "price": 60,
-            "stock": 100,
-            "image": "images/stationery/pencil.png",
-            "description": "Compass and geometry tools."
-        },
-
-        {
-            "name": "Protractor 180 Degree",
-            "category": geometry,
-            "price": 15,
-            "stock": 150,
-            "image": "images/stationery/pencil.png",
-            "description": "Transparent 180-degree protractor."
-        },
-
-        {
-            "name": "Set Square Pair",
-            "category": geometry,
-            "price": 40,
-            "stock": 100,
-            "image": "images/stationery/pencil.png",
-            "description": "Pair of geometry set squares."
-        },
-
-        {
-            "name": "Metal Scale 30cm",
-            "category": geometry,
-            "price": 50,
-            "stock": 80,
-            "image": "images/stationery/pencil.png",
-            "description": "Durable metal ruler."
-        },
-
-        # ====================================================
-        # 79-84 : PAPER & ENVELOPES
-        # ====================================================
-
-        {
-            "name": "A4 Copier Paper - 100 Sheets",
-            "category": paper,
-            "price": 70,
-            "stock": 100,
-            "image": "images/stationery/nootbook.png",
-            "description": "White A4 paper for printing and photocopying."
-        },
-
-        {
-            "name": "A4 Copier Paper - 500 Sheets",
-            "category": paper,
-            "price": 320,
+            "name": "Acrylic Paint Set - 12",
+            "category": art,
+            "price": 249,
             "stock": 50,
-            "image": "images/stationery/nootbook.png",
-            "description": "A4 copier paper ream."
+            "image": "images/stationery/acrylic-paints.png",
+            "description": "Twelve acrylic colours suitable for craft and canvas projects."
+        },
+        {
+            "name": "Oil Pastel Set - 24",
+            "category": art,
+            "price": 189,
+            "stock": 60,
+            "image": "images/stationery/oil-pastels-24.png",
+            "description": "Twenty-four creamy oil pastel shades for expressive artwork and blending."
+        },
+        {
+            "name": "Fineliner Drawing Pens - 8",
+            "category": art,
+            "price": 149,
+            "stock": 80,
+            "image": "images/stationery/fineliner-pens.png",
+            "description": "Eight fine drawing pens for outlines, diagrams and lettering."
+        },
+        {
+            "name": "Paint Brush Set - 10",
+            "category": art,
+            "price": 129,
+            "stock": 75,
+            "image": "images/stationery/paint-brush-set.png",
+            "description": "Mixed-size brushes for watercolour, acrylic and craft painting."
         },
 
+        # ====================================================
+        # OFFICE SUPPLIES (7)
+        # ====================================================
         {
-            "name": "A3 Paper - 100 Sheets",
-            "category": paper,
-            "price": 180,
+            "name": "Modern Desk Organizer",
+            "category": office,
+            "price": 249,
+            "stock": 45,
+            "image": "images/stationery/desk-organizer.png",
+            "description": "Compact desk organizer with practical sections for everyday stationery."
+        },
+        {
+            "name": "Heavy Duty Desktop Stapler",
+            "category": office,
+            "price": 159,
+            "stock": 55,
+            "image": "images/stationery/desktop-stapler.png",
+            "description": "Sturdy desktop stapler for school, office and project documents."
+        },
+        {
+            "name": "Metal Binder Clips - 12 Pack",
+            "category": office,
+            "price": 69,
+            "stock": 100,
+            "image": "images/stationery/binder-clips.png",
+            "description": "Strong metal binder clips for organizing papers and documents."
+        },
+        {
+            "name": "Paper Clip Box - 100",
+            "category": office,
+            "price": 49,
+            "stock": 120,
+            "image": "images/stationery/paper-clips.png",
+            "description": "Box of paper clips for everyday office and study use."
+        },
+        {
+            "name": "Desktop Tape Dispenser",
+            "category": office,
+            "price": 119,
+            "stock": 65,
+            "image": "images/stationery/tape-dispenser.png",
+            "description": "Stable desktop tape dispenser for quick and clean cutting."
+        },
+        {
+            "name": "Whiteboard Marker Set - 4",
+            "category": office,
+            "price": 89,
+            "stock": 100,
+            "image": "images/stationery/whiteboard-markers.png",
+            "description": "Four low-odour markers for whiteboards, study rooms and meetings."
+        },
+        {
+            "name": "Document Tray - 3 Tier",
+            "category": office,
+            "price": 299,
+            "stock": 40,
+            "image": "images/stationery/document-tray.png",
+            "description": "Three-tier tray for sorting documents, files and daily paperwork."
+        },
+
+        # ====================================================
+        # BAGS & POUCHES (6)
+        # ====================================================
+        {
+            "name": "Canvas Utility Pouch",
+            "category": bags,
+            "price": 299,
             "stock": 50,
-            "image": "images/stationery/nootbook.png",
-            "description": "A3 sheets for printing and projects."
+            "image": "images/stationery/canvas-pouch.png",
+            "description": "Durable canvas pouch for pens, cables, small accessories and daily essentials."
         },
-
         {
-            "name": "A4 Colour Paper - 100 Sheets",
-            "category": paper,
-            "price": 120,
+            "name": "Laptop Document Sleeve",
+            "category": bags,
+            "price": 399,
+            "stock": 35,
+            "image": "images/stationery/document-sleeve.png",
+            "description": "Minimal padded sleeve for carrying notebooks, documents and a compact laptop."
+        },
+        {
+            "name": "Double Zip Pencil Pouch",
+            "category": bags,
+            "price": 179,
             "stock": 70,
-            "image": "images/stationery/nootbook.png",
-            "description": "Assorted colour A4 paper."
+            "image": "images/stationery/double-zip-pouch.png",
+            "description": "Double-zip pouch with separate sections for pens, pencils and accessories."
         },
-
         {
-            "name": "White Envelope - Pack of 25",
-            "category": paper,
-            "price": 60,
-            "stock": 100,
-            "image": "images/stationery/file_foolder.png",
-            "description": "White envelopes for documents and letters."
+            "name": "Slim Stationery Pouch",
+            "category": bags,
+            "price": 149,
+            "stock": 85,
+            "image": "images/stationery/slim-stationery-pouch.png",
+            "description": "Slim lightweight pouch for carrying essential stationery every day."
         },
-
         {
-            "name": "Document Envelope - Pack of 10",
-            "category": paper,
-            "price": 80,
-            "stock": 100,
-            "image": "images/stationery/file_foolder.png",
-            "description": "Large envelopes for documents."
+            "name": "Everyday College Tote Bag",
+            "category": bags,
+            "price": 349,
+            "stock": 45,
+            "image": "images/stationery/college-tote-bag.png",
+            "description": "Reusable tote bag for notebooks, files, bottles and everyday college items."
+        },
+        {
+            "name": "Mini Travel Organizer Pouch",
+            "category": bags,
+            "price": 229,
+            "stock": 60,
+            "image": "images/stationery/travel-organizer-pouch.png",
+            "description": "Compact organizer pouch for chargers, cables, pens and small essentials."
         },
 
         # ====================================================
-        # 85-90 : CALCULATORS
+        # WATER BOTTLES (5)
         # ====================================================
-
         {
-            "name": "Casio MJ-120D Calculator",
-            "category": calculators,
-            "price": 550,
+            "name": "750ml Insulated Bottle",
+            "category": bottles,
+            "price": 699,
             "stock": 40,
-            "image": "images/stationery/pen.png",
-            "description": "Basic desktop calculator for everyday calculations."
+            "image": "images/stationery/insulated-bottle.png",
+            "description": "Insulated reusable bottle designed for study days, work and travel."
+        },
+        {
+            "name": "750ml Tritan Water Bottle",
+            "category": bottles,
+            "price": 349,
+            "stock": 65,
+            "image": "images/stationery/tritan-bottle.png",
+            "description": "Lightweight reusable bottle with a practical 750ml capacity."
+        },
+        {
+            "name": "1L Sports Water Bottle",
+            "category": bottles,
+            "price": 399,
+            "stock": 55,
+            "image": "images/stationery/1l-sports-bottle.png",
+            "description": "Large reusable bottle with a carry-friendly design for active days."
+        },
+        {
+            "name": "500ml Compact Steel Bottle",
+            "category": bottles,
+            "price": 449,
+            "stock": 50,
+            "image": "images/stationery/compact-steel-bottle.png",
+            "description": "Compact steel bottle sized for desks, backpacks and short trips."
+        },
+        {
+            "name": "650ml Flip Lid Bottle",
+            "category": bottles,
+            "price": 299,
+            "stock": 70,
+            "image": "images/stationery/flip-lid-bottle.png",
+            "description": "Reusable 650ml bottle with an easy flip lid for daily use."
         },
 
+        # ====================================================
+        # TECH ACCESSORIES (6)
+        # ====================================================
         {
-            "name": "Casio MS-8B Calculator",
-            "category": calculators,
-            "price": 450,
+            "name": "Cable Organizer Set",
+            "category": tech,
+            "price": 199,
+            "stock": 70,
+            "image": "images/stationery/cable-organizer.png",
+            "description": "Cable clips and organizers for keeping charging and desk cables tidy."
+        },
+        {
+            "name": "32GB USB Flash Drive",
+            "category": tech,
+            "price": 499,
+            "stock": 45,
+            "image": "images/stationery/usb-drive.png",
+            "description": "Compact 32GB USB drive for storing projects, documents and study files."
+        },
+        {
+            "name": "Phone Stand - Foldable",
+            "category": tech,
+            "price": 149,
+            "stock": 80,
+            "image": "images/stationery/foldable-phone-stand.png",
+            "description": "Foldable desktop phone stand for calls, videos and study sessions."
+        },
+        {
+            "name": "6-in-1 Cable Adapter Kit",
+            "category": tech,
+            "price": 249,
+            "stock": 55,
+            "image": "images/stationery/cable-adapter-kit.png",
+            "description": "Compact adapter kit for organizing and connecting common charging cables."
+        },
+        {
+            "name": "USB Desk Light",
+            "category": tech,
+            "price": 329,
             "stock": 40,
-            "image": "images/stationery/pen.png",
-            "description": "Compact basic calculator."
+            "image": "images/stationery/usb-desk-light.png",
+            "description": "Compact USB-powered desk light for focused study and work."
+        },
+        {
+            "name": "Wireless Mouse Pad - Basic",
+            "category": tech,
+            "price": 179,
+            "stock": 65,
+            "image": "images/stationery/basic-mouse-pad.png",
+            "description": "Smooth desk mouse pad suitable for home, college and office use."
         },
 
+        # ====================================================
+        # LUNCH BOXES (6)
+        # ====================================================
         {
-            "name": "Casio FX-82MS Scientific Calculator",
-            "category": calculators,
-            "price": 650,
+            "name": "2-Compartment Lunch Box",
+            "category": lunch,
+            "price": 399,
+            "stock": 55,
+            "image": "images/stationery/lunch-box.png",
+            "description": "Practical two-compartment lunch box for school, college and office meals."
+        },
+        {
+            "name": "Insulated Lunch Bag",
+            "category": lunch,
+            "price": 349,
             "stock": 50,
-            "image": "images/stationery/pen.png",
-            "description": "Scientific calculator for students."
+            "image": "images/stationery/insulated-lunch-bag.png",
+            "description": "Compact insulated lunch bag for carrying meals and snacks."
         },
-
         {
-            "name": "Casio FX-991ES Plus",
-            "category": calculators,
-            "price": 1200,
-            "stock": 30,
-            "image": "images/stationery/pen.png",
-            "description": "Advanced scientific calculator."
+            "name": "3-Compartment Meal Box",
+            "category": lunch,
+            "price": 449,
+            "stock": 45,
+            "image": "images/stationery/3-compartment-meal-box.png",
+            "description": "Three-section meal box for keeping different foods neatly separated."
         },
-
         {
-            "name": "Citizen Basic Calculator",
-            "category": calculators,
-            "price": 300,
-            "stock": 50,
-            "image": "images/stationery/pen.png",
-            "description": "Affordable desktop calculator."
+            "name": "Compact Snack Box",
+            "category": lunch,
+            "price": 229,
+            "stock": 70,
+            "image": "images/stationery/snack-box.png",
+            "description": "Small reusable box for snacks, fruits and light meals."
         },
-
         {
-            "name": "Orpat Basic Calculator",
-            "category": calculators,
-            "price": 250,
-            "stock": 50,
-            "image": "images/stationery/pen.png",
-            "description": "Simple calculator for everyday use."
+            "name": "Steel Lunch Box - 2 Tier",
+            "category": lunch,
+            "price": 549,
+            "stock": 40,
+            "image": "images/stationery/steel-lunch-box.png",
+            "description": "Two-tier steel lunch box for students and office meals."
         },
-
-        # ====================================================
-        # 91-95 : SCHOOL ESSENTIALS
-        # ====================================================
-
         {
-            "name": "Nataraj Eraser - Pack of 5",
-            "category": school,
-            "price": 20,
-            "stock": 150,
-            "image": "images/stationery/pencil.png",
-            "description": "Soft erasers for pencil writing."
-        },
-
-        {
-            "name": "Apsara Eraser - Pack of 5",
-            "category": school,
-            "price": 25,
-            "stock": 150,
-            "image": "images/stationery/pencil.png",
-            "description": "Clean-writing erasers."
-        },
-
-        {
-            "name": "DOMS Sharpener - Pack of 5",
-            "category": school,
-            "price": 30,
-            "stock": 150,
-            "image": "images/stationery/pencil.png",
-            "description": "Compact pencil sharpeners."
-        },
-
-        {
-            "name": "Pencil Box",
-            "category": school,
-            "price": 100,
-            "stock": 80,
-            "image": "images/stationery/binder.png",
-            "description": "Storage box for pens and pencils."
-        },
-
-        {
-            "name": "College ID Card Holder",
-            "category": school,
-            "price": 40,
-            "stock": 100,
-            "image": "images/stationery/file_foolder.png",
-            "description": "Simple ID card holder."
+            "name": "Lunch Cutlery Set",
+            "category": lunch,
+            "price": 159,
+            "stock": 85,
+            "image": "images/stationery/lunch-cutlery-set.png",
+            "description": "Portable spoon and fork set for everyday lunch boxes and travel."
         },
 
         # ====================================================
-        # 96-100 : ADHESIVES & CORRECTION
+        # KEYCHAINS & ACCESSORIES (5)
         # ====================================================
-
         {
-            "name": "Fevicol MR - 50g",
-            "category": adhesives,
-            "price": 35,
+            "name": "Acrylic Keychain",
+            "category": accessories,
+            "price": 99,
             "stock": 100,
-            "image": "images/stationery/sticky_notes.png",
-            "description": "White adhesive for paper and craft work."
+            "image": "images/stationery/acrylic-keychain.png",
+            "description": "Lightweight acrylic keychain for keys, bags and everyday accessories."
         },
-
         {
-            "name": "Fevistik Glue Stick - 15g",
-            "category": adhesives,
-            "price": 40,
+            "name": "Multipurpose Lanyard",
+            "category": accessories,
+            "price": 129,
+            "stock": 90,
+            "image": "images/stationery/multipurpose-lanyard.png",
+            "description": "Simple multipurpose lanyard for ID cards, keys and small accessories."
+        },
+        {
+            "name": "Minimal Metal Keyring",
+            "category": accessories,
+            "price": 79,
+            "stock": 120,
+            "image": "images/stationery/metal-keyring.png",
+            "description": "Simple metal keyring for keys, pouches and bags."
+        },
+        {
+            "name": "ID Card Holder",
+            "category": accessories,
+            "price": 89,
             "stock": 100,
-            "image": "images/stationery/sticky_notes.png",
-            "description": "Easy-to-use glue stick."
+            "image": "images/stationery/id-card-holder.png",
+            "description": "Clear ID card holder for college, office and events."
         },
-
         {
-            "name": "Camlin Correction Pen",
-            "category": adhesives,
-            "price": 35,
-            "stock": 100,
-            "image": "images/stationery/pen.png",
-            "description": "Correction pen for clean document editing."
-        },
-
-        {
-            "name": "Correction Tape",
-            "category": adhesives,
-            "price": 45,
-            "stock": 100,
-            "image": "images/stationery/pen.png",
-            "description": "Quick-dry correction tape."
-        },
-
-        {
-            "name": "Double Side Tape",
-            "category": adhesives,
-            "price": 50,
-            "stock": 80,
-            "image": "images/stationery/sticky_notes.png",
-            "description": "Double-sided adhesive tape for craft and office use."
+            "name": "Badge Clip Set - 3",
+            "category": accessories,
+            "price": 69,
+            "stock": 110,
+            "image": "images/stationery/badge-clip-set.png",
+            "description": "Three clips for attaching badges, ID cards and small tags."
         }
     ]
 
-    # ========================================================
-    # ADD / UPDATE PRODUCTS
-    # ========================================================
+    # --------------------------------------------------------
+    # ADD / UPDATE NEW PRODUCTS
+    # --------------------------------------------------------
 
     for product in products:
 
@@ -1524,9 +1200,9 @@ def main():
 
         print()
         print("==========================================")
-        print("       PRINTCARE SEEDING COMPLETE")
+        print("       PRINTIFY SEEDING COMPLETE")
         print("==========================================")
-        print("100 stationery products added/updated.")
+        print("70 stationery products added/updated.")
         print("==========================================")
 
 

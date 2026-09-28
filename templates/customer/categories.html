@@ -1,58 +1,717 @@
 {% extends "base.html" %}
-{% block title %}Categories - PrintCare{% endblock %}
+
+{% block title %}Categories - Printify{% endblock %}
+
 {% block content %}
 
-{% if search_query is defined and search_query %}
-<h2 class="section-title">Search results for "{{ search_query }}"</h2>
+<style>
+/* =========================================================
+   PRINTIFY CATEGORIES PAGE
+   Page-scoped styles only.
+   Does not change global style.css.
+========================================================= */
 
-{% if search_services %}
-<h3 class="section-subtitle">Printing Services</h3>
-<div class="printing-grid">
-    {% for svc in search_services %}
-    <a href="{{ url_for('printing.details', slug=svc.slug) }}" class="printing-card">
-        <div class="printing-card-icon">🖨️</div>
-        <div class="printing-card-name">{{ svc.name }}</div>
-    </a>
-    {% endfor %}
+.printify-categories-page {
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 32px 28px 110px;
+}
+
+/* ---------------------------------------------------------
+   PAGE HEADER
+--------------------------------------------------------- */
+
+.categories-header {
+    margin-bottom: 30px;
+}
+
+.categories-header .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #eaf2ff;
+    color: #2563eb;
+    padding: 7px 13px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    margin-bottom: 12px;
+}
+
+.categories-header h1 {
+    margin: 0 0 8px;
+    color: #172033;
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1.15;
+}
+
+.categories-header p {
+    margin: 0;
+    color: #667085;
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 700px;
+}
+
+/* ---------------------------------------------------------
+   SECTION HEADER
+--------------------------------------------------------- */
+
+.printify-category-section {
+    margin-bottom: 38px;
+}
+
+.printify-section-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 17px;
+}
+
+.printify-section-heading-left h2 {
+    margin: 0 0 5px;
+    font-size: 22px;
+    font-weight: 800;
+    color: #172033;
+}
+
+.printify-section-heading-left p {
+    margin: 0;
+    color: #7b8495;
+    font-size: 13px;
+}
+
+/* ---------------------------------------------------------
+   CATEGORY GRID
+--------------------------------------------------------- */
+
+.printify-category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+/* ---------------------------------------------------------
+   CATEGORY CARD
+--------------------------------------------------------- */
+
+.printify-category-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-height: 86px;
+    padding: 17px 18px;
+    background: #ffffff;
+    border: 1px solid #e4eaf4;
+    border-radius: 18px;
+    box-shadow: 0 7px 22px rgba(28, 45, 78, 0.05);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+    overflow: hidden;
+}
+
+.printify-category-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(37, 99, 235, 0.06),
+        transparent 55%
+    );
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+.printify-category-card:hover {
+    transform: translateY(-4px);
+    border-color: #bdd2f8;
+    box-shadow: 0 14px 30px rgba(28, 45, 78, 0.10);
+}
+
+.printify-category-card:hover::before {
+    opacity: 1;
+}
+
+/* ---------------------------------------------------------
+   CATEGORY ICON
+--------------------------------------------------------- */
+
+.printify-category-icon {
+    position: relative;
+    z-index: 1;
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef4ff;
+    color: #2563eb;
+    font-size: 24px;
+    box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.05);
+}
+
+.printify-category-content {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+    flex: 1;
+}
+
+.printify-category-name {
+    display: block;
+    margin: 0 0 5px;
+    color: #172033;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+.printify-category-description {
+    margin: 0;
+    color: #8a93a3;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.printify-category-arrow {
+    position: relative;
+    z-index: 1;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f6f8fc;
+    color: #98a2b3;
+    font-size: 18px;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.printify-category-card:hover .printify-category-arrow {
+    background: #2563eb;
+    color: #ffffff;
+    transform: translateX(2px);
+}
+
+/* ---------------------------------------------------------
+   SEARCH
+--------------------------------------------------------- */
+
+.printify-search-box {
+    margin-bottom: 30px;
+    padding: 19px 20px;
+    border: 1px solid #dfe7f4;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #f7faff, #ffffff);
+}
+
+.printify-search-box h2 {
+    margin: 0 0 5px;
+    color: #172033;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.printify-search-box p {
+    margin: 0;
+    color: #7b8495;
+    font-size: 13px;
+}
+
+/* ---------------------------------------------------------
+   SEARCH PRINTING CARDS
+--------------------------------------------------------- */
+
+.printify-search-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+    margin-bottom: 28px;
+}
+
+.printify-search-card {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-height: 72px;
+    padding: 14px 16px;
+    background: #ffffff;
+    border: 1px solid #e4eaf4;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(28, 45, 78, 0.04);
+    transition: 0.2s ease;
+}
+
+.printify-search-card:hover {
+    transform: translateY(-3px);
+    border-color: #bfd2f5;
+    box-shadow: 0 12px 25px rgba(28, 45, 78, 0.08);
+}
+
+.printify-search-icon {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: #eef4ff;
+    font-size: 21px;
+}
+
+.printify-search-name {
+    color: #172033;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+/* ---------------------------------------------------------
+   SEARCH PRODUCT CARDS
+--------------------------------------------------------- */
+
+.printify-product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.printify-product-card {
+    display: block;
+    background: #ffffff;
+    border: 1px solid #e4eaf4;
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 7px 22px rgba(28, 45, 78, 0.05);
+    transition: 0.2s ease;
+}
+
+.printify-product-card:hover {
+    transform: translateY(-4px);
+    border-color: #bdd2f8;
+    box-shadow: 0 14px 30px rgba(28, 45, 78, 0.10);
+}
+
+.printify-product-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 15px;
+    background: #f1f5fb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 29px;
+    margin-bottom: 14px;
+}
+
+.printify-product-name {
+    color: #172033;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.4;
+    margin-bottom: 8px;
+}
+
+.printify-product-price {
+    color: #2563eb;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+/* ---------------------------------------------------------
+   EMPTY STATE
+--------------------------------------------------------- */
+
+.printify-empty-state {
+    padding: 45px 25px;
+    text-align: center;
+    background: #ffffff;
+    border: 1px dashed #ced8e8;
+    border-radius: 18px;
+    color: #7b8495;
+    font-size: 14px;
+}
+
+/* ---------------------------------------------------------
+   RESPONSIVE
+--------------------------------------------------------- */
+
+@media (max-width: 1050px) {
+
+    .printify-category-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .printify-search-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .printify-product-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+
+    .printify-categories-page {
+        padding: 22px 15px 105px;
+    }
+
+    .categories-header h1 {
+        font-size: 28px;
+    }
+
+    .printify-category-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .printify-search-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .printify-product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .printify-category-card {
+        min-height: 80px;
+        padding: 15px;
+    }
+
+    .printify-category-icon {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+    }
+}
+
+@media (max-width: 430px) {
+
+    .printify-product-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .printify-section-heading {
+        align-items: flex-start;
+    }
+}
+</style>
+
+
+<div class="printify-categories-page">
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="categories-header">
+
+        <span class="eyebrow">
+            ✦ Explore Printify
+        </span>
+
+        {% if search_query is defined and search_query %}
+
+            <h1>Search Results</h1>
+
+            <p>
+                Showing results for
+                <strong>"{{ search_query }}"</strong>
+            </p>
+
+        {% else %}
+
+            <h1>Categories</h1>
+
+            <p>
+                Choose a printing service or explore our stationery collection.
+            </p>
+
+        {% endif %}
+
+    </header>
+
+
+    <!-- =====================================================
+         SEARCH RESULTS
+    ====================================================== -->
+
+    {% if search_query is defined and search_query %}
+
+        {% if search_services %}
+
+        <section class="printify-category-section">
+
+            <div class="printify-section-heading">
+
+                <div class="printify-section-heading-left">
+
+                    <h2>Printing Services</h2>
+
+                    <p>
+                        Select a service to continue.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="printify-search-grid">
+
+                {% for svc in search_services %}
+
+                <a
+                    href="{{ url_for('printing.details', slug=svc.slug) }}"
+                    class="printify-search-card"
+                >
+
+                    <div class="printify-search-icon">
+                        🖨️
+                    </div>
+
+                    <div class="printify-search-name">
+                        {{ svc.name }}
+                    </div>
+
+                    <div class="printify-category-arrow">
+                        →
+                    </div>
+
+                </a>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+
+        {% if search_products %}
+
+        <section class="printify-category-section">
+
+            <div class="printify-section-heading">
+
+                <div class="printify-section-heading-left">
+
+                    <h2>Stationery</h2>
+
+                    <p>
+                        Find the stationery product you need.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="printify-product-grid">
+
+                {% for p in search_products %}
+
+                <a
+                    href="{{ url_for('stationery.details', product_id=p.id) }}"
+                    class="printify-product-card"
+                >
+
+                    <div class="printify-product-icon">
+                        📦
+                    </div>
+
+                    <div class="printify-product-name">
+                        {{ p.name }}
+                    </div>
+
+                    <div class="printify-product-price">
+                        ₹{{ p.price }}
+                    </div>
+
+                </a>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+
+        {% if not search_services and not search_products %}
+
+            <div class="printify-empty-state">
+                No results found for "{{ search_query }}".
+            </div>
+
+        {% endif %}
+
+
+    {% else %}
+
+        <!-- =================================================
+             PRINTING CATEGORIES
+        ================================================== -->
+
+        <section class="printify-category-section">
+
+            <div class="printify-section-heading">
+
+                <div class="printify-section-heading-left">
+
+                    <h2>Printing Categories</h2>
+
+                    <p>
+                        Choose how you want to print your documents.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="printify-category-grid">
+
+                {% for cat in printing_categories %}
+
+                <a
+                    href="{{ url_for('printing.list_services', category=cat.id) }}"
+                    class="printify-category-card"
+                >
+
+                    <div class="printify-category-icon">
+                        🖨️
+                    </div>
+
+                    <div class="printify-category-content">
+
+                        <span class="printify-category-name">
+                            {{ cat.name }}
+                        </span>
+
+                        <p class="printify-category-description">
+                            Explore {{ cat.name.lower() }} services
+                        </p>
+
+                    </div>
+
+                    <div class="printify-category-arrow">
+                        →
+                    </div>
+
+                </a>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             STATIONERY CATEGORIES
+        ================================================== -->
+
+        <section class="printify-category-section">
+
+            <div class="printify-section-heading">
+
+                <div class="printify-section-heading-left">
+
+                    <h2>Stationery Categories</h2>
+
+                    <p>
+                        Explore notebooks, writing tools, office items and more.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="printify-category-grid">
+
+                {% for cat in stationery_categories %}
+
+                <a
+                    href="{{ url_for('stationery.list_products', category=cat.id) }}"
+                    class="printify-category-card"
+                >
+
+                    <div class="printify-category-icon">
+
+                        {% if cat.name == "Notebooks & Journals" %}
+                            📓
+                        {% elif cat.name == "Pens & Writing" %}
+                            🖊️
+                        {% elif cat.name == "Highlighters" %}
+                            🖍️
+                        {% elif cat.name == "Sticky Notes" %}
+                            🗒️
+                        {% elif cat.name == "Art Supplies" %}
+                            🎨
+                        {% elif cat.name == "Office Supplies" %}
+                            📎
+                        {% elif cat.name == "Bags & Pouches" %}
+                            🎒
+                        {% elif cat.name == "Water Bottles" %}
+                            🥤
+                        {% elif cat.name == "Tech Accessories" %}
+                            💻
+                        {% elif cat.name == "Lunch Boxes" %}
+                            🍱
+                        {% elif cat.name == "Keychains & Accessories" %}
+                            🔑
+                        {% else %}
+                            📦
+                        {% endif %}
+
+                    </div>
+
+                    <div class="printify-category-content">
+
+                        <span class="printify-category-name">
+                            {{ cat.name }}
+                        </span>
+
+                        <p class="printify-category-description">
+                            Shop {{ cat.name.lower() }}
+                        </p>
+
+                    </div>
+
+                    <div class="printify-category-arrow">
+                        →
+                    </div>
+
+                </a>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+    {% endif %}
+
 </div>
-{% endif %}
 
-{% if search_products %}
-<h3 class="section-subtitle">Stationery</h3>
-<div class="product-grid">
-    {% for p in search_products %}
-    <a href="{{ url_for('stationery.details', product_id=p.id) }}" class="product-card">
-        <div class="product-card-icon">📦</div>
-        <div class="product-card-name">{{ p.name }}</div>
-        <div class="product-card-price">Rs. {{ p.price }}</div>
-    </a>
-    {% endfor %}
-</div>
-{% endif %}
-
-{% if not search_services and not search_products %}
-<p class="empty-state">No results found for "{{ search_query }}".</p>
-{% endif %}
-
-{% else %}
-
-<h2 class="section-title">Printing Categories</h2>
-<div class="category-grid">
-    {% for cat in printing_categories %}
-    <a href="{{ url_for('printing.list_services', category=cat.id) }}" class="category-card">
-        <span class="cat-icon">🖨️</span><span>{{ cat.name }}</span>
-    </a>
-    {% endfor %}
-</div>
-
-<h2 class="section-title">Stationery Categories</h2>
-<div class="category-grid">
-    {% for cat in stationery_categories %}
-    <a href="{{ url_for('stationery.list_products', category=cat.id) }}" class="category-card">
-        <span class="cat-icon">🗂️</span><span>{{ cat.name }}</span>
-    </a>
-    {% endfor %}
-</div>
-
-{% endif %}
 {% endblock %}

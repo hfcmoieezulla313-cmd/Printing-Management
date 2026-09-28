@@ -1,0 +1,1045 @@
+{% extends "base.html" %}
+
+{% block title %}Printify - Upload Photo{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* =========================================================
+   PHOTO UPLOAD PAGE
+   Page-specific styling only.
+   Configuration page is not affected.
+========================================================= */
+
+.printify-photo-upload-page {
+    min-height: calc(100vh - 80px);
+    position: relative;
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 45px 20px 85px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f5f8ff 0%,
+            #edf3ff 50%,
+            #f8fbff 100%
+        );
+}
+
+
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
+.printify-photo-upload-page::before {
+    content: "";
+
+    position: absolute;
+
+    width: 560px;
+    height: 560px;
+
+    top: -280px;
+    left: -190px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(56, 100, 245, 0.14),
+            transparent 68%
+        );
+
+    pointer-events: none;
+}
+
+
+.printify-photo-upload-page::after {
+    content: "";
+
+    position: absolute;
+
+    width: 500px;
+    height: 500px;
+
+    right: -190px;
+    bottom: -260px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(102, 145, 255, 0.12),
+            transparent 68%
+        );
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.printify-photo-upload-content {
+    width: 100%;
+    max-width: 760px;
+
+    position: relative;
+    z-index: 2;
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.printify-photo-brand {
+    text-align: center;
+
+    margin-bottom: 22px;
+}
+
+
+.printify-photo-brand-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    text-decoration: none;
+
+    color: #17243e;
+
+    font-size: 28px;
+    font-weight: 800;
+}
+
+
+.printify-photo-brand-icon {
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #315efb,
+            #6b89f7
+        );
+
+    color: white;
+
+    font-size: 21px;
+
+    box-shadow:
+        0 10px 25px rgba(49, 94, 251, 0.22);
+}
+
+
+.printify-photo-brand-name span {
+    color: #3964f5;
+}
+
+
+.printify-photo-brand-subtitle {
+    margin: 8px 0 0;
+
+    color: #707b90;
+
+    font-size: 13px;
+
+    letter-spacing: 0.25px;
+}
+
+
+/* =========================================================
+   MAIN CARD
+========================================================= */
+
+.printify-photo-upload-card {
+    width: 100%;
+
+    padding: 38px 38px 32px;
+
+    border-radius: 28px;
+
+    background: rgba(255, 255, 255, 0.98);
+
+    border: 1px solid #dfe6f3;
+
+    box-shadow:
+        0 25px 65px rgba(35, 55, 95, 0.13),
+        0 5px 18px rgba(35, 55, 95, 0.05);
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   MAIN ICON
+========================================================= */
+
+.printify-photo-main-icon {
+    width: 72px;
+    height: 72px;
+
+    margin: 0 auto 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #edf2ff,
+            #dfe8ff
+        );
+
+    font-size: 32px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.printify-photo-eyebrow {
+    display: inline-block;
+
+    margin-bottom: 10px;
+
+    color: #4168ed;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.6px;
+}
+
+
+.printify-photo-upload-card h1 {
+    margin: 0;
+
+    color: #17243e;
+
+    font-size: clamp(29px, 4vw, 38px);
+
+    line-height: 1.15;
+
+    font-weight: 800;
+}
+
+
+.printify-photo-upload-description {
+    max-width: 580px;
+
+    margin: 12px auto 0;
+
+    color: #6c778c;
+
+    font-size: 14px;
+
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   UPLOAD AREA
+========================================================= */
+
+.printify-photo-upload-area {
+    max-width: 560px;
+
+    margin: 28px auto 0;
+
+    padding: 28px 22px;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #f9fbff,
+            #f4f7fd
+        );
+
+    border: 1.5px dashed #c7d3ed;
+
+    transition:
+        border-color 0.18s ease,
+        background 0.18s ease;
+}
+
+
+.printify-photo-upload-area:hover {
+    border-color: #7e9bf1;
+
+    background:
+        linear-gradient(
+            180deg,
+            #f7faff,
+            #f1f5fd
+        );
+}
+
+
+/* =========================================================
+   CHOOSE PHOTO
+========================================================= */
+
+.printify-photo-select-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    min-width: 190px;
+    min-height: 52px;
+
+    padding: 0 24px;
+
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #315efb,
+            #5377f5
+        );
+
+    color: white;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 12px 27px rgba(49, 94, 251, 0.20);
+
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+
+.printify-photo-select-button:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 15px 32px rgba(49, 94, 251, 0.27);
+}
+
+
+/* =========================================================
+   SELECTED FILE
+========================================================= */
+
+.printify-photo-selected {
+    width: 100%;
+
+    max-width: 560px;
+
+    margin: 20px auto 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 14px 15px;
+
+    border-radius: 16px;
+
+    border: 1px solid #d7e1f2;
+
+    background: white;
+
+    text-align: left;
+}
+
+
+.printify-photo-selected.hidden {
+    display: none;
+}
+
+
+.printify-photo-selected-icon {
+    width: 40px;
+    height: 40px;
+
+    flex: 0 0 auto;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #eaf8ef;
+
+    color: #238a49;
+
+    font-size: 16px;
+
+    font-weight: 900;
+}
+
+
+.printify-photo-selected-info {
+    min-width: 0;
+
+    flex: 1;
+}
+
+
+.printify-photo-selected-info strong,
+.printify-photo-selected-info span {
+    display: block;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+.printify-photo-selected-info strong {
+    color: #1c2942;
+
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+
+.printify-photo-selected-info span {
+    margin-top: 3px;
+
+    color: #7b8699;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   CHANGE
+========================================================= */
+
+.printify-photo-change-button {
+    flex: 0 0 auto;
+
+    padding: 8px 11px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #eef3ff;
+
+    color: #3c63e9;
+
+    cursor: pointer;
+
+    font-size: 11px;
+
+    font-weight: 800;
+}
+
+
+.printify-photo-change-button:hover {
+    background: #e1e9ff;
+}
+
+
+/* =========================================================
+   CONTINUE
+========================================================= */
+
+.printify-photo-continue-button {
+    width: 100%;
+
+    max-width: 560px;
+
+    min-height: 55px;
+
+    margin: 20px auto 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    border: none;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #315efb,
+            #5278f7
+        );
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+    box-shadow:
+        0 12px 28px rgba(49, 94, 251, 0.21);
+
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        opacity 0.18s ease;
+}
+
+
+.printify-photo-continue-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 16px 34px rgba(49, 94, 251, 0.27);
+}
+
+
+.printify-photo-continue-button:disabled {
+    opacity: 0.45;
+
+    cursor: not-allowed;
+
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   INFORMATION PILLS
+========================================================= */
+
+.printify-photo-upload-info {
+    margin-top: 20px;
+
+    display: flex;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    gap: 9px;
+}
+
+
+.printify-photo-info-pill {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 9px 13px;
+
+    border-radius: 999px;
+
+    background: #f4f7fc;
+
+    border: 1px solid #e4e9f2;
+
+    color: #69758a;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   SECURITY
+========================================================= */
+
+.printify-photo-secure-note {
+    margin-top: 17px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 7px;
+
+    color: #8993a5;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+
+    .printify-photo-upload-page {
+        padding:
+            30px
+            14px
+            70px;
+    }
+
+
+    .printify-photo-brand-link {
+        font-size: 24px;
+    }
+
+
+    .printify-photo-upload-card {
+        padding:
+            28px
+            18px
+            24px;
+
+        border-radius: 23px;
+    }
+
+
+    .printify-photo-main-icon {
+        width: 64px;
+        height: 64px;
+
+        font-size: 28px;
+    }
+
+
+    .printify-photo-upload-card h1 {
+        font-size: 28px;
+    }
+
+
+    .printify-photo-upload-description {
+        font-size: 13px;
+    }
+
+
+    .printify-photo-upload-area {
+        padding: 23px 14px;
+    }
+
+
+    .printify-photo-selected {
+        align-items: flex-start;
+    }
+
+}
+
+
+@media (max-width: 430px) {
+
+    .printify-photo-upload-page {
+        padding-left: 9px;
+        padding-right: 9px;
+    }
+
+
+    .printify-photo-upload-card {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+
+    .printify-photo-upload-card h1 {
+        font-size: 25px;
+    }
+
+
+    .printify-photo-selected {
+        gap: 9px;
+    }
+
+
+    .printify-photo-change-button {
+        padding: 7px 8px;
+    }
+
+}
+
+</style>
+
+
+<section class="printify-photo-upload-page">
+
+    <div class="printify-photo-upload-content">
+
+
+        <!-- =================================================
+             BRAND
+        ================================================== -->
+
+        <div class="printify-photo-brand">
+
+            <a
+                href="{{ url_for('main.home') }}"
+                class="printify-photo-brand-link"
+            >
+
+                <span class="printify-photo-brand-icon">
+                    ✦
+                </span>
+
+                <span class="printify-photo-brand-name">
+                    Print<span>ify</span>
+                </span>
+
+            </a>
+
+            <p class="printify-photo-brand-subtitle">
+                Smart Printing • Stationery • More
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             MAIN CARD
+        ================================================== -->
+
+        <div class="printify-photo-upload-card">
+
+
+            <!-- ICON -->
+
+            <div class="printify-photo-main-icon">
+                🖼️
+            </div>
+
+
+            <!-- HEADER -->
+
+            <span class="printify-photo-eyebrow">
+                PHOTO PRINTING
+            </span>
+
+            <h1>
+                Upload your photo
+            </h1>
+
+            <p class="printify-photo-upload-description">
+                Upload a JPG, JPEG or PNG photo.
+                You can choose the size, frame and copies on the next step.
+            </p>
+
+
+            <!-- =================================================
+                 FORM
+            ================================================== -->
+
+            <form
+                method="POST"
+                enctype="multipart/form-data"
+                id="photo-upload-form"
+            >
+
+                <input
+                    type="file"
+                    name="photo"
+                    id="photo"
+                    accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                    hidden
+                    required
+                >
+
+
+                <!-- Upload area -->
+
+                <div class="printify-photo-upload-area">
+
+                    <label
+                        for="photo"
+                        class="printify-photo-select-button"
+                    >
+                        📷 Choose Photo
+                    </label>
+
+                </div>
+
+
+                <!-- Selected file -->
+
+                <div
+                    id="photo-selected"
+                    class="printify-photo-selected hidden"
+                >
+
+                    <div class="printify-photo-selected-icon">
+                        ✓
+                    </div>
+
+                    <div class="printify-photo-selected-info">
+
+                        <strong id="photo-file-name">
+                            Photo selected
+                        </strong>
+
+                        <span id="photo-file-size">
+                            Ready to upload
+                        </span>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        id="photo-change"
+                        class="printify-photo-change-button"
+                    >
+                        Change
+                    </button>
+
+                </div>
+
+
+                <!-- Continue -->
+
+                <button
+                    type="submit"
+                    id="photo-continue"
+                    class="printify-photo-continue-button"
+                    disabled
+                >
+                    Continue to Configure
+                    <span>→</span>
+                </button>
+
+            </form>
+
+
+            <!-- =================================================
+                 INFORMATION
+            ================================================== -->
+
+            <div class="printify-photo-upload-info">
+
+                <div class="printify-photo-info-pill">
+
+                    <span>📷</span>
+
+                    <span>
+                        JPG, JPEG, PNG
+                    </span>
+
+                </div>
+
+
+                <div class="printify-photo-info-pill">
+
+                    <span>1️⃣</span>
+
+                    <span>
+                        One photo
+                    </span>
+
+                </div>
+
+
+                <div class="printify-photo-info-pill">
+
+                    <span>⚙️</span>
+
+                    <span>
+                        Configure next
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- SECURITY -->
+
+            <div class="printify-photo-secure-note">
+
+                <span>
+                    🔒
+                </span>
+
+                <span>
+                    Your photo will be securely uploaded.
+                </span>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const fileInput =
+        document.getElementById("photo");
+
+    const selectedBox =
+        document.getElementById("photo-selected");
+
+    const fileName =
+        document.getElementById("photo-file-name");
+
+    const fileSize =
+        document.getElementById("photo-file-size");
+
+    const continueButton =
+        document.getElementById("photo-continue");
+
+    const changeButton =
+        document.getElementById("photo-change");
+
+    const form =
+        document.getElementById("photo-upload-form");
+
+
+    /* =====================================================
+       FILE SIZE
+    ===================================================== */
+
+    function formatFileSize(bytes) {
+
+        if (bytes < 1024) {
+
+            return bytes + " B";
+
+        }
+
+
+        if (bytes < 1024 * 1024) {
+
+            return (
+                (bytes / 1024).toFixed(1) +
+                " KB"
+            );
+
+        }
+
+
+        return (
+            (bytes / (1024 * 1024)).toFixed(1) +
+            " MB"
+        );
+    }
+
+
+    /* =====================================================
+       UPDATE SELECTED FILE
+    ===================================================== */
+
+    function updateSelectedFile() {
+
+        if (!fileInput.files.length) {
+
+            selectedBox.classList.add("hidden");
+
+            continueButton.disabled = true;
+
+            return;
+        }
+
+
+        const file =
+            fileInput.files[0];
+
+
+        fileName.textContent =
+            file.name;
+
+
+        fileSize.textContent =
+            formatFileSize(file.size);
+
+
+        selectedBox.classList.remove("hidden");
+
+
+        continueButton.disabled =
+            false;
+    }
+
+
+    /* =====================================================
+       FILE CHANGE
+    ===================================================== */
+
+    fileInput.addEventListener(
+        "change",
+        updateSelectedFile
+    );
+
+
+    /* =====================================================
+       CHANGE PHOTO
+    ===================================================== */
+
+    changeButton.addEventListener(
+        "click",
+        function () {
+
+            fileInput.click();
+
+        }
+    );
+
+
+    /* =====================================================
+       SUBMIT
+    ===================================================== */
+
+    form.addEventListener(
+        "submit",
+        function () {
+
+            continueButton.disabled = true;
+
+            continueButton.innerHTML =
+                "Uploading... <span>⏳</span>";
+
+        }
+    );
+
+});
+
+</script>
+
+{% endblock %}

@@ -59,7 +59,7 @@ def send_otp_email(email, otp):
 
     message = EmailMessage()
 
-    message["Subject"] = "Your PrintPilot AI Verification Code"
+    message["Subject"] = "Your Printify AI Verification Code"
     message["From"] = mail_from
     message["To"] = email
 
@@ -67,7 +67,7 @@ def send_otp_email(email, otp):
         f"""
 Hello,
 
-Welcome to PrintPilot AI!
+Welcome to  AI!
 
 Your account verification OTP is:
 
@@ -78,7 +78,7 @@ This OTP is valid for {OTP_EXPIRY_MINUTES} minutes.
 If you did not request this code, you can safely ignore this email.
 
 Regards,
-PrintPilot AI
+Printify AI
 Printing made smarter
 """
     )

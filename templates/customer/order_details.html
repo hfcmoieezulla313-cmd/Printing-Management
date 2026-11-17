@@ -1,38 +1,438 @@
+
 {% extends "base.html" %}
-{% block title %}Order {{ order.order_number }} - PrintCare{% endblock %}
+
+{% block title %}Track Order {{ order.order_number }} - Printify{% endblock %}
+
 {% block content %}
-<h2 class="section-title">Order {{ order.order_number }}</h2>
-<span class="status-badge status-{{ order.status|lower|replace(' ', '-') }}">{{ order.status }}</span>
 
-<div class="tracking-timeline">
-    {% for step in timeline %}
-    <div class="tl-step {{ 'tl-done' if step.done }} {{ 'tl-current' if step.current }}">
-        <div class="tl-dot">{{ '✓' if step.done else '○' }}</div>
-        <div class="tl-label">{{ step.label }}</div>
-    </div>
-    {% endfor %}
-</div>
+<div class="customer-order-page">
 
-<h3 class="section-subtitle">Items</h3>
-<div class="order-items-list">
-    {% for item in order.items %}
-    <div class="order-item-row">
+    <div class="order-header">
         <div>
-            <strong>{{ item.name_snapshot }}</strong>
-            {% if item.details_snapshot %}<div class="order-item-details">{{ item.details_snapshot }}</div>{% endif %}
+            <h2 class="section-title">Track Your Order</h2>
+            <p class="order-number">Order #{{ order.order_number }}</p>
         </div>
-        <div>Qty {{ item.quantity }} · Rs. {{ '%.2f'|format(item.line_total) }}</div>
+
+        <span class="status-badge status-{{ order.status|lower|replace(' ', '-') }}">
+            {{ order.status }}
+        </span>
     </div>
-    {% endfor %}
+
+    <!-- ORDER TRACKING -->
+    <div class="tracking-card">
+
+        <h3>Order Progress</h3>
+
+        {% set steps = [
+            'Confirmed',
+            'Printing',
+            'Ready for Delivery',
+            'Out for Delivery',
+            'Delivered'
+        ] %}
+
+        {% set current_index = steps.index(order.status) if order.status in steps else -1 %}
+
+        <div class="tracking-timeline">
+
+            {% for step in steps %}
+
+                <div class="timeline-step
+                    {% if current_index >= 0 and loop.index0 < current_index %}completed{% endif %}
+                    {% if loop.index0 == current_index %}current{% endif %}">
+
+                    <div class="timeline-icon">
+                        {% if current_index >= 0 and loop.index0 <= current_index %}
+                            ✓
+                        {% else %}
+                            {{ loop.index }}
+                        {% endif %}
+                    </div>
+
+                    <div class="timeline-content">
+                        <strong>{{ step }}</strong>
+
+                        {% if loop.index0 == current_index %}
+                            <span>Current Status</span>
+                        {% elif current_index >= 0 and loop.index0 < current_index %}
+                            <span>Completed</span>
+                        {% else %}
+                            <span>Waiting</span>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% if order.status == 'Cancelled' %}
+            <div class="order-message cancelled-message">
+                This order has been cancelled.
+            </div>
+        {% elif order.status == 'Delivered' %}
+            <div class="order-message delivered-message">
+                Your order has been delivered successfully!
+            </div>
+        {% else %}
+            <div class="order-message">
+                Your order is being processed. This page refreshes automatically
+                to show the latest available status.
+            </div>
+        {% endif %}
+
+    </div>
+
+    <!-- ORDER ITEMS -->
+    <div class="tracking-card">
+
+        <h3>Ordered Items</h3>
+
+        <div class="order-items-list">
+
+            {% for item in order.items %}
+
+                <div class="order-item-row">
+
+                    <div>
+                        <strong>{{ item.name_snapshot }}</strong>
+
+                        {% if item.details_snapshot %}
+                            <div class="order-item-details">
+                                {{ item.details_snapshot }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="item-price">
+                        Qty: {{ item.quantity }}
+                        <br>
+                        Rs. {{ '%.2f'|format(item.line_total|float) }}
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <p>No order items found.</p>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+    <!-- PAYMENT SUMMARY -->
+    <div class="tracking-card">
+
+        <h3>Payment Summary</h3>
+
+        <div class="cart-summary">
+
+            <div class="cs-row">
+                <span>Subtotal</span>
+                <span>Rs. {{ '%.2f'|format(order.subtotal|float) }}</span>
+            </div>
+
+            <div class="cs-row">
+                <span>Delivery</span>
+                <span>Rs. {{ '%.2f'|format(order.delivery_charge|float) }}</span>
+            </div>
+
+            {% if order.discount_amount %}
+                <div class="cs-row">
+                    <span>Discount</span>
+                    <span>- Rs. {{ '%.2f'|format(order.discount_amount|float) }}</span>
+                </div>
+            {% endif %}
+
+            <div class="cs-row cs-total">
+                <span>Total Amount</span>
+                <span>Rs. {{ '%.2f'|format(order.total_amount|float) }}</span>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- DELIVERY ADDRESS -->
+    <div class="tracking-card">
+
+        <h3>Delivery Address</h3>
+
+        <p>
+            <strong>{{ order.contact_name }}</strong>
+            <br>
+            {{ order.contact_phone }}
+        </p>
+
+        {% if order.address %}
+            <p>{{ order.address.full_text() }}</p>
+        {% else %}
+            <p>Delivery address not available.</p>
+        {% endif %}
+
+    </div>
+
+    <div class="order-actions">
+        <a href="{{ url_for('orders.my_orders') }}" class="back-orders-btn">
+            View My Orders
+        </a>
+    </div>
+
 </div>
 
-<div class="cart-summary">
-    <div class="cs-row"><span>Subtotal</span><span>Rs. {{ '%.2f'|format(order.subtotal) }}</span></div>
-    <div class="cs-row"><span>Delivery</span><span>Rs. {{ '%.2f'|format(order.delivery_charge) }}</span></div>
-    {% if order.discount_amount %}<div class="cs-row"><span>Discount</span><span>- Rs. {{ '%.2f'|format(order.discount_amount) }}</span></div>{% endif %}
-    <div class="cs-row cs-total"><span>Total</span><span>Rs. {{ '%.2f'|format(order.total_amount) }}</span></div>
-</div>
+<style>
 
-<h3 class="section-subtitle">Delivery Address</h3>
-<p>{{ order.contact_name }}, {{ order.contact_phone }}<br>{{ order.address.full_text() }}</p>
+.customer-order-page {
+    max-width: 950px;
+    margin: 30px auto;
+    padding: 0 15px;
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+
+.order-number {
+    color: #64748b;
+    margin-top: -10px;
+}
+
+.tracking-card {
+    background: #fff;
+    padding: 24px;
+    margin-bottom: 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+.tracking-card h3 {
+    color: #1e293b;
+    margin-top: 0;
+    margin-bottom: 22px;
+}
+
+.status-badge {
+    padding: 8px 14px;
+    border-radius: 20px;
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.status-printing {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-ready-for-delivery {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-out-for-delivery {
+    background: #ede9fe;
+    color: #6d28d9;
+}
+
+.status-delivered {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-cancelled {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.tracking-timeline {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 30px 0;
+}
+
+.timeline-step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+}
+
+.timeline-icon {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #e2e8f0;
+    color: #64748b;
+    font-weight: 700;
+    margin-bottom: 10px;
+    z-index: 1;
+}
+
+.timeline-step.completed .timeline-icon,
+.timeline-step.current .timeline-icon {
+    background: #2563eb;
+    color: white;
+}
+
+.timeline-step.current .timeline-icon {
+    box-shadow: 0 0 0 5px #dbeafe;
+}
+
+.timeline-content strong {
+    display: block;
+    font-size: 12px;
+    color: #334155;
+}
+
+.timeline-content span {
+    display: block;
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 5px;
+}
+
+.timeline-step.current .timeline-content span {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.order-message {
+    background: #eff6ff;
+    color: #1d4ed8;
+    padding: 13px;
+    border-radius: 9px;
+    font-size: 14px;
+}
+
+.delivered-message {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.cancelled-message {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.order-item-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 15px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.order-item-row:last-child {
+    border-bottom: none;
+}
+
+.order-item-details {
+    color: #64748b;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.item-price {
+    text-align: right;
+    white-space: nowrap;
+    color: #475569;
+    font-size: 14px;
+}
+
+.cart-summary {
+    max-width: 450px;
+    margin-left: auto;
+}
+
+.cs-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 10px 0;
+    color: #64748b;
+}
+
+.cs-total {
+    border-top: 1px solid #e2e8f0;
+    margin-top: 10px;
+    padding-top: 15px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.cs-total span:last-child {
+    color: #2563eb;
+}
+
+.order-actions {
+    margin: 25px 0;
+}
+
+.back-orders-btn {
+    display: inline-block;
+    padding: 12px 20px;
+    background: #2563eb;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.back-orders-btn:hover {
+    background: #1d4ed8;
+}
+
+@media(max-width: 650px) {
+    .tracking-timeline {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+    }
+
+    .timeline-step {
+        flex-direction: row;
+        text-align: left;
+        gap: 12px;
+    }
+
+    .timeline-icon {
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+
+    .order-item-row {
+        flex-direction: column;
+    }
+
+    .item-price {
+        text-align: left;
+    }
+}
+
+</style>
+
+{% if order.status not in ['Delivered', 'Cancelled'] %}
+<script>
+    setTimeout(function () {
+        window.location.reload();
+    }, 30000);
+</script>
+{% endif %}
+
 {% endblock %}

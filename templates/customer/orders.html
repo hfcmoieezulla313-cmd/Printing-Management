@@ -1,24 +1,264 @@
-{% extends "base.html" %}
-{% block title %}My Orders - PrintCare{% endblock %}
-{% block content %}
-<h2 class="section-title">My Orders</h2>
 
-{% if orders %}
-<div class="order-list">
-    {% for order in orders %}
-    <a href="{{ url_for('orders.order_details', order_number=order.order_number) }}" class="order-row">
-        <div>
-            <div class="order-row-number">{{ order.order_number }}</div>
-            <div class="order-row-date">{{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}</div>
-        </div>
-        <div>
-            <span class="status-badge status-{{ order.status|lower|replace(' ', '-') }}">{{ order.status }}</span>
-            <div class="order-row-total">Rs. {{ '%.2f'|format(order.total_amount) }}</div>
-        </div>
-    </a>
-    {% endfor %}
+{% extends "base.html" %}
+
+{% block title %}My Orders - Printify{% endblock %}
+
+{% block content %}
+
+<style>
+/* =================================
+   PRINTIFY MY ORDERS PAGE
+================================= */
+
+.orders-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 24px 110px;
+    color: #172554;
+}
+
+.orders-heading {
+    margin-bottom: 25px;
+}
+
+.orders-heading h1 {
+    margin: 0 0 7px;
+    color: #142b59;
+    font-size: 28px;
+    font-weight: 750;
+}
+
+.orders-heading p {
+    margin: 0;
+    color: #71809b;
+    font-size: 14px;
+}
+
+.order-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.order-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    padding: 22px 24px;
+    background: #ffffff;
+    border: 1px solid #e2e9f5;
+    border-radius: 16px;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(30, 64, 120, 0.04);
+    transition: 0.2s ease;
+}
+
+.order-row:hover {
+    transform: translateY(-2px);
+    border-color: #bfd2ff;
+    box-shadow: 0 8px 22px rgba(30, 64, 120, 0.08);
+}
+
+.order-row-number {
+    color: #172b55;
+    font-size: 16px;
+    font-weight: 750;
+    margin-bottom: 8px;
+}
+
+.order-row-date {
+    color: #8290a7;
+    font-size: 13px;
+}
+
+.order-row > div:last-child {
+    text-align: right;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 9px;
+    border-radius: 20px;
+    background: #edf3ff;
+    color: #2563eb;
+    font-size: 11px;
+    font-weight: 750;
+    text-transform: capitalize;
+}
+
+.status-pending {
+    background: #fff7e6;
+    color: #b7791f;
+}
+
+.status-confirmed {
+    background: #eaf2ff;
+    color: #2563eb;
+}
+
+.status-processing {
+    background: #f0eaff;
+    color: #7545c7;
+}
+
+.status-completed {
+    background: #e8f8ef;
+    color: #16834a;
+}
+
+.status-delivered {
+    background: #e8f8ef;
+    color: #16834a;
+}
+
+.status-cancelled {
+    background: #fff0f0;
+    color: #dc3545;
+}
+
+.order-row-total {
+    color: #2563eb;
+    font-size: 17px;
+    font-weight: 750;
+}
+
+.orders-empty {
+    padding: 65px 20px;
+    text-align: center;
+    background: #ffffff;
+    border: 1px dashed #cbd8ee;
+    border-radius: 18px;
+}
+
+.orders-empty-icon {
+    font-size: 45px;
+    margin-bottom: 15px;
+}
+
+.orders-empty h2 {
+    color: #172b55;
+    font-size: 21px;
+    margin: 0 0 9px;
+}
+
+.orders-empty p {
+    color: #71809b;
+    font-size: 14px;
+    margin: 0 0 22px;
+}
+
+.orders-empty a {
+    display: inline-block;
+    padding: 12px 23px;
+    background: #2563eb;
+    color: #ffffff;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: 0.2s;
+}
+
+.orders-empty a:hover {
+    background: #1d4ed8;
+}
+
+@media (max-width: 600px) {
+    .orders-page {
+        padding: 22px 14px 110px;
+    }
+
+    .orders-heading h1 {
+        font-size: 24px;
+    }
+
+    .order-row {
+        padding: 17px;
+        gap: 10px;
+    }
+
+    .order-row-number {
+        font-size: 14px;
+    }
+
+    .order-row-date {
+        font-size: 11px;
+    }
+
+    .order-row-total {
+        font-size: 15px;
+    }
+
+    .status-badge {
+        font-size: 10px;
+        padding: 5px 9px;
+    }
+}
+</style>
+
+<div class="orders-page">
+
+    <div class="orders-heading">
+        <h1>My Orders</h1>
+        <p>Track and view your printing orders.</p>
+    </div>
+
+    {% if orders %}
+
+    <div class="order-list">
+
+        {% for order in orders %}
+
+        <a href="{{ url_for('orders.order_details', order_number=order.order_number) }}"
+           class="order-row">
+
+            <div>
+                <div class="order-row-number">
+                    Order #{{ order.order_number }}
+                </div>
+
+                <div class="order-row-date">
+                    {{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}
+                </div>
+            </div>
+
+            <div>
+
+                <span class="status-badge status-{{ order.status|lower|replace(' ', '-') }}">
+                    {{ order.status }}
+                </span>
+
+                <div class="order-row-total">
+                    Rs. {{ '%.2f'|format(order.total_amount) }}
+                </div>
+
+            </div>
+
+        </a>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="orders-empty">
+
+        <div class="orders-empty-icon">📦</div>
+
+        <h2>No orders yet</h2>
+
+        <p>You haven't placed any orders yet. Your orders will appear here.</p>
+
+        <a href="{{ url_for('main.home') }}">
+            Start Shopping →
+        </a>
+
+    </div>
+
+    {% endif %}
+
 </div>
-{% else %}
-<p class="empty-state">You haven't placed any orders yet.</p>
-{% endif %}
+
 {% endblock %}

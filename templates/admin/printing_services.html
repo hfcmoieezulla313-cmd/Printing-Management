@@ -1,50 +1,570 @@
-{% extends "admin/base.html" %}
-{% block title %}Printing Services - Admin{% endblock %}
-{% block content %}
-<h1>Printing Services</h1>
-<table class="admin-table">
-    <tr><th>Name</th><th>Price/page</th><th>Flat price</th><th>Active</th><th></th></tr>
-    {% for s in services %}
-    <tr>
-        <td>{{ s.name }}</td>
-        <td>{{ s.price_per_page if s.is_configurable else '-' }}</td>
-        <td>{{ s.flat_price if s.flat_price else '-' }}</td>
-        <td>{{ 'Yes' if s.is_active else 'No' }}</td>
-        <td>
-            <form method="post" action="{{ url_for('admin.delete_printing_service', service_id=s.id) }}" class="inline-form">
-                <button type="submit" class="btn-remove">Delete</button>
-            </form>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
 
-<h3 class="section-subtitle">Add / Edit Printing Service</h3>
-<p class="hint">To edit an existing one, set the same Slug and submit — it will update the existing service.</p>
-<form method="post" class="form-stack">
-    <label>Name<input type="text" name="name" required></label>
-    <label>Slug (unique, e.g. a4-bw-print)<input type="text" name="slug" required></label>
-    <label>Category
-        <select name="category_id">
-            {% for c in categories %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
-        </select>
-    </label>
-    <label>Description<textarea name="description" rows="2"></textarea></label>
-    <label>Paper Size
-        <select name="paper_size">
-            <option value="">N/A</option><option value="A4">A4</option><option value="A3">A3</option>
-        </select>
-    </label>
-    <label>Print Type
-        <select name="print_type">
-            <option value="">N/A</option><option value="BW">BW</option><option value="COLOR">COLOR</option>
-        </select>
-    </label>
-    <label class="checkbox-row"><input type="checkbox" name="is_configurable" checked> Configurable (per-page pricing)</label>
-    <label>Price per page (Rs.)<input type="number" step="0.01" name="price_per_page" value="0"></label>
-    <label>Double-side extra per page (Rs.)<input type="number" step="0.01" name="double_side_extra" value="0"></label>
-    <label>Flat price (Rs., for non-configurable services e.g. binding)<input type="number" step="0.01" name="flat_price"></label>
-    <label class="checkbox-row"><input type="checkbox" name="is_active" checked> Active</label>
-    <button type="submit" class="btn btn-primary btn-block">Save Service</button>
-</form>
+{% extends "admin/base.html" %}
+
+{% block title %}Printing Services - Printify Admin{% endblock %}
+
+{% block content %}
+
+<div class="services-page">
+
+    <div class="page-header">
+        <div>
+            <h1>Printing Services</h1>
+            <p>Manage printing services, pricing and availability.</p>
+        </div>
+
+        <button type="button" class="primary-btn" onclick="resetServiceForm()">
+            + Add New Service
+        </button>
+    </div>
+
+    <!-- SERVICE STATISTICS -->
+    <div class="service-stats">
+        <div class="stat-card">
+            <span>Total Services</span>
+            <h2>{{ services|length }}</h2>
+        </div>
+
+        <div class="stat-card">
+            <span>Active Services</span>
+            <h2>{{ services|selectattr('is_active')|list|length }}</h2>
+        </div>
+
+        <div class="stat-card">
+            <span>Inactive Services</span>
+            <h2>{{ services|rejectattr('is_active')|list|length }}</h2>
+        </div>
+    </div>
+
+    <!-- SERVICES TABLE -->
+    <div class="content-card">
+
+        <div class="card-heading">
+            <div>
+                <h3>All Printing Services</h3>
+                <p>View and manage your available printing options.</p>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="services-table">
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Price / Page</th>
+                        <th>Flat Price</th>
+                        <th>Paper Size</th>
+                        <th>Print Type</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for s in services %}
+                    <tr>
+                        <td>
+                            <strong>{{ s.name }}</strong>
+                            <small>{{ s.slug }}</small>
+                        </td>
+
+                        <td>
+                            {% if s.is_configurable %}
+                                ₹{{ '%.2f'|format(s.price_per_page or 0) }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if s.flat_price is not none %}
+                                ₹{{ '%.2f'|format(s.flat_price) }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+
+                        <td>{{ s.paper_size or '-' }}</td>
+                        <td>{{ s.print_type or '-' }}</td>
+
+                        <td>
+                            {% if s.is_active %}
+                                <span class="status active">Active</span>
+                            {% else %}
+                                <span class="status inactive">Inactive</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <div class="action-buttons">
+
+                                <button
+                                    type="button"
+                                    class="edit-btn"
+                                    data-id="{{ s.id }}"
+                                    data-name="{{ s.name }}"
+                                    data-slug="{{ s.slug }}"
+                                    data-category="{{ s.category_id or '' }}"
+                                    data-description="{{ s.description or '' }}"
+                                    data-paper="{{ s.paper_size or '' }}"
+                                    data-type="{{ s.print_type or '' }}"
+                                    data-configurable="{{ 'true' if s.is_configurable else 'false' }}"
+                                    data-price="{{ s.price_per_page or 0 }}"
+                                    data-extra="{{ s.double_side_extra or 0 }}"
+                                    data-flat="{{ s.flat_price if s.flat_price is not none else '' }}"
+                                    data-active="{{ 'true' if s.is_active else 'false' }}"
+                                    onclick="editService(this)">
+                                    Edit
+                                </button>
+
+                                <form method="POST"
+                                      action="{{ url_for('admin.delete_printing_service', service_id=s.id) }}"
+                                      onsubmit="return confirm('Are you sure you want to delete this printing service?');">
+
+                                    <button type="submit" class="delete-btn">
+                                        Delete
+                                    </button>
+
+                                </form>
+
+                            </div>
+                        </td>
+                    </tr>
+
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <div>🖨️</div>
+                            <h3>No Printing Services Found</h3>
+                            <p>Add your first printing service using the form below.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ADD / EDIT FORM -->
+    <div class="content-card form-card" id="service-form-section">
+
+        <div class="card-heading">
+            <div>
+                <h3 id="form-title">Add New Printing Service</h3>
+                <p id="form-description">Enter the details of your printing service.</p>
+            </div>
+        </div>
+
+        <form method="POST" class="service-form" id="serviceForm">
+
+            <input type="hidden" name="id" id="service-id">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="service-name">Service Name *</label>
+                    <input type="text" name="name" id="service-name" required
+                           placeholder="Example: A4 Black and White Printing">
+                </div>
+
+                <div class="form-group">
+                    <label for="service-slug">Slug *</label>
+                    <input type="text" name="slug" id="service-slug" required
+                           placeholder="a4-bw-print">
+                </div>
+
+                <div class="form-group">
+                    <label for="category-id">Printing Category</label>
+                    <select name="category_id" id="category-id">
+                        <option value="">Select Category</option>
+                        {% for c in categories %}
+                            <option value="{{ c.id }}">{{ c.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="paper-size">Paper Size</label>
+                    <select name="paper_size" id="paper-size">
+                        <option value="">Not Applicable</option>
+                        <option value="A4">A4</option>
+                        <option value="A3">A3</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="print-type">Print Type</label>
+                    <select name="print_type" id="print-type">
+                        <option value="">Not Applicable</option>
+                        <option value="BW">Black & White</option>
+                        <option value="COLOR">Color</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="price-per-page">Price Per Page (₹)</label>
+                    <input type="number" step="0.01" min="0"
+                           name="price_per_page" id="price-per-page" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="double-side-extra">Double-Side Extra (₹)</label>
+                    <input type="number" step="0.01" min="0"
+                           name="double_side_extra" id="double-side-extra" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="flat-price">Flat Price (₹)</label>
+                    <input type="number" step="0.01" min="0"
+                           name="flat_price" id="flat-price"
+                           placeholder="For binding or other fixed-price services">
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="service-description">Description</label>
+                    <textarea name="description" id="service-description"
+                              rows="3" placeholder="Describe this printing service..."></textarea>
+                </div>
+
+            </div>
+
+            <div class="checkbox-options">
+
+                <label class="checkbox-label">
+                    <input type="checkbox" name="is_configurable"
+                           id="is-configurable" checked>
+                    Per-page configurable pricing
+                </label>
+
+                <label class="checkbox-label">
+                    <input type="checkbox" name="is_active"
+                           id="is-active" checked>
+                    Service is active
+                </label>
+
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="save-btn" id="save-btn">
+                    Save Printing Service
+                </button>
+
+                <button type="button" class="cancel-btn"
+                        onclick="resetServiceForm()">
+                    Clear Form
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+
+<style>
+.services-page {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.page-header h1 {
+    margin: 0 0 6px;
+    color: #172554;
+}
+
+.page-header p,
+.card-heading p {
+    margin: 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.primary-btn,
+.save-btn {
+    border: none;
+    background: #2563eb;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.service-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.stat-card,
+.content-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 13px;
+    padding: 21px;
+}
+
+.stat-card span {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.stat-card h2 {
+    color: #2563eb;
+    margin: 8px 0 0;
+    font-size: 25px;
+}
+
+.card-heading {
+    margin-bottom: 20px;
+}
+
+.card-heading h3 {
+    color: #1e293b;
+    margin: 0 0 6px;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.services-table {
+    width: 100%;
+    min-width: 850px;
+    border-collapse: collapse;
+}
+
+.services-table th {
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 12px;
+    text-align: left;
+    padding: 14px;
+}
+
+.services-table td {
+    padding: 15px 14px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #475569;
+    font-size: 13px;
+}
+
+.services-table td strong {
+    display: block;
+    color: #1e293b;
+}
+
+.services-table td small {
+    display: block;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+
+.status {
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.status.active {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status.inactive {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 7px;
+}
+
+.action-buttons form {
+    margin: 0;
+}
+
+.edit-btn,
+.delete-btn {
+    padding: 8px 11px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.edit-btn {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.delete-btn {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 45px 15px !important;
+}
+
+.empty-state div {
+    font-size: 35px;
+}
+
+.empty-state h3 {
+    color: #1e293b;
+}
+
+.empty-state p {
+    color: #64748b;
+}
+
+.service-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 13px;
+    outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #2563eb;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.checkbox-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 22px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #475569;
+    font-size: 13px;
+}
+
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.cancel-btn {
+    padding: 12px 18px;
+    background: #f1f5f9;
+    color: #475569;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+@media(max-width: 750px) {
+    .service-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .full-width {
+        grid-column: auto;
+    }
+}
+</style>
+
+<script>
+function editService(button) {
+    document.getElementById("service-id").value = button.dataset.id;
+    document.getElementById("service-name").value = button.dataset.name;
+    document.getElementById("service-slug").value = button.dataset.slug;
+    document.getElementById("category-id").value = button.dataset.category;
+    document.getElementById("service-description").value = button.dataset.description;
+    document.getElementById("paper-size").value = button.dataset.paper;
+    document.getElementById("print-type").value = button.dataset.type;
+    document.getElementById("is-configurable").checked =
+        button.dataset.configurable === "true";
+    document.getElementById("price-per-page").value = button.dataset.price;
+    document.getElementById("double-side-extra").value = button.dataset.extra;
+    document.getElementById("flat-price").value = button.dataset.flat;
+    document.getElementById("is-active").checked =
+        button.dataset.active === "true";
+
+    document.getElementById("form-title").textContent = "Edit Printing Service";
+    document.getElementById("form-description").textContent =
+        "Update the selected printing service.";
+    document.getElementById("save-btn").textContent = "Update Printing Service";
+
+    document.getElementById("service-form-section").scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+function resetServiceForm() {
+    document.getElementById("serviceForm").reset();
+    document.getElementById("service-id").value = "";
+
+    document.getElementById("form-title").textContent =
+        "Add New Printing Service";
+    document.getElementById("form-description").textContent =
+        "Enter the details of your printing service.";
+    document.getElementById("save-btn").textContent =
+        "Save Printing Service";
+
+    document.getElementById("service-form-section").scrollIntoView({
+        behavior: "smooth"
+    });
+}
+</script>
+
 {% endblock %}

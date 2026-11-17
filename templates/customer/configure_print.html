@@ -1,39 +1,409 @@
+
 {% extends "base.html" %}
 
-{% block title %}Configure Print - Printify AI{% endblock %}
+{% block title %}Configure Print - Printify{% endblock %}
 
 {% block content %}
+
+<style>
+.print-config-page {
+    background: #f5f7fc;
+    min-height: 75vh;
+    padding: 35px 20px 60px;
+    color: #17233b;
+}
+
+.print-config-container {
+    max-width: 1120px;
+    margin: 0 auto;
+}
+
+.print-config-header {
+    margin-bottom: 25px;
+}
+
+.config-eyebrow {
+    display: inline-block;
+    color: #2563eb;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    margin-bottom: 9px;
+}
+
+.print-config-header h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #17233b;
+    margin: 0 0 8px;
+}
+
+.print-config-header p {
+    color: #77849a;
+    font-size: 14px;
+    margin: 0;
+}
+
+.print-config-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 18px;
+    align-items: start;
+}
+
+.config-card {
+    background: #fff;
+    border: 1px solid #e8edf5;
+    border-radius: 18px;
+    padding: 23px;
+    margin-bottom: 18px;
+    box-shadow: 0 5px 20px rgba(30, 55, 90, .045);
+}
+
+.config-card-header {
+    margin-bottom: 19px;
+}
+
+.config-card-header h2 {
+    font-size: 18px;
+    font-weight: 750;
+    color: #17233b;
+    margin: 0 0 6px;
+}
+
+.config-card-header p {
+    color: #8793a6;
+    font-size: 13px;
+    margin: 0;
+}
+
+.uploaded-files-card {
+    margin-bottom: 20px;
+}
+
+.uploaded-files-list,
+.page-count-list {
+    display: grid;
+    gap: 11px;
+}
+
+.uploaded-file-row,
+.page-count-row {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 13px 15px;
+    background: #f8faff;
+    border: 1px solid #e5ebf5;
+    border-radius: 13px;
+}
+
+.uploaded-file-icon,
+.page-file-icon {
+    width: 43px;
+    height: 43px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    background: #eaf1ff;
+    color: #2563eb;
+    border-radius: 12px;
+    font-size: 20px;
+}
+
+.uploaded-file-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.uploaded-file-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #253650;
+    overflow-wrap: anywhere;
+}
+
+.uploaded-file-meta {
+    font-size: 12px;
+    color: #8793a6;
+    margin-top: 5px;
+}
+
+.uploaded-file-number {
+    width: 29px;
+    height: 29px;
+    display: grid;
+    place-items: center;
+    background: #e8f7ef;
+    color: #16834d;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.page-count-row {
+    justify-content: space-between;
+}
+
+.page-count-file {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.page-count-file strong {
+    display: block;
+    font-size: 13px;
+    color: #263651;
+    overflow-wrap: anywhere;
+}
+
+.page-count-file span {
+    display: block;
+    color: #8793a6;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.page-count-input,
+.config-field input,
+.config-field select {
+    min-height: 44px;
+    border: 1px solid #dce4f0;
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: #fff;
+    color: #263651;
+    font: inherit;
+    outline: none;
+}
+
+.page-count-input {
+    width: 95px;
+    flex-shrink: 0;
+}
+
+.page-count-input:focus,
+.config-field input:focus,
+.config-field select:focus {
+    border-color: #5287f5;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .10);
+}
+
+.option-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.option-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 16px;
+    min-height: 82px;
+    border: 1px solid #e0e7f1;
+    border-radius: 13px;
+    background: #fff;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.option-card:hover {
+    border-color: #9bb9fa;
+    background: #f8faff;
+}
+
+.option-card:has(input:checked) {
+    border: 1.5px solid #2563eb;
+    background: #f2f6ff;
+}
+
+.option-card input {
+    width: 17px;
+    height: 17px;
+    margin-top: 2px;
+    accent-color: #2563eb;
+    flex-shrink: 0;
+}
+
+.option-card-content {
+    display: grid;
+    gap: 6px;
+}
+
+.option-card-title {
+    color: #263651;
+    font-size: 14px;
+    font-weight: 750;
+}
+
+.option-card-description {
+    color: #8793a6;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.config-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.config-field {
+    display: grid;
+    gap: 8px;
+}
+
+.config-field label {
+    color: #263651;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.config-field input,
+.config-field select {
+    width: 100%;
+}
+
+.config-field small {
+    color: #8793a6;
+    font-size: 11px;
+}
+
+.price-card {
+    grid-column: 2;
+    grid-row: 1 / span 6;
+    position: sticky;
+    top: 20px;
+    padding: 24px;
+}
+
+.price-summary {
+    display: grid;
+    gap: 17px;
+}
+
+.pb-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    color: #78869a;
+    font-size: 13px;
+}
+
+.pb-row strong,
+.pb-row > span:last-child {
+    color: #263651;
+    font-weight: 700;
+    text-align: right;
+}
+
+.pb-total {
+    border-top: 1px solid #e8edf5;
+    padding-top: 18px;
+    margin-top: 3px;
+    color: #17233b;
+    font-weight: 750;
+    font-size: 15px;
+}
+
+.pb-total strong {
+    color: #2563eb;
+    font-size: 25px;
+}
+
+.print-submit {
+    grid-column: 1;
+    width: 100%;
+    min-height: 52px;
+    border: none;
+    border-radius: 12px;
+    background: #2563eb;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: .2s ease;
+    box-shadow: 0 7px 17px rgba(37, 99, 235, .18);
+}
+
+.print-submit:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 850px) {
+    .print-config-form {
+        grid-template-columns: 1fr;
+    }
+
+    .price-card {
+        grid-column: 1;
+        grid-row: auto;
+        position: static;
+    }
+
+    .print-submit {
+        grid-column: 1;
+    }
+}
+
+@media (max-width: 550px) {
+    .print-config-page {
+        padding: 24px 13px 45px;
+    }
+
+    .print-config-header h1 {
+        font-size: 26px;
+    }
+
+    .config-card {
+        padding: 17px;
+        border-radius: 15px;
+    }
+
+    .option-grid,
+    .config-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .page-count-row {
+        flex-wrap: wrap;
+    }
+
+    .page-count-input {
+        width: 100%;
+    }
+}
+</style>
 
 <section class="print-config-page">
 
     <div class="print-config-container">
 
-        <!-- Header -->
+        <!-- PAGE HEADER -->
         <div class="print-config-header">
             <span class="config-eyebrow">PRINT SETTINGS</span>
-
             <h1>Configure Your Print</h1>
-
             <p>
                 Review your uploaded files and choose how you want them printed.
             </p>
         </div>
 
-
-        <!-- Uploaded Files -->
+        <!-- UPLOADED FILES -->
         <section class="config-card uploaded-files-card">
 
             <div class="config-card-header">
-                <div>
-                    <h2>Your Files</h2>
-                    <p>
-                        {{ documents|length }}
-                        file{% if documents|length != 1 %}s{% endif %}
-                        ready for printing
-                    </p>
-                </div>
+                <h2>Your Files</h2>
+                <p>
+                    {{ documents|length }}
+                    file{% if documents|length != 1 %}s{% endif %}
+                    ready for printing
+                </p>
             </div>
-
 
             <div class="uploaded-files-list">
 
@@ -50,7 +420,6 @@
                     </div>
 
                     <div class="uploaded-file-details">
-
                         <div class="uploaded-file-name">
                             {{ file.original_filename }}
                         </div>
@@ -60,7 +429,6 @@
                             ·
                             {{ (file.file_size_bytes / 1024)|round(1) }} KB
                         </div>
-
                     </div>
 
                     <div class="uploaded-file-number">
@@ -72,11 +440,9 @@
                 {% endfor %}
 
             </div>
-
         </section>
 
-
-        <!-- Configuration Form -->
+        <!-- CONFIGURATION FORM -->
         <form
             method="POST"
             id="config-form"
@@ -84,16 +450,13 @@
             data-service-id="{{ service.id if service else '' }}"
         >
 
-            <!-- Page Count -->
+            <!-- PAGE COUNT -->
             <section class="config-card">
 
                 <div class="config-card-header">
-                    <div>
-                        <h2>Pages</h2>
-                        <p>Enter the number of pages for each file.</p>
-                    </div>
+                    <h2>Pages</h2>
+                    <p>Enter the number of pages for each file.</p>
                 </div>
-
 
                 <div class="page-count-list">
 
@@ -118,7 +481,6 @@
 
                         </div>
 
-
                         <input
                             type="number"
                             name="page_count_{{ file.id }}"
@@ -134,20 +496,15 @@
                     {% endfor %}
 
                 </div>
-
             </section>
 
-
-            <!-- Paper Size -->
+            <!-- PAPER SIZE -->
             <section class="config-card">
 
                 <div class="config-card-header">
-                    <div>
-                        <h2>Paper Size</h2>
-                        <p>Select the paper size for your print.</p>
-                    </div>
+                    <h2>Paper Size</h2>
+                    <p>Select the paper size for your print.</p>
                 </div>
-
 
                 <div class="option-grid">
 
@@ -163,17 +520,12 @@
                         >
 
                         <span class="option-card-content">
-                            <span class="option-card-title">
-                                A4
-                            </span>
-
+                            <span class="option-card-title">A4</span>
                             <span class="option-card-description">
                                 Standard document size
                             </span>
                         </span>
-
                     </label>
-
 
                     <label class="option-card">
                         <input
@@ -187,32 +539,23 @@
                         >
 
                         <span class="option-card-content">
-                            <span class="option-card-title">
-                                A3
-                            </span>
-
+                            <span class="option-card-title">A3</span>
                             <span class="option-card-description">
                                 Larger paper size
                             </span>
                         </span>
-
                     </label>
 
                 </div>
-
             </section>
 
-
-            <!-- Print Type -->
+            <!-- PRINT COLOR -->
             <section class="config-card">
 
                 <div class="config-card-header">
-                    <div>
-                        <h2>Print Color</h2>
-                        <p>Choose how your documents should be printed.</p>
-                    </div>
+                    <h2>Print Color</h2>
+                    <p>Choose how your documents should be printed.</p>
                 </div>
-
 
                 <div class="option-grid">
 
@@ -229,16 +572,13 @@
 
                         <span class="option-card-content">
                             <span class="option-card-title">
-                                Black & White
+                                Black &amp; White
                             </span>
-
                             <span class="option-card-description">
                                 Clear and economical printing
                             </span>
                         </span>
-
                     </label>
-
 
                     <label class="option-card">
                         <input
@@ -252,32 +592,23 @@
                         >
 
                         <span class="option-card-content">
-                            <span class="option-card-title">
-                                Color
-                            </span>
-
+                            <span class="option-card-title">Color</span>
                             <span class="option-card-description">
                                 Full-color printing
                             </span>
                         </span>
-
                     </label>
 
                 </div>
-
             </section>
 
-
-            <!-- Print Side -->
+            <!-- PRINT SIDE -->
             <section class="config-card">
 
                 <div class="config-card-header">
-                    <div>
-                        <h2>Print Side</h2>
-                        <p>Choose whether to print on one or both sides.</p>
-                    </div>
+                    <h2>Print Side</h2>
+                    <p>Choose whether to print on one or both sides.</p>
                 </div>
-
 
                 <div class="option-grid">
 
@@ -291,17 +622,12 @@
                         >
 
                         <span class="option-card-content">
-                            <span class="option-card-title">
-                                Single Side
-                            </span>
-
+                            <span class="option-card-title">Single Side</span>
                             <span class="option-card-description">
                                 Print on one side
                             </span>
                         </span>
-
                     </label>
-
 
                     <label class="option-card">
                         <input
@@ -312,40 +638,29 @@
                         >
 
                         <span class="option-card-content">
-                            <span class="option-card-title">
-                                Double Side
-                            </span>
-
+                            <span class="option-card-title">Double Side</span>
                             <span class="option-card-description">
                                 Print on both sides
                             </span>
                         </span>
-
                     </label>
 
                 </div>
-
             </section>
 
-
-            <!-- Copies + Binding -->
+            <!-- COPIES AND BINDING -->
             <section class="config-card">
 
                 <div class="config-card-header">
-                    <div>
-                        <h2>Finishing Options</h2>
-                        <p>Choose copies and binding.</p>
-                    </div>
+                    <h2>Finishing Options</h2>
+                    <p>Choose copies and binding.</p>
                 </div>
-
 
                 <div class="config-fields">
 
                     <div class="config-field">
 
-                        <label for="copies">
-                            Copies
-                        </label>
+                        <label for="copies">Copies</label>
 
                         <input
                             type="number"
@@ -356,46 +671,29 @@
                             required
                         >
 
-                        <small>
-                            Number of complete sets to print
-                        </small>
+                        <small>Number of complete sets to print</small>
 
                     </div>
 
-
                     <div class="config-field">
 
-                        <label for="binding">
-                            Binding
-                        </label>
+                        <label for="binding">Binding</label>
 
-                        <select
-                            name="binding"
-                            id="binding"
-                        >
+                        <select name="binding" id="binding">
 
-                            <option value="NONE">
-                                No Binding
-                            </option>
-
-                            <option value="SPIRAL">
-                                Spiral Binding
-                            </option>
+                            <option value="NONE">No Binding</option>
+                            <option value="SPIRAL">Spiral Binding</option>
 
                         </select>
 
-                        <small>
-                            Spiral binding is charged separately
-                        </small>
+                        <small>Spiral binding is charged separately</small>
 
                     </div>
 
                 </div>
-
             </section>
 
-
-            <!-- Price Breakdown -->
+            <!-- PRICE SUMMARY -->
             <section
                 class="config-card price-card"
                 id="price-breakdown"
@@ -403,22 +701,17 @@
             >
 
                 <div class="config-card-header">
-                    <div>
-                        <h2>Price Summary</h2>
-                        <p>Your estimated printing cost</p>
-                    </div>
+                    <span class="config-eyebrow">ORDER SUMMARY</span>
+                    <h2>Price Summary</h2>
+                    <p>Your estimated printing cost</p>
                 </div>
-
 
                 <div class="price-summary">
 
                     <div class="pb-row">
                         <span>Total files</span>
-                        <strong>
-                            {{ documents|length }}
-                        </strong>
+                        <strong>{{ documents|length }}</strong>
                     </div>
-
 
                     <div class="pb-row">
                         <span>Total pages</span>
@@ -426,7 +719,6 @@
                             {{ documents|sum(attribute='page_count') }}
                         </strong>
                     </div>
-
 
                     <div class="pb-row">
                         <span>Price per page</span>
@@ -439,7 +731,6 @@
                         </span>
                     </div>
 
-
                     <div class="pb-row">
                         <span>Printing subtotal</span>
                         <span id="pb-subtotal">
@@ -450,7 +741,6 @@
                             {% endif %}
                         </span>
                     </div>
-
 
                     <div class="pb-row">
                         <span>Binding cost</span>
@@ -463,29 +753,22 @@
                         </span>
                     </div>
 
-
                     <div class="pb-row pb-total">
-
                         <span>Final Total</span>
 
                         <strong id="pb-total">
-
                             {% if breakdown %}
                                 Rs. {{ '%.2f'|format(breakdown.total) }}
                             {% else %}
                                 Rs. 0.00
                             {% endif %}
-
                         </strong>
-
                     </div>
 
                 </div>
-
             </section>
 
-
-            <!-- Submit -->
+            <!-- ADD TO CART -->
             <button
                 type="submit"
                 class="btn btn-primary btn-lg btn-block print-submit"
@@ -493,18 +776,13 @@
                 Add All Files to Cart →
             </button>
 
-
         </form>
 
     </div>
-
 </section>
 
 {% endblock %}
 
-
 {% block extra_js %}
-
 <script src="{{ url_for('static', filename='js/print_config.js') }}"></script>
-
 {% endblock %}

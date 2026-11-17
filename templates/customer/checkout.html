@@ -1,59 +1,534 @@
+
 {% extends "base.html" %}
-{% block title %}Checkout - PrintCare{% endblock %}
+
+{% block title %}Checkout - Printify{% endblock %}
+
 {% block content %}
-<h2 class="section-title">Checkout</h2>
 
-<section class="checkout-section">
-    <h3 class="section-subtitle">Delivery Address</h3>
-    {% if addresses %}
-    <form id="order-form" method="post" action="{{ url_for('checkout.place_order') }}" class="form-stack">
-        {% for addr in addresses %}
-        <label class="radio-card">
-            <input type="radio" name="address_id" value="{{ addr.id }}" {{ 'checked' if loop.first }} required>
-            <span><strong>{{ addr.label }}</strong> - {{ addr.contact_name }}, {{ addr.contact_phone }}<br>{{ addr.full_text() }}</span>
-        </label>
-        {% endfor %}
+<style>
+/* =================================
+   PRINTIFY CHECKOUT PAGE
+================================= */
 
-        <h3 class="section-subtitle">Payment Method</h3>
-        <label class="radio-card">
-            <input type="radio" name="payment_method" value="COD" checked> Cash on Delivery
-        </label>
-        <label class="radio-card">
-            <input type="radio" name="payment_method" value="ONLINE_PLACEHOLDER"> Online Payment (Demo Placeholder)
-        </label>
+.checkout-page {
+    max-width: 1050px;
+    margin: 0 auto;
+    padding: 30px 24px 110px;
+    color: #172554;
+}
 
-        <h3 class="section-subtitle">Order Summary</h3>
-        <div class="cart-summary">
-            <div class="cs-row"><span>Subtotal</span><span>Rs. {{ '%.2f'|format(summary.subtotal) }}</span></div>
-            <div class="cs-row"><span>Delivery</span><span>{{ 'FREE' if summary.delivery_charge == 0 else 'Rs. %.2f'|format(summary.delivery_charge) }}</span></div>
-            {% if applied_coupon %}
-            <div class="cs-row"><span>Coupon ({{ applied_coupon.code }})</span><span>- Rs. {{ '%.2f'|format(summary.discount_amount) }}</span></div>
-            {% endif %}
-            <div class="cs-row cs-total"><span>Total</span><span>Rs. {{ '%.2f'|format(summary.total_amount) }}</span></div>
+.checkout-heading {
+    margin-bottom: 25px;
+}
+
+.checkout-heading h1 {
+    color: #142b59;
+    font-size: 28px;
+    font-weight: 750;
+    margin: 0 0 7px;
+}
+
+.checkout-heading p {
+    color: #71809b;
+    font-size: 14px;
+    margin: 0;
+}
+
+.checkout-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.9fr);
+    gap: 22px;
+    align-items: start;
+}
+
+.checkout-main,
+.checkout-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.checkout-card {
+    padding: 24px;
+    background: #ffffff;
+    border: 1px solid #e2e9f5;
+    border-radius: 17px;
+    box-shadow: 0 4px 15px rgba(30, 64, 120, 0.04);
+}
+
+.checkout-card h2 {
+    color: #172b55;
+    font-size: 18px;
+    font-weight: 750;
+    margin: 0 0 7px;
+}
+
+.checkout-card-description {
+    color: #8290a7;
+    font-size: 13px;
+    margin: 0 0 20px;
+}
+
+.checkout-empty {
+    padding: 25px 15px;
+    text-align: center;
+    background: #f8faff;
+    border: 1px dashed #cbd8ee;
+    border-radius: 12px;
+}
+
+.checkout-empty-icon {
+    font-size: 35px;
+    margin-bottom: 10px;
+}
+
+.checkout-empty strong {
+    display: block;
+    color: #172b55;
+    margin-bottom: 7px;
+}
+
+.checkout-empty p {
+    color: #71809b;
+    font-size: 13px;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.radio-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    background: #ffffff;
+    border: 1px solid #e2e9f5;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.radio-card:hover {
+    border-color: #93b4ff;
+    background: #f8faff;
+}
+
+.radio-card:has(input:checked) {
+    border-color: #2563eb;
+    background: #f2f6ff;
+}
+
+.radio-card input {
+    margin-top: 4px;
+    accent-color: #2563eb;
+}
+
+.radio-card-content {
+    flex: 1;
+    min-width: 0;
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.radio-card-content strong {
+    color: #172b55;
+    font-size: 14px;
+}
+
+.checkout-primary-button,
+.checkout-secondary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 45px;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.checkout-primary-button {
+    background: #2563eb;
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 5px 13px rgba(37, 99, 235, 0.18);
+}
+
+.checkout-primary-button:hover {
+    background: #1d4ed8;
+}
+
+.checkout-secondary-button {
+    background: #edf3ff;
+    color: #2563eb;
+    border: 1px solid #dce7ff;
+}
+
+.checkout-secondary-button:hover {
+    background: #dce8ff;
+}
+
+.checkout-coupon-form {
+    display: flex;
+    gap: 9px;
+}
+
+.checkout-coupon-form input {
+    flex: 1;
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid #dce4f1;
+    border-radius: 9px;
+    outline: none;
+    font-size: 13px;
+}
+
+.checkout-coupon-form input:focus {
+    border-color: #2563eb;
+}
+
+.checkout-coupon-form button {
+    padding: 0 20px;
+    background: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 9px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.checkout-applied-coupon {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 13px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+    color: #166534;
+    font-size: 13px;
+}
+
+.checkout-applied-coupon button {
+    padding: 7px 11px;
+    color: #dc3545;
+    background: #fff1f2;
+    border: 1px solid #ffe0e3;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.checkout-summary-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid #edf0f6;
+    color: #71809b;
+    font-size: 14px;
+}
+
+.checkout-summary-row strong {
+    color: #172b55;
+}
+
+.checkout-summary-total {
+    margin-top: 5px;
+    padding-top: 17px;
+    border-bottom: none;
+    color: #172b55;
+    font-size: 16px;
+    font-weight: 750;
+}
+
+.checkout-summary-total strong {
+    color: #2563eb;
+    font-size: 19px;
+}
+
+.checkout-manage {
+    margin-top: 15px;
+}
+
+@media (max-width: 750px) {
+    .checkout-page {
+        padding: 22px 14px 110px;
+    }
+
+    .checkout-heading h1 {
+        font-size: 24px;
+    }
+
+    .checkout-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .checkout-card {
+        padding: 18px;
+    }
+}
+
+@media (max-width: 400px) {
+    .checkout-coupon-form {
+        flex-direction: column;
+    }
+
+    .checkout-coupon-form button {
+        min-height: 42px;
+    }
+}
+</style>
+
+<div class="checkout-page">
+
+    <div class="checkout-heading">
+        <h1>Checkout</h1>
+        <p>Complete your order securely and easily.</p>
+    </div>
+
+    <div class="checkout-layout">
+
+        <div class="checkout-main">
+
+            <!-- DELIVERY ADDRESS -->
+
+            <section class="checkout-card">
+
+                <h2>Delivery Address</h2>
+
+                <p class="checkout-card-description">
+                    Select the address where you want your order delivered.
+                </p>
+
+                {% if addresses %}
+
+                <form id="order-form"
+                      method="post"
+                      action="{{ url_for('checkout.place_order') }}"
+                      class="form-stack">
+
+                    {% for addr in addresses %}
+
+                    <label class="radio-card">
+
+                        <input type="radio"
+                               name="address_id"
+                               value="{{ addr.id }}"
+                               {% if loop.first %}checked{% endif %}
+                               required>
+
+                        <span class="radio-card-content">
+                            <strong>{{ addr.label }}</strong><br>
+
+                            {{ addr.contact_name }}<br>
+
+                            {{ addr.contact_phone }}<br>
+
+                            {{ addr.full_text() }}
+                        </span>
+
+                    </label>
+
+                    {% endfor %}
+
+                    <!-- PAYMENT METHOD -->
+
+                    <h2 style="margin-top:25px;">Payment Method</h2>
+
+                    <p class="checkout-card-description">
+                        Choose your preferred payment method.
+                    </p>
+
+                    <label class="radio-card">
+
+                        <input type="radio"
+                               name="payment_method"
+                               value="COD"
+                               checked>
+
+                        <span class="radio-card-content">
+                            <strong>Cash on Delivery</strong><br>
+                            Pay when your order arrives.
+                        </span>
+
+                    </label>
+
+                    <label class="radio-card">
+
+                        <input type="radio"
+                               name="payment_method"
+                               value="ONLINE_PLACEHOLDER">
+
+                        <span class="radio-card-content">
+                            <strong>Online Payment</strong><br>
+                            Demo placeholder payment option.
+                        </span>
+
+                    </label>
+
+                    <button type="submit"
+                            class="checkout-primary-button">
+                        Place Order →
+                    </button>
+
+                </form>
+
+                {% else %}
+
+                <div class="checkout-empty">
+
+                    <div class="checkout-empty-icon">📍</div>
+
+                    <strong>No saved addresses yet</strong>
+
+                    <p>
+                        Please add a delivery address before placing your order.
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+                <div class="checkout-manage">
+
+                    <a href="{{ url_for('profile.addresses') }}"
+                       class="checkout-secondary-button">
+                        + Manage Addresses
+                    </a>
+
+                </div>
+
+            </section>
+
+            <!-- COUPON -->
+
+            <section class="checkout-card">
+
+                <h2>Apply Coupon</h2>
+
+                <p class="checkout-card-description">
+                    Have a discount coupon? Apply it here.
+                </p>
+
+                {% if applied_coupon %}
+
+                <div class="checkout-applied-coupon">
+
+                    <span>
+                        <strong>{{ applied_coupon.code }}</strong>
+                        applied successfully
+                    </span>
+
+                    <form method="post"
+                          action="{{ url_for('checkout.remove_coupon') }}">
+
+                        <button type="submit">
+                            Remove
+                        </button>
+
+                    </form>
+
+                </div>
+
+                {% else %}
+
+                <form method="post"
+                      action="{{ url_for('checkout.apply_coupon') }}"
+                      class="checkout-coupon-form">
+
+                    <input type="text"
+                           name="code"
+                           placeholder="Enter coupon code"
+                           required>
+
+                    <button type="submit">
+                        Apply
+                    </button>
+
+                </form>
+
+                {% endif %}
+
+            </section>
+
         </div>
 
-        <button type="submit" class="btn btn-primary btn-block">Place Order</button>
-    </form>
-    {% else %}
-    <p class="empty-state">You have no saved addresses yet.</p>
-    {% endif %}
+        <!-- ORDER SUMMARY -->
 
-    <a href="{{ url_for('profile.addresses') }}" class="btn btn-secondary btn-block">Manage Addresses</a>
-</section>
+        <div class="checkout-sidebar">
 
-<section class="checkout-section">
-    <h3 class="section-subtitle">Coupon</h3>
-    {% if applied_coupon %}
-    <form method="post" action="{{ url_for('checkout.remove_coupon') }}">
-        <p>Applied: <strong>{{ applied_coupon.code }}</strong></p>
-        <button type="submit" class="btn btn-secondary">Remove Coupon</button>
-    </form>
-    {% else %}
-    <form method="post" action="{{ url_for('checkout.apply_coupon') }}" class="coupon-form">
-        <input type="text" name="code" placeholder="Enter coupon code">
-        <button type="submit" class="btn btn-secondary">Apply</button>
-    </form>
-    {% endif %}
-</section>
+            {% if addresses %}
+
+            <section class="checkout-card">
+
+                <h2>Order Summary</h2>
+
+                <p class="checkout-card-description">
+                    Review your order amount.
+                </p>
+
+                <div class="checkout-summary-row">
+                    <span>Subtotal</span>
+                    <strong>
+                        Rs. {{ '%.2f'|format(summary.subtotal) }}
+                    </strong>
+                </div>
+
+                <div class="checkout-summary-row">
+                    <span>Delivery</span>
+                    <strong>
+                        {{ 'FREE' if summary.delivery_charge == 0 else 'Rs. %.2f'|format(summary.delivery_charge) }}
+                    </strong>
+                </div>
+
+                {% if applied_coupon %}
+
+                <div class="checkout-summary-row">
+                    <span>Coupon ({{ applied_coupon.code }})</span>
+
+                    <strong>
+                        - Rs. {{ '%.2f'|format(summary.discount_amount) }}
+                    </strong>
+                </div>
+
+                {% endif %}
+
+                <div class="checkout-summary-row checkout-summary-total">
+                    <span>Total Amount</span>
+
+                    <strong>
+                        Rs. {{ '%.2f'|format(summary.total_amount) }}
+                    </strong>
+                </div>
+
+            </section>
+
+            {% endif %}
+
+            <section class="checkout-card">
+
+                <h2>Need Help?</h2>
+
+                <p class="checkout-card-description" style="margin-bottom:0;">
+                    Review your address and order details before placing your order.
+                </p>
+
+            </section>
+
+        </div>
+
+    </div>
+
+</div>
+
 {% endblock %}
-{% block extra_js %}<script src="{{ url_for('static', filename='js/checkout.js') }}"></script>{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/checkout.js') }}"></script>
+{% endblock %}

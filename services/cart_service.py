@@ -1,8 +1,8 @@
+
 """
 Cart manipulation helpers.
 
-Printing, stationery, photo, and passport-photo cart logic
-is kept here so route files stay thin and reusable.
+Printing, photo, and passport-photo cart logic.
 """
 
 from models import (
@@ -11,7 +11,6 @@ from models import (
     CartItem,
     PrintConfiguration,
     PhotoConfiguration,
-    StationeryProduct,
 )
 
 from services.pricing_service import compute_print_price
@@ -19,12 +18,14 @@ from services.pricing_service import compute_print_price
 
 def get_or_create_cart(user):
     """Return the user's existing cart or create one."""
+
     if user.cart:
         return user.cart
 
     cart = Cart(user_id=user.id)
     db.session.add(cart)
     db.session.commit()
+
     return cart
 
 
@@ -90,12 +91,7 @@ def add_photo_item_to_cart(
     quantity,
     computed_total,
 ):
-    """
-    Create a normal PHOTO configuration and add it to the cart.
-
-    The price is calculated before this function is called.
-    The calculated result is stored in PhotoConfiguration.
-    """
+    """Create a PHOTO configuration and add it to the cart."""
 
     cart = get_or_create_cart(user)
 
@@ -133,9 +129,7 @@ def add_passport_photo_item_to_cart(
     quantity,
     computed_total,
 ):
-    """
-    Create a PASSPORT photo configuration and add it to the cart.
-    """
+    """Create a PASSPORT photo configuration and add it to the cart."""
 
     cart = get_or_create_cart(user)
 
@@ -167,44 +161,8 @@ def add_passport_photo_item_to_cart(
     return item
 
 
-def add_stationery_item_to_cart(
-    user,
-    product: StationeryProduct,
-    quantity=1,
-):
-    """Add a stationery product or increase its existing quantity."""
-
-    cart = get_or_create_cart(user)
-
-    quantity = max(1, int(quantity))
-
-    existing = CartItem.query.filter_by(
-        cart_id=cart.id,
-        item_type="STATIONERY",
-        stationery_product_id=product.id,
-    ).first()
-
-    if existing:
-        existing.quantity += quantity
-        db.session.commit()
-        return existing
-
-    item = CartItem(
-        cart_id=cart.id,
-        item_type="STATIONERY",
-        stationery_product_id=product.id,
-        quantity=quantity,
-        unit_price=product.price,
-    )
-
-    db.session.add(item)
-    db.session.commit()
-
-    return item
-
-
 def update_cart_item_quantity(user, item_id, quantity):
-    """Update stationery quantity or remove an item."""
+    """Update the quantity of a cart item or remove it."""
 
     item = CartItem.query.join(Cart).filter(
         CartItem.id == item_id,
@@ -221,9 +179,12 @@ def update_cart_item_quantity(user, item_id, quantity):
         db.session.commit()
         return None
 
-    if item.item_type == "STATIONERY":
-        item.quantity = quantity
+    # Printing, photo and passport configurations are priced
+    # individually, so their cart-item quantity remains 1.
+    if item.item_type not in ("PRINTING", "PHOTO", "PASSPORT"):
+        return None
 
+    item.quantity = 1
     db.session.commit()
 
     return item

@@ -1,53 +1,386 @@
+
 {% extends "base.html" %}
-{% block title %}Cart - PrintCare{% endblock %}
+
+{% block title %}Cart - Printify{% endblock %}
+
 {% block content %}
-<h2 class="section-title">Your Cart</h2>
 
-{% if cart.items %}
-<div class="cart-list">
-    {% for item in cart.items %}
-    <div class="cart-item">
-        <div class="cart-item-icon">{{ '🖨️' if item.item_type == 'PRINTING' else '📦' }}</div>
-        <div class="cart-item-info">
-            <div class="cart-item-name">{{ item.display_name() }}</div>
-            {% if item.item_type == 'PRINTING' and item.print_configuration %}
-            <div class="cart-item-config">
-                {{ item.print_configuration.paper_size }} · {{ item.print_configuration.print_type }} ·
-                {{ item.print_configuration.print_side }} side · {{ item.print_configuration.copies }} copies ·
-                Binding: {{ item.print_configuration.binding }}
-            </div>
-            {% endif %}
-            <div class="cart-item-price">Rs. {{ '%.2f'|format(item.line_total()) }}</div>
-        </div>
-        <div class="cart-item-actions">
-            {% if item.item_type == 'STATIONERY' %}
-            <form method="post" action="{{ url_for('cart.update_item', item_id=item.id) }}" class="qty-form">
-                <button type="submit" name="quantity" value="{{ item.quantity - 1 }}">-</button>
-                <span>{{ item.quantity }}</span>
-                <button type="submit" name="quantity" value="{{ item.quantity + 1 }}">+</button>
-            </form>
-            {% endif %}
-            <form method="post" action="{{ url_for('cart.remove_item', item_id=item.id) }}">
-                <button type="submit" class="btn-remove">Remove</button>
-            </form>
-        </div>
+<style>
+.cart-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 24px 110px;
+    color: #172554;
+}
+
+.cart-heading {
+    margin-bottom: 25px;
+}
+
+.cart-heading h1 {
+    font-size: 28px;
+    font-weight: 750;
+    color: #142b59;
+    margin: 0 0 7px;
+}
+
+.cart-heading p {
+    color: #71809b;
+    font-size: 14px;
+    margin: 0;
+}
+
+.cart-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 22px;
+    background: #ffffff;
+    border: 1px solid #e2e9f5;
+    border-radius: 17px;
+    box-shadow: 0 4px 15px rgba(30, 64, 120, 0.04);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cart-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(30, 64, 120, 0.08);
+}
+
+.cart-item-icon {
+    width: 55px;
+    height: 55px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #edf3ff;
+    border-radius: 14px;
+    font-size: 25px;
+}
+
+.cart-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.cart-item-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #172b55;
+    margin-bottom: 7px;
+}
+
+.cart-item-config {
+    color: #77849b;
+    font-size: 12px;
+    line-height: 1.7;
+    margin-bottom: 7px;
+}
+
+.cart-item-price {
+    color: #2563eb;
+    font-size: 16px;
+    font-weight: 750;
+}
+
+.cart-item-actions form {
+    margin: 0;
+}
+
+.btn-remove {
+    padding: 9px 15px;
+    background: #fff1f2;
+    color: #dc3545;
+    border: 1px solid #ffe0e3;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 650;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-remove:hover {
+    background: #ffe0e3;
+}
+
+.cart-summary {
+    max-width: 470px;
+    margin: 25px 0 18px auto;
+    padding: 22px;
+    background: #ffffff;
+    border: 1px solid #e2e9f5;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(30, 64, 120, 0.04);
+}
+
+.cs-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 10px 0;
+    color: #64748b;
+    font-size: 14px;
+    border-bottom: 1px solid #edf0f6;
+}
+
+.cs-row span:last-child {
+    color: #172b55;
+    font-weight: 700;
+}
+
+.cs-warning {
+    margin: 15px 0 0;
+    padding: 12px;
+    color: #a16207;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 9px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.cart-checkout {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.cart-checkout .btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 230px;
+    padding: 14px 24px;
+    background: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 11px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 5px 13px rgba(37, 99, 235, 0.2);
+    transition: 0.2s;
+}
+
+.cart-checkout .btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+.cart-checkout .btn-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+    pointer-events: none;
+}
+
+.cart-empty {
+    padding: 65px 20px;
+    text-align: center;
+    background: #ffffff;
+    border: 1px dashed #cbd8ee;
+    border-radius: 18px;
+}
+
+.cart-empty-icon {
+    font-size: 45px;
+    margin-bottom: 15px;
+}
+
+.cart-empty h2 {
+    color: #172b55;
+    font-size: 21px;
+    margin-bottom: 8px;
+}
+
+.cart-empty p {
+    color: #71809b;
+    font-size: 14px;
+    margin-bottom: 22px;
+}
+
+.cart-empty .btn {
+    display: inline-block;
+    padding: 12px 23px;
+    background: #2563eb;
+    color: #ffffff;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+@media (max-width: 650px) {
+    .cart-page {
+        padding: 22px 14px 110px;
+    }
+
+    .cart-heading h1 {
+        font-size: 24px;
+    }
+
+    .cart-item {
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 16px;
+    }
+
+    .cart-item-info {
+        width: calc(100% - 70px);
+        flex: initial;
+    }
+
+    .cart-item-actions {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .cart-summary {
+        max-width: 100%;
+    }
+
+    .cart-checkout .btn {
+        width: 100%;
+    }
+}
+</style>
+
+<div class="cart-page">
+
+    <div class="cart-heading">
+        <h1>Your Cart</h1>
+        <p>Review your selected printing services before checkout.</p>
     </div>
-    {% endfor %}
-</div>
 
-<div class="cart-summary">
-    <div class="cs-row"><span>Subtotal</span><span>Rs. {{ '%.2f'|format(totals.subtotal) }}</span></div>
-    <div class="cs-row"><span>Delivery</span><span>{{ 'FREE' if totals.delivery_charge == 0 else 'Rs. %.2f'|format(totals.delivery_charge) }}</span></div>
-    {% if not totals.meets_minimum_order %}
-    <p class="cs-warning">Minimum order value is Rs. {{ totals.minimum_order_value }}. Add more items to check out.</p>
+    {% if cart.items %}
+
+    <div class="cart-list">
+
+        {% for item in cart.items %}
+
+        <div class="cart-item">
+
+            <div class="cart-item-icon">
+                {% if item.item_type == 'PRINTING' %}
+                    🖨️
+                {% elif item.item_type == 'PHOTO' %}
+                    📷
+                {% elif item.item_type == 'PASSPORT' %}
+                    🪪
+                {% else %}
+                    📄
+                {% endif %}
+            </div>
+
+            <div class="cart-item-info">
+
+                <div class="cart-item-name">
+                    {{ item.display_name() }}
+                </div>
+
+                {% if item.item_type == 'PRINTING' and item.print_configuration %}
+
+                <div class="cart-item-config">
+                    {{ item.print_configuration.paper_size }}
+                    · {{ item.print_configuration.print_type }}
+                    · {{ item.print_configuration.print_side }} side
+                    · {{ item.print_configuration.copies }} copies
+                    · Binding: {{ item.print_configuration.binding }}
+                </div>
+
+                {% endif %}
+
+                <div class="cart-item-price">
+                    Rs. {{ '%.2f'|format(item.line_total()) }}
+                </div>
+
+            </div>
+
+            <div class="cart-item-actions">
+
+                <form method="post"
+                      action="{{ url_for('cart.remove_item', item_id=item.id) }}">
+
+                    <button type="submit" class="btn-remove">
+                        Remove
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    <div class="cart-summary">
+
+        <div class="cs-row">
+            <span>Subtotal</span>
+            <span>Rs. {{ '%.2f'|format(totals.subtotal) }}</span>
+        </div>
+
+        <div class="cs-row">
+            <span>Delivery</span>
+            <span>
+                {{ 'FREE' if totals.delivery_charge == 0 else 'Rs. %.2f'|format(totals.delivery_charge) }}
+            </span>
+        </div>
+
+        {% if not totals.meets_minimum_order %}
+
+        <p class="cs-warning">
+            Minimum order value is Rs. {{ totals.minimum_order_value }}.
+            Add more items to check out.
+        </p>
+
+        {% endif %}
+
+    </div>
+
+    <div class="cart-checkout">
+
+        <a href="{{ url_for('checkout.checkout') }}"
+           class="btn btn-primary btn-block {{ 'btn-disabled' if not totals.meets_minimum_order }}">
+
+            Proceed to Checkout →
+
+        </a>
+
+    </div>
+
+    {% else %}
+
+    <div class="cart-empty">
+
+        <div class="cart-empty-icon">🛒</div>
+
+        <h2>Your cart is empty</h2>
+
+        <p>You haven't added any items yet. Explore our printing services.</p>
+
+        <a href="{{ url_for('main.home') }}" class="btn">
+            Start Shopping →
+        </a>
+
+    </div>
+
     {% endif %}
+
 </div>
 
-<a href="{{ url_for('checkout.checkout') }}" class="btn btn-primary btn-block {{ 'btn-disabled' if not totals.meets_minimum_order }}">Proceed to Checkout</a>
-
-{% else %}
-<p class="empty-state">Your cart is empty.</p>
-<a href="{{ url_for('main.home') }}" class="btn btn-primary">Start Shopping</a>
-{% endif %}
 {% endblock %}
-{% block extra_js %}<script src="{{ url_for('static', filename='js/cart.js') }}"></script>{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/cart.js') }}"></script>
+{% endblock %}

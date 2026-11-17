@@ -1,11 +1,11 @@
--- Printing Management System - reference schema.
--- NOTE: In normal use you do NOT need to run this file by hand.
--- `python database/seed.py` creates all tables automatically via the
--- SQLAlchemy models in models/. This file is provided for reference,
--- documentation, and viva/demo purposes so you can see the schema
--- without opening every model file.
 
-CREATE DATABASE IF NOT EXISTS printing_management CHARACTER SET utf8mb4;
+-- Printify - Reference Database Schema
+-- Normal setup uses SQLAlchemy models through database/seed.py.
+-- This file is provided for documentation and reference.
+
+CREATE DATABASE IF NOT EXISTS printing_management
+CHARACTER SET utf8mb4;
+
 USE printing_management;
 
 CREATE TABLE IF NOT EXISTS users (
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS addresses (
 CREATE TABLE IF NOT EXISTS categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    kind VARCHAR(20) NOT NULL,
+    kind VARCHAR(20) NOT NULL DEFAULT 'printing',
     icon VARCHAR(50) DEFAULT 'folder',
     sort_order INT DEFAULT 0,
     is_active BOOLEAN DEFAULT TRUE
@@ -65,20 +65,6 @@ CREATE TABLE IF NOT EXISTS printing_services (
     double_side_extra DECIMAL(10,2) DEFAULT 0,
     is_configurable BOOLEAN DEFAULT TRUE,
     flat_price DECIMAL(10,2),
-    image VARCHAR(255),
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at DATETIME,
-    updated_at DATETIME,
-    FOREIGN KEY (category_id) REFERENCES categories(id)
-);
-
-CREATE TABLE IF NOT EXISTS stationery_products (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    category_id INT,
-    name VARCHAR(150) NOT NULL,
-    description TEXT,
-    price DECIMAL(10,2) NOT NULL DEFAULT 0,
-    stock INT NOT NULL DEFAULT 0,
     image VARCHAR(255),
     is_active BOOLEAN DEFAULT TRUE,
     created_at DATETIME,
@@ -114,6 +100,11 @@ CREATE TABLE IF NOT EXISTS print_configurations (
     FOREIGN KEY (printing_service_id) REFERENCES printing_services(id)
 );
 
+CREATE TABLE IF NOT EXISTS photo_configurations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    created_at DATETIME
+);
+
 CREATE TABLE IF NOT EXISTS carts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL UNIQUE,
@@ -127,13 +118,12 @@ CREATE TABLE IF NOT EXISTS cart_items (
     cart_id INT NOT NULL,
     item_type VARCHAR(20) NOT NULL,
     print_configuration_id INT,
-    stationery_product_id INT,
+    photo_configuration_id INT,
     quantity INT NOT NULL DEFAULT 1,
     unit_price DECIMAL(10,2) NOT NULL DEFAULT 0,
     created_at DATETIME,
     FOREIGN KEY (cart_id) REFERENCES carts(id) ON DELETE CASCADE,
-    FOREIGN KEY (print_configuration_id) REFERENCES print_configurations(id),
-    FOREIGN KEY (stationery_product_id) REFERENCES stationery_products(id)
+    FOREIGN KEY (print_configuration_id) REFERENCES print_configurations(id)
 );
 
 CREATE TABLE IF NOT EXISTS coupons (

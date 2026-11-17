@@ -1,3 +1,4 @@
+
 from datetime import datetime
 
 from models import db
@@ -6,7 +7,10 @@ from models import db
 class Cart(db.Model):
     __tablename__ = "carts"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
 
     user_id = db.Column(
         db.Integer,
@@ -55,30 +59,23 @@ class CartItem(db.Model):
     )
 
     # Supported item types:
-    # PRINTING / STATIONERY / PHOTO / PASSPORT
+    # PRINTING / PHOTO / PASSPORT
     item_type = db.Column(
         db.String(20),
         nullable=False
     )
 
-    # Printing item
+    # Printing configuration
     print_configuration_id = db.Column(
         db.Integer,
         db.ForeignKey("print_configurations.id"),
         nullable=True
     )
 
-    # Photo / Passport Photo item
+    # Photo / Passport Photo configuration
     photo_configuration_id = db.Column(
         db.Integer,
         db.ForeignKey("photo_configurations.id"),
-        nullable=True
-    )
-
-    # Stationery item
-    stationery_product_id = db.Column(
-        db.Integer,
-        db.ForeignKey("stationery_products.id"),
         nullable=True
     )
 
@@ -107,30 +104,33 @@ class CartItem(db.Model):
         "PhotoConfiguration"
     )
 
-    stationery_product = db.relationship(
-        "StationeryProduct"
-    )
-
     def display_name(self):
+        """Return the cart item's display name."""
+
         if self.item_type == "PRINTING" and self.print_configuration:
             svc = self.print_configuration.printing_service
             return svc.name if svc else "Printing item"
 
-        if self.item_type in ("PHOTO", "PASSPORT") and self.photo_configuration:
+        if (
+            self.item_type in ("PHOTO", "PASSPORT")
+            and self.photo_configuration
+        ):
             return self.photo_configuration.display_name()
-
-        if self.item_type == "STATIONERY" and self.stationery_product:
-            return self.stationery_product.name
 
         return "Item"
 
     def line_total(self):
+        """Calculate the total price of this cart item."""
+
         if self.item_type == "PRINTING" and self.print_configuration:
             return float(
                 self.print_configuration.computed_total
             )
 
-        if self.item_type in ("PHOTO", "PASSPORT") and self.photo_configuration:
+        if (
+            self.item_type in ("PHOTO", "PASSPORT")
+            and self.photo_configuration
+        ):
             return float(
                 self.photo_configuration.computed_total
             )

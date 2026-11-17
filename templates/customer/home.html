@@ -353,7 +353,7 @@
             </h1>
 
             <p>
-                All your printing and stationery needs,
+                Your printing needs,
                 delivered fast to your door.
             </p>
 
@@ -467,29 +467,7 @@
                     Get passport size photos
                 </p>
 
-            </a>
-
-
-            <!-- STATIONERY -->
-
-            <a href="{{ url_for('stationery.list_products') }}"
-               class="quick-access-card">
-
-                <div class="quick-access-icon">
-                    📚
-                </div>
-
-                <h3>
-                    Stationery
-                </h3>
-
-                <p>
-                    Shop stationery products
-                </p>
-
-            </a>
-
-        </div>
+            </a></div>
 
     </section>
 
@@ -523,7 +501,7 @@
 
             <p>
                 I can help you choose printing options,
-                stationery products, and answer your questions.
+                printing options and answer your questions.
             </p>
 
 
@@ -538,175 +516,7 @@
 
         </div>
 
-    </section>
-
-
-    <!-- =====================================================
-         MOST ORDERED STATIONERY
-    ====================================================== -->
-
-    <section class="dashboard-section">
-
-        <div class="dashboard-section-header">
-
-            <div>
-
-                <h2>
-                    ⭐ Most Ordered Stationery
-                </h2>
-
-                <p>
-                    Popular products customers love
-                </p>
-
-            </div>
-
-
-            <a href="{{ url_for('stationery.list_products') }}"
-               class="view-all">
-
-                View all →
-
-            </a>
-
-        </div>
-
-
-        <div class="stationery-products-grid">
-
-            {% for product in popular_stationery %}
-
-                <div class="stationery-product-card">
-
-
-                    <!-- PRODUCT IMAGE -->
-
-                    <a href="{{ url_for('stationery.details',
-                                        product_id=product.id) }}"
-                       class="product-image-container">
-
-                        {% if product.image %}
-
-                            <img
-                                src="{{ url_for('static',
-                                               filename=product.image) }}"
-                                alt="{{ product.name }}"
-                                class="product-image"
-                            >
-
-                        {% else %}
-
-                            <div class="product-placeholder">
-                                📚
-                            </div>
-
-                        {% endif %}
-
-                    </a>
-
-
-                    <!-- PRODUCT DETAILS -->
-
-                    <div class="product-details">
-
-
-                        <!-- PRODUCT NAME -->
-
-                        <a href="{{ url_for('stationery.details',
-                                            product_id=product.id) }}"
-                           class="product-name">
-
-                            {{ product.name }}
-
-                        </a>
-
-
-                        <!-- PRICE -->
-
-                        <div class="product-price">
-
-                            ₹{{ product.price }}
-
-                        </div>
-
-
-                        <!-- STOCK -->
-
-                        {% if product.in_stock() %}
-
-                            <span class="product-stock">
-                                ✓ In Stock
-                            </span>
-
-                        {% else %}
-
-                            <span class="product-stock out-of-stock">
-                                Out of Stock
-                            </span>
-
-                        {% endif %}
-
-
-                        <!-- QUANTITY + CART -->
-
-                        <div class="product-cart-row">
-
-
-                            <div class="quantity-control">
-
-                                <button
-                                    type="button"
-                                    onclick="changeQuantity(this, -1)"
-                                    aria-label="Decrease quantity"
-                                >
-                                    −
-                                </button>
-
-
-                                <span class="quantity-value">
-                                    1
-                                </span>
-
-
-                                <button
-                                    type="button"
-                                    onclick="changeQuantity(this, 1)"
-                                    aria-label="Increase quantity"
-                                >
-                                    +
-                                </button>
-
-                            </div>
-
-
-                            <button
-                                type="button"
-                                class="add-cart-button"
-                                onclick="addToCart('{{ product.id }}', this)"
-                            >
-                                🛒 Add
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            {% else %}
-
-                <p>
-                    No stationery products available.
-                </p>
-
-            {% endfor %}
-
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
+    </section><!-- =====================================================
          FINAL CTA
     ====================================================== -->
 

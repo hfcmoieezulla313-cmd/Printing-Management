@@ -442,7 +442,7 @@
             <h1>Categories</h1>
 
             <p>
-                Choose a printing service or explore our stationery collection.
+                Choose a printing service that suits your needs.
             </p>
 
         {% endif %}
@@ -503,60 +503,7 @@
 
         </section>
 
-        {% endif %}
-
-
-        {% if search_products %}
-
-        <section class="printify-category-section">
-
-            <div class="printify-section-heading">
-
-                <div class="printify-section-heading-left">
-
-                    <h2>Stationery</h2>
-
-                    <p>
-                        Find the stationery product you need.
-                    </p>
-
-                </div>
-
-            </div>
-
-            <div class="printify-product-grid">
-
-                {% for p in search_products %}
-
-                <a
-                    href="{{ url_for('stationery.details', product_id=p.id) }}"
-                    class="printify-product-card"
-                >
-
-                    <div class="printify-product-icon">
-                        📦
-                    </div>
-
-                    <div class="printify-product-name">
-                        {{ p.name }}
-                    </div>
-
-                    <div class="printify-product-price">
-                        ₹{{ p.price }}
-                    </div>
-
-                </a>
-
-                {% endfor %}
-
-            </div>
-
-        </section>
-
-        {% endif %}
-
-
-        {% if not search_services and not search_products %}
+        {% endif %}{% if not search_services %}
 
             <div class="printify-empty-state">
                 No results found for "{{ search_query }}".
@@ -623,94 +570,7 @@
 
             </div>
 
-        </section>
-
-
-        <!-- =================================================
-             STATIONERY CATEGORIES
-        ================================================== -->
-
-        <section class="printify-category-section">
-
-            <div class="printify-section-heading">
-
-                <div class="printify-section-heading-left">
-
-                    <h2>Stationery Categories</h2>
-
-                    <p>
-                        Explore notebooks, writing tools, office items and more.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="printify-category-grid">
-
-                {% for cat in stationery_categories %}
-
-                <a
-                    href="{{ url_for('stationery.list_products', category=cat.id) }}"
-                    class="printify-category-card"
-                >
-
-                    <div class="printify-category-icon">
-
-                        {% if cat.name == "Notebooks & Journals" %}
-                            📓
-                        {% elif cat.name == "Pens & Writing" %}
-                            🖊️
-                        {% elif cat.name == "Highlighters" %}
-                            🖍️
-                        {% elif cat.name == "Sticky Notes" %}
-                            🗒️
-                        {% elif cat.name == "Art Supplies" %}
-                            🎨
-                        {% elif cat.name == "Office Supplies" %}
-                            📎
-                        {% elif cat.name == "Bags & Pouches" %}
-                            🎒
-                        {% elif cat.name == "Water Bottles" %}
-                            🥤
-                        {% elif cat.name == "Tech Accessories" %}
-                            💻
-                        {% elif cat.name == "Lunch Boxes" %}
-                            🍱
-                        {% elif cat.name == "Keychains & Accessories" %}
-                            🔑
-                        {% else %}
-                            📦
-                        {% endif %}
-
-                    </div>
-
-                    <div class="printify-category-content">
-
-                        <span class="printify-category-name">
-                            {{ cat.name }}
-                        </span>
-
-                        <p class="printify-category-description">
-                            Shop {{ cat.name.lower() }}
-                        </p>
-
-                    </div>
-
-                    <div class="printify-category-arrow">
-                        →
-                    </div>
-
-                </a>
-
-                {% endfor %}
-
-            </div>
-
-        </section>
-
-    {% endif %}
+        </section>{% endif %}
 
 </div>
 

@@ -12,7 +12,7 @@
 
     {% block title %}
 
-    Printify - Printing & Stationery
+    Printify - Printing
 
     {% endblock %}
 
@@ -77,7 +77,7 @@
             <input
                 type="text"
                 name="q"
-                placeholder="Search for printing or stationery..."
+                placeholder="Search for printing..."
                 value="{{ request.args.get('q', '') }}"
             >
 
@@ -214,16 +214,6 @@
     </a>
 
 
-    <a
-        href="{{ url_for('main.categories') }}"
-        class="{{ 'active' if request.endpoint == 'main.categories' }}"
-    >
-
-        <span>🗂️</span>
-
-        <small>Categories</small>
-
-    </a>
 
 
     <a
